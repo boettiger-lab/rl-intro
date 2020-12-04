@@ -1,0 +1,105 @@
+---
+title: Deep Reinforcement Learning for Conservation Decisions
+authors:
+  - name: Carl Boettiger
+    department: Department of Environmental Science, Policy, and Management
+    affiliation: University of California, Berkeley
+    location: Berkeley, California
+    email: cboettig@berkeley.edu
+
+abstract: |
+  Enter the text of your abstract here.
+keywords:
+  - blah
+  - blee
+  - bloo
+  - these are optional and can be removed
+bibliography: references.bib
+output: 
+  rticles::arxiv_article:
+    keep_tex: true
+---
+
+# Introduction
+
+# RL essentials
+
+- terminology, problem definition
+- discussion / table of current benchmark algorithms (DQN, PPO, DDPG, A2C, TD3, SAC)
+- training, hyperparameter tuning
+
+# Examples
+
+
+```{r setup, cache = FALSE}
+library(tidyverse)
+library(reticulate)
+```
+
+## Finding a known optimal solution using RL
+
+fishing gym?
+
+```{r cache=TRUE}
+## Python dependencies
+gym         <- import ("gym")
+gym_fishing <- import("gym_fishing")
+sb3         <- import ("stable_baselines3")
+
+# train an agent (model) on one of the environments:
+env <- gym$make("fishing-v1")
+a2c <- sb3$A2C('MlpPolicy', env, verbose=0L) # Must use L for integers!
+a2c$learn(total_timesteps=300000L)
+sims <- env$simulate(a2c, reps = 500L)
+```
+
+```{r}
+sims %>%
+  group_by(time) %>% 
+  summarise(ave_state = mean(state),
+            sd_state = sd(state),
+            ave_action = mean(action),
+            ave_reward = mean(reward),
+            .groups = "drop") %>%
+  ggplot(aes(time, ave_state)) +  geom_line() 
+  
+```
+
+
+```{r}
+sims %>% filter(rep < 50) %>% ggplot(aes(time, state, group = as.factor(rep))) + geom_line(alpha=0.1)
+```
+
+
+```{r}
+policy <- env$policyfn(a2c, reps = 50L)
+policy %>% ggplot(aes(state, action, group=rep)) + geom_point()
+```
+
+
+
+## Example of solving a problem that is difficult/impossible for conventional methods
+
+two use cases to consider: 
+  - model is known but too complex to solve by (approximate) dynamic programming etc, or non-markovian
+  - model is unknown
+  
+model uncertainty/transfer learning? nonstationary dynamics? 
+
+## Example of an open problem without an RL solution
+
+fire gym?
+
+
+# Open issues
+
+- wild west of AI?
+- reproducibility
+- AI ethics, transparency
+
+# a vision going forward
+
+- our public/open source environments and agents, leaderboard
+- the need for collaborative/competitive development both to make better benchmark environments and better agents
+
+
