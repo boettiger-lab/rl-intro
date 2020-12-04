@@ -413,6 +413,13 @@
       "Repository": "RSPM",
       "Hash": "a399e4773075fc2375b71f45fca186c4"
     },
+    "patchwork": {
+      "Package": "patchwork",
+      "Version": "1.1.0",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "89ba3e06a77b8ac5f6e7879e4d2ff375"
+    },
     "pillar": {
       "Package": "pillar",
       "Version": "1.4.7",
@@ -566,6 +573,13 @@
       "Source": "Repository",
       "Repository": "RSPM",
       "Hash": "06c85365a03fdaf699966cc1d3cf53ea"
+    },
+    "rticles": {
+      "Package": "rticles",
+      "Version": "0.17",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "12e9c0d85a390d72ec84e703ab129a39"
     },
     "rvest": {
       "Package": "rvest",

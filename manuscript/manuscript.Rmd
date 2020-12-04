@@ -1,12 +1,24 @@
 ---
 title: Deep Reinforcement Learning for Conservation Decisions
 authors:
+  - name: Marcus Lapeyrolerie
+    department: Department of Environmental Science, Policy, and Management
+    affiliation: University of California, Berkeley
+    location: Berkeley, California
+  - name: Melissa Chapman
+    department: Department of Environmental Science, Policy, and Management
+    affiliation: University of California, Berkeley
+    location: Berkeley, California
+  - name: Kari Norman
+    department: Department of Environmental Science, Policy, and Management
+    affiliation: University of California, Berkeley
+    location: Berkeley, California
   - name: Carl Boettiger
     department: Department of Environmental Science, Policy, and Management
     affiliation: University of California, Berkeley
     location: Berkeley, California
     email: cboettig@berkeley.edu
-
+    
 abstract: |
   Enter the text of your abstract here.
 keywords:
@@ -31,9 +43,12 @@ output:
 # Examples
 
 
-```{r setup, cache = FALSE}
+```{r setup, cache = FALSE, include = FALSE}
 library(tidyverse)
+library(patchwork)
 library(reticulate)
+
+knitr::opts_chunk$set(echo=FALSE)
 ```
 
 ## Finding a known optimal solution using RL
@@ -48,32 +63,23 @@ sb3         <- import ("stable_baselines3")
 
 # train an agent (model) on one of the environments:
 env <- gym$make("fishing-v1")
-a2c <- sb3$A2C('MlpPolicy', env, verbose=0L) # Must use L for integers!
+a2c <- sb3$A2C('MlpPolicy', env, verbose=0L, seed = 42L) # Must use L for integers!
 a2c$learn(total_timesteps=300000L)
 sims <- env$simulate(a2c, reps = 500L)
 ```
 
-```{r}
-sims %>%
-  group_by(time) %>% 
-  summarise(ave_state = mean(state),
-            sd_state = sd(state),
-            ave_action = mean(action),
-            ave_reward = mean(reward),
-            .groups = "drop") %>%
-  ggplot(aes(time, ave_state)) +  geom_line() 
-  
-```
 
 
 ```{r}
-sims %>% filter(rep < 50) %>% ggplot(aes(time, state, group = as.factor(rep))) + geom_line(alpha=0.1)
-```
-
-
-```{r}
+fig_fish_sims <- sims %>% 
+  filter(rep < 50) %>%
+  ggplot(aes(time, state, group = as.factor(rep))) + geom_line(alpha=0.1)
 policy <- env$policyfn(a2c, reps = 50L)
-policy %>% ggplot(aes(state, action, group=rep)) + geom_point()
+fig_fish_policy <- policy %>% ggplot(aes(state, state - action, group=rep)) + geom_point()
+```
+
+```{r fig1, fig.cap=""}
+fig_fish_sims + fig_fish_policy
 ```
 
 
