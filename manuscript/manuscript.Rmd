@@ -55,6 +55,9 @@ library(tidyverse)
 library(patchwork)
 library(reticulate)
 
+np <- import("numpy")
+np.random.seed(24L)
+
 knitr::opts_chunk$set(echo=FALSE)
 ```
 
@@ -68,25 +71,64 @@ gym         <- import ("gym")
 gym_fishing <- import("gym_fishing")
 sb3         <- import ("stable_baselines3")
 
-# train an agent (model) on one of the environments:
+## initialize the environment
 env <- gym$make("fishing-v1")
+```
+
+```{r eval=!file.exists("cache/a2c.zip")}
+# train an agent (model) on one of the environments:
 a2c <- sb3$A2C('MlpPolicy', env, verbose=0L, seed = 42L) # Must use L for integers!
 a2c$learn(total_timesteps=300000L)
-sims <- env$simulate(a2c, reps = 500L)
+a2c$save("cache/a2c")
 ```
+
+```{r}
+# Simulate management under the trained agent
+a2c <- sb3$A2C$load("cache/a2c")
+sims <- env$simulate(a2c, reps = 500L)
+
+policy <- env$policyfn(a2c, reps = 50L)
+```
+
+
 
 
 
 ```{r}
-fig_fish_sims <- sims %>% 
-  filter(rep < 50) %>%
-  ggplot(aes(time, state, group = as.factor(rep))) + geom_line(alpha=0.1)
-policy <- env$policyfn(a2c, reps = 50L)
-fig_fish_policy <- policy %>% ggplot(aes(state, state - action, group=rep)) + geom_point()
+# Simulate under the optimal solution (given the model)
+opt <- gym_fishing$models$escapement(env)
+opt_sims <- env$simulate(opt, reps = 500L)
+opt_policy <- env$policyfn(opt) %>% rename(optimal = action)
+
+sims_df <- bind_rows(sims, opt_sims, .id = "model")
+policy <- left_join(policy, opt_policy)
+```
+
+
+```{r}
+ymin <- function(x) last(x[(ntile(x, 20)==1)])
+ymax <- function(x) last(x[(ntile(x, 20)==19)])
+
+fig_sims <- 
+sims_df %>% 
+  group_by(time, model) %>% 
+  summarise(ymin = ymin(state),
+            ymax = ymax(state),
+            state = mean(state), .groups = "drop") %>%
+  ggplot(aes(time, state, ymin = ymin, ymax = ymax, fill=model)) + 
+  geom_ribbon(alpha= 0.3) + geom_line(aes(col = model))
+```
+
+
+```{r}
+fig_policy <- 
+  policy %>% ggplot(aes(state, state - action, group=rep)) + 
+  geom_point(alpha=.05) + geom_line(aes(y = state - optimal), col = "blue") + 
+  coord_cartesian(xlim = c(0, 1.5), ylim=c(0,0.9))
 ```
 
 ```{r fig1, fig.cap=""}
-fig_fish_sims + fig_fish_policy
+fig_sims + fig_policy
 ```
 
 
