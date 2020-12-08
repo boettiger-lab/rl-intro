@@ -99,11 +99,30 @@ policy <- env$policyfn(a2c, reps = 50L)
 opt <- gym_fishing$models$escapement(env)
 opt_sims <- env$simulate(opt, reps = 500L)
 opt_policy <- env$policyfn(opt) %>% rename(optimal = action)
+```
 
-sims_df <- bind_rows(sims, opt_sims, .id = "model")
+```{r}
+sims_df <- bind_rows(sims, opt_sims, .id = "model") %>%
+  mutate(model = c("A2C", "optimal")[as.integer(model)])
+
 policy <- left_join(policy, opt_policy)
 ```
 
+
+```{r}
+gamma <- 1 #discount
+fig_reward <- sims_df %>% 
+  group_by(rep, model) %>%
+  mutate(cum_reward = cumsum(reward * gamma^time)) %>%
+  group_by(time, model) %>%
+  summarise(mean_reward = mean(cum_reward), 
+            sd = sd(cum_reward), .groups = "drop") %>% 
+  ggplot(aes(time, mean_reward)) + 
+  geom_ribbon(aes(ymin = mean_reward - 2*sd, 
+                  ymax = mean_reward + 2*sd, fill = model),
+              alpha=0.25, show.legend = FALSE) + 
+  geom_line(aes(col = model)) + ylab("mean cumulative reward")
+```
 
 ```{r}
 ymin <- function(x) last(x[(ntile(x, 20)==1)])
@@ -128,9 +147,9 @@ fig_policy <-
 ```
 
 ```{r fig1, fig.cap=""}
-fig_sims + fig_policy
+fig_sims / ( fig_policy + fig_reward)
 ```
-
+Note that the A2C policy learns to shut down fishing entirely below a certain stock size, without any variation.  However, it keeps the fishery closed even once stock sizes are slightly higher than $B_{MSY}$.  Once it begins fishing, it slightly under-harvests for stock sizes a little over $B_{MSY}$, but tends to over-harvest for very large stock sizes (rarely ever realized, as fishing pressure is enough to keep it out of this range). Note also that the harvest varies across replicates, creating a fuzzy region in the policy function. Under such a policy, A2C maintains a stock size on average significantly above $B_{MSY}$, though also sees higher volatility particularly on the low side.  Note that due to the stochastic nature of the environment, any given replicate A2C may out-perform the optimal policy, though on average the optimal policy provides consistently better yields.  
 
 
 ## Example of solving a problem that is difficult/impossible for conventional methods
