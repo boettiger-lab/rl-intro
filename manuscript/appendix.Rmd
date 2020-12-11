@@ -18,7 +18,7 @@ authors:
     affiliation: University of California, Berkeley
     location: Berkeley, California
     email: cboettig@berkeley.edu
-    
+
 abstract: |
   Enter the text of your abstract here.
 keywords:
@@ -32,7 +32,11 @@ output:
     keep_tex: true
 ---
 
-```{r setup, cache = FALSE, include = FALSE}
+```{r knitr, include = FALSE}
+knitr::opts_chunk$set(echo=FALSE)
+```
+
+```{r setup, cache = FALSE}
 library(tidyverse)
 library(patchwork)
 library(reticulate)
@@ -40,7 +44,9 @@ library(reticulate)
 np <- import("numpy")
 np$random$seed(42L)
 
-knitr::opts_chunk$set(echo=FALSE)
+# force CPU-evaluation for reproducibility
+Sys.setenv("CUDA_VISIBLE_DEVICES"="")
+
 ```
 
 ## Finding a known optimal solution using RL
@@ -54,20 +60,50 @@ gym_fishing <- import("gym_fishing")
 sb3         <- import ("stable_baselines3")
 
 ## initialize the environment
-env <- gym$make("fishing-v1")
+env <- gym$make("fishing-v1", sigma = 0.1)
 ```
 
 ```{r eval=!file.exists("cache/a2c.zip")}
 # train an agent (model) on one of the environments:
-## FIXME set tuned hyperparameters
-td3 <- sb3$TD3('MlpPolicy', env, verbose=0L, seed = 42L) # Must use L for integers!
+
+
+#Trial 15 finished with value: 7.6994757652282715 and parameters: 
+hyper = list('gamma'= 0.995, 'lr'= 0.0001355522450968401, 'batch_size'= 128L, 
+         'buffer_size'= 10000L, 'episodic'= FALSE, 'train_freq'= 128L, 
+         'noise_type'= 'normal', 'noise_std'= 0.6656948079225263, 
+         'net_arch'= 'big')
+policy_kwargs = list(net_arch=c(400L, 300L)) # big
+
+
+#non-episodic:
+hyper['gradient_steps'] = hyper['train_freq']
+hyper['n_episodes_rollout'] = -1
+n_actions = env$action_space$shape[0]
+hyper$action_noise = sb3$common$noise$NormalActionNoise(
+        mean=np$zeros(n_actions),
+        sigma= hyper[['noise_std']] * np$ones(n_actions)
+        )
+
+
+td3 = sb3$TD3('MlpPolicy', env,  verbose=0L, seed = 42L,
+            gamma = hyper[['gamma']],
+            learning_rate = hyper[['lr']],
+            batch_size = hyper[['batch_size']],            
+            buffer_size = hyper[['buffer_size']],
+            action_noise = hyper[['action_noise']],
+            train_freq = hyper[['train_freq']],
+            gradient_steps = hyper[['train_freq']],
+            n_episodes_rollout = hyper[['n_episodes_rollout']],
+            policy_kwargs=policy_kwargs)
+
+
 td3$learn(total_timesteps=300000L)
 td3$save("cache/td3")
 ```
 
 ```{r}
 # Simulate management under the trained agent
-td3 <- sb3$A2C$load("cache/td3")
+#td3 <- sb3$A2C$load("cache/td3") ## fixme, fails to load
 sims <- env$simulate(td3, reps = 500L)
 policy <- env$policyfn(td3, reps = 50L)
 ```
@@ -127,31 +163,5 @@ fig_policy <-
 ```{r fig1, fig.cap=""}
 fig_sims / ( fig_policy + fig_reward)
 ```
-Note that the A2C policy learns to shut down fishing entirely below a certain stock size, without any variation.  However, it keeps the fishery closed even once stock sizes are slightly higher than $B_{MSY}$.  Once it begins fishing, it slightly under-harvests for stock sizes a little over $B_{MSY}$, but tends to over-harvest for very large stock sizes (rarely ever realized, as fishing pressure is enough to keep it out of this range). Note also that the harvest varies across replicates, creating a fuzzy region in the policy function. Under such a policy, A2C maintains a stock size on average significantly above $B_{MSY}$, though also sees higher volatility particularly on the low side.  Note that due to the stochastic nature of the environment, any given replicate A2C may out-perform the optimal policy, though on average the optimal policy provides consistently better yields.  
-
-
-## Example of solving a problem that is difficult/impossible for conventional methods
-
-two use cases to consider: 
-  - model is known but too complex to solve by (approximate) dynamic programming etc, or non-markovian
-  - model is unknown
-  
-model uncertainty/transfer learning? nonstationary dynamics? 
-
-## Example of an open problem without an RL solution
-
-fire gym?
-
-
-# Open issues
-
-- wild west of AI?
-- reproducibility
-- AI ethics, transparency
-
-# a vision going forward
-
-- our public/open source environments and agents, leaderboard
-- the need for collaborative/competitive development both to make better benchmark environments and better agents
-
-
+```{r}
+```
