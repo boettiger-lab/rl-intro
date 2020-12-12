@@ -50,105 +50,10 @@ If RL has great promise, the approach also imposes great risk.  Lacking the trac
 # Examples
 
 
-```{r setup, cache = FALSE, include = FALSE}
-library(tidyverse)
-library(patchwork)
-library(reticulate)
-
-np <- import("numpy")
-np$random$seed(42L)
-
-knitr::opts_chunk$set(echo=FALSE)
-```
-
 ## Finding a known optimal solution using RL
 
-fishing gym?
-
-```{r }
-## Python dependencies
-gym         <- import ("gym")
-gym_fishing <- import("gym_fishing")
-sb3         <- import ("stable_baselines3")
-
-## initialize the environment
-env <- gym$make("fishing-v1")
-```
-
-```{r eval=!file.exists("cache/a2c.zip")}
-# train an agent (model) on one of the environments:
-a2c <- sb3$A2C('MlpPolicy', env, verbose=0L, seed = 42L) # Must use L for integers!
-a2c$learn(total_timesteps=300000L)
-a2c$save("cache/a2c")
-```
-
-```{r}
-# Simulate management under the trained agent
-a2c <- sb3$A2C$load("cache/a2c")
-sims <- env$simulate(a2c, reps = 500L)
-
-policy <- env$policyfn(a2c, reps = 50L)
-```
 
 
-
-
-
-```{r}
-# Simulate under the optimal solution (given the model)
-opt <- gym_fishing$models$escapement(env)
-opt_sims <- env$simulate(opt, reps = 500L)
-opt_policy <- env$policyfn(opt) %>% rename(optimal = action)
-```
-
-```{r}
-sims_df <- bind_rows(sims, opt_sims, .id = "model") %>%
-  mutate(model = c("A2C", "optimal")[as.integer(model)])
-
-policy <- left_join(policy, opt_policy)
-```
-
-
-```{r}
-gamma <- 1 #discount
-fig_reward <- sims_df %>% 
-  group_by(rep, model) %>%
-  mutate(cum_reward = cumsum(reward * gamma^time)) %>%
-  group_by(time, model) %>%
-  summarise(mean_reward = mean(cum_reward), 
-            sd = sd(cum_reward), .groups = "drop") %>% 
-  ggplot(aes(time, mean_reward)) + 
-  geom_ribbon(aes(ymin = mean_reward - 2*sd, 
-                  ymax = mean_reward + 2*sd, fill = model),
-              alpha=0.25, show.legend = FALSE) + 
-  geom_line(aes(col = model)) + ylab("mean cumulative reward")
-```
-
-```{r}
-ymin <- function(x) last(x[(ntile(x, 20)==1)])
-ymax <- function(x) last(x[(ntile(x, 20)==19)])
-
-fig_sims <- 
-sims_df %>% 
-  group_by(time, model) %>% 
-  summarise(ymin = ymin(state),
-            ymax = ymax(state),
-            state = mean(state), .groups = "drop") %>%
-  ggplot(aes(time, state, ymin = ymin, ymax = ymax, fill=model)) + 
-  geom_ribbon(alpha= 0.3) + geom_line(aes(col = model))
-```
-
-
-```{r}
-fig_policy <- 
-  policy %>% ggplot(aes(state, state - action, group=rep)) + 
-  geom_point(alpha=.05) + geom_line(aes(y = state - optimal), col = "blue") + 
-  coord_cartesian(xlim = c(0, 1.5), ylim=c(0,0.9))
-```
-
-```{r fig1, fig.cap=""}
-fig_sims / ( fig_policy + fig_reward)
-```
 Note that the A2C policy learns to shut down fishing entirely below a certain stock size, without any variation.  However, it keeps the fishery closed even once stock sizes are slightly higher than $B_{MSY}$.  Once it begins fishing, it slightly under-harvests for stock sizes a little over $B_{MSY}$, but tends to over-harvest for very large stock sizes (rarely ever realized, as fishing pressure is enough to keep it out of this range). Note also that the harvest varies across replicates, creating a fuzzy region in the policy function. Under such a policy, A2C maintains a stock size on average significantly above $B_{MSY}$, though also sees higher volatility particularly on the low side.  Note that due to the stochastic nature of the environment, any given replicate A2C may out-perform the optimal policy, though on average the optimal policy provides consistently better yields.  
 
 
