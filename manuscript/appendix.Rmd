@@ -33,7 +33,7 @@ output:
 ---
 
 ```{r knitr, include = FALSE}
-knitr::opts_chunk$set(echo=FALSE, message = FALSE, warning = FALSE,
+knitr::opts_chunk$set(echo=TRUE, message = FALSE, warning = FALSE,
                       fig.width = 7, fig.height = 4)
 ggplot2::theme_set(ggplot2::theme_bw())
 
@@ -158,7 +158,11 @@ reward_df <- sims_df %>%
 ```
 
 
-
+```{r}
+write_csv(sims_df, "figs/sims_df.csv")
+write_csv(policy_df, "figs/policy_df.csv")
+write_csv(reward_df, "figs/reward_df.csv")
+```
 
 ```{r}
 ymin <- function(x) last(x[(ntile(x, 20)==1)])

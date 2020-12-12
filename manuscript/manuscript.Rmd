@@ -50,8 +50,63 @@ If RL has great promise, the approach also imposes great risk.  Lacking the trac
 # Examples
 
 
+```{r knitr, include = FALSE}
+library(tidyverse)
+library(patchwork)
+knitr::opts_chunk$set(echo=FALSE, message = FALSE, warning = FALSE,
+                      fig.width = 7, fig.height = 4)
+ggplot2::theme_set(ggplot2::theme_bw())
+
+scale_colour_discrete <- function(...) ggthemes::scale_colour_solarized()
+scale_fill_discrete <- function(...) ggthemes::scale_fill_solarized()
+pal <- ggthemes::solarized_pal()(6)
+txtcolor <- "#586e75"
+
+```
+
 ## Finding a known optimal solution using RL
 
+
+
+
+```{r}
+sims_df <- read_csv( "figs/sims_df.csv")
+policy_df <- read_csv("figs/policy_df.csv")
+reward_df <- read_csv("figs/reward_df.csv")
+
+ymin <- function(x) last(x[(ntile(x, 20)==1)])
+ymax <- function(x) last(x[(ntile(x, 20)==19)])
+
+fig_sims <- 
+sims_df %>% 
+  group_by(time, model) %>% 
+  summarise(ymin = ymin(state),
+            ymax = ymax(state),
+            state = mean(state), .groups = "drop") %>%
+  ggplot(aes(time, state, ymin = ymin, ymax = ymax, fill=model)) + 
+  geom_ribbon(alpha= 0.3) + geom_line(aes(col = model))
+
+fig_policy <- 
+  policy_df %>% ggplot(aes(state, state - action, 
+                           group=interaction(rep, model),
+                           col = model)) + 
+  geom_line(show.legend = FALSE) + 
+  coord_cartesian(xlim = c(0, 1.3), ylim=c(0,0.9)) + 
+  ylab("escapement")
+
+
+fig_reward <- reward_df %>% 
+  ggplot(aes(time, mean_reward)) + 
+  geom_ribbon(aes(ymin = mean_reward - 2*sd, 
+                  ymax = mean_reward + 2*sd, fill = model),
+              alpha=0.25, show.legend = FALSE) + 
+  geom_line(aes(col = model), show.legend = FALSE) + 
+  ylab("reward")
+```
+
+```{r fig1, fig.cap=""}
+fig_sims / ( fig_policy + fig_reward)
+```
 
 
 Note that the A2C policy learns to shut down fishing entirely below a certain stock size, without any variation.  However, it keeps the fishery closed even once stock sizes are slightly higher than $B_{MSY}$.  Once it begins fishing, it slightly under-harvests for stock sizes a little over $B_{MSY}$, but tends to over-harvest for very large stock sizes (rarely ever realized, as fishing pressure is enough to keep it out of this range). Note also that the harvest varies across replicates, creating a fuzzy region in the policy function. Under such a policy, A2C maintains a stock size on average significantly above $B_{MSY}$, though also sees higher volatility particularly on the low side.  Note that due to the stochastic nature of the environment, any given replicate A2C may out-perform the optimal policy, though on average the optimal policy provides consistently better yields.  
