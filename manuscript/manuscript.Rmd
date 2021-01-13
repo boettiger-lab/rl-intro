@@ -38,7 +38,7 @@ Despite rapidly expanding interest in machine learning (ML) and artificial intel
 
 We believe RL approaches hold particular interest for conservation decision-making problems, for two reasons.  First, ecological systems are complex and difficult to represent accurately using models that remain tractable with classical approaches.  For example, convenient mathematical assumptions such as stationarity, often required by classical techniques [@Marescot2013], stand in stark odds with the picture of an environment which is constantly changing.  Second, RL approaches do not require massive amounts of data, in stark contrast with other more widely used applications of ML.  Despite the expansion in data collection from remote sensors, citizen science, and other efforts, ecological data often remains too sparse in the details that matter.  And in a changing environment, no amount of historical data may be able to train supervised or unsupervised ML approaches to anticipate a future that has never been observed.  Stationarity is an even stronger assumption there than in classical approaches. However, RL are not trained by historical data alone, but rather, they rely on computer simulations.  Simulations are our most powerful approach to exploring future scenario, and simulated 'data' represents the largest contribution to the exponential growth of data in climate science [@].  As we illustrate here, a software agent can be trained to successfully navigate hypothetical scenarios through it's experience in simulation that would be difficult or impossible to solve with classical methods.  In this manner, RL can compliment, rather than replace, existing empirical and theoretical research which would continue to form the basis for those simulations.
 
-If RL has great promise, the approach also imposes great risk.  Lacking the tractability of classical methods, an RL agent can appear to solve a wide class of scenarios with ease, but fail unexpectedly under seemingly similar conditions.  Despite recent progress, Deep RL is a young field and stability and robustness of RL agents remain largely open problems. Giving algorithms direct influence over conservation policy may also raise ethical and political issues, particularly if those algorithms (or components thereof) are treated as propietary intellectual property. 
+If RL has great promise, the approach also imposes great risk.  Lacking the tractability of classical methods, an RL agent can appear to solve a wide class of scenarios with ease, but fail unexpectedly under seemingly similar conditions.  Despite recent progress, Deep RL is a young field and stability and robustness of RL agents remain largely open problems. Giving algorithms direct influence over conservation policy may also raise ethical and political issues, particularly if those algorithms (or components thereof) are treated as proprietary intellectual property. 
 
 
 # RL essentials
@@ -48,6 +48,12 @@ If RL has great promise, the approach also imposes great risk.  Lacking the trac
 - training, hyperparameter tuning
 
 # Examples
+
+## Sustainable harvest
+
+We provide three examples that illustrate the application and potential of deep RL to ecological and conservation problems, highlighting both the potential and challenges there-in.  The first example focuses on the well-studied problem of setting harvest quotas in fisheries management [@Schaefer1954; @Clark1974; @Reed1979; @Worm2006; @Costello2018].  Given an appropriately estimated model, the optimal harvest policy can be determined precisely (e.g. by stochastic dynamic programming, SDP, see @Marescot2013), and under most circumstances takes the form of a "constant-escapement" policy [see mathematical proof in @Reed1979]. This provides a natural first benchmark for deep RL approaches, since we can compare the RL solution to the mathematical optimum directly.  The problem is also of interest because the RL approach can be extended to consider ecological dynamics that either surpass the complexity possible with SDP methods, or violate assumptions of such classical approaches). Moreover, fisheries management is both an important global challenge in it's own right [@Worm2006; @Costello2018] as well as a common test case to understand ecological dynamics and conservation management more broadly [@].
+
+For illustrative purposes, we consider the simplest version of the dynamic optimal harvest problem as outlined by @Clark1974 or @Reed1979 (covering the stochastic case).  In short, the manager seeks to optimize the net present value (discounted cumulative catch) of a fishery, observing the stock size each year and setting an appropriate harvest quota in response.  In the classical approach, the best model of the fish population dynamics must first be estimated from data, potentially with posterior distributions over parameter estimates reflecting any uncertainty. From this model, the optimal harvest policy -- that is, the a function which returns the optimal quota for each possible observed stock size -- can be determined either by analytic [@Reed1979] or numerical [@Marescot2013] methods, depending on the complexity of the model.  In a RL approach, the model is instead replaced by a computer simulation, usually referred to as an "environment."  The simplest simulation is merely an implementation of the estimated model itself.  However, unlike an analytic or SDP solution that is derived directly from the estimated model, the RL approach is in principle agnostic to the details of the simulation.
 
 
 ```{r knitr, include = FALSE}
@@ -64,7 +70,6 @@ txtcolor <- "#586e75"
 
 ```
 
-## Finding a known optimal solution using RL
 
 
 

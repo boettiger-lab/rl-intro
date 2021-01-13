@@ -18,3 +18,4 @@ six==1.15.0
 stable-baselines3==0.10.0
 torch==1.7.0
 typing-extensions==3.7.4.3
+-e git+https://github.com/boettiger-lab/gym_conservation#egg=gym_conservation
