@@ -34,14 +34,33 @@ output:
 
 # Introduction
 
-Despite rapidly expanding interest in machine learning (ML) and artificial intelligence (AI) applications to ecology, the use of reinforcement learning (RL) has been largely neglected, which have focused primarily on applications of either supervised learning [@examples] or unsupervised learning [@examples].  In third learning paradigm in AI, reinforcement learning, a _software agent_ learns by repeated experience to select _actions_ to maximize some cumulative reward.  RL is an incredibly general approach, and the one that in principle looks most like artificial general intelligence.  RL has been notable for successes such as AlphaZero, a single agent that can beat the best human players in go, chess, and shogi [@alphazero], as well as applications in robotics [@robotics], but also faces major challenges [@henderson2017].
+<!-- no examples of issues / problems named!-->
 
-We believe RL approaches hold particular interest for conservation decision-making problems, for two reasons.  First, ecological systems are complex and difficult to represent accurately using models that remain tractable with classical approaches.  For example, convenient mathematical assumptions such as stationarity, often required by classical techniques [@Marescot2013], stand in stark odds with the picture of an environment which is constantly changing.  Second, RL approaches do not require massive amounts of data, in stark contrast with other more widely used applications of ML.  Despite the expansion in data collection from remote sensors, citizen science, and other efforts, ecological data often remains too sparse in the details that matter.  And in a changing environment, no amount of historical data may be able to train supervised or unsupervised ML approaches to anticipate a future that has never been observed.  Stationarity is an even stronger assumption there than in classical approaches. However, RL are not trained by historical data alone, but rather, they rely on computer simulations.  Simulations are our most powerful approach to exploring future scenario, and simulated 'data' represents the largest contribution to the exponential growth of data in climate science [@].  As we illustrate here, a software agent can be trained to successfully navigate hypothetical scenarios through it's experience in simulation that would be difficult or impossible to solve with classical methods.  In this manner, RL can compliment, rather than replace, existing empirical and theoretical research which would continue to form the basis for those simulations.
+Despite rapidly expanding interest in machine learning (ML) and artificial intelligence (AI) applications to ecology, the use of reinforcement learning (RL) has been largely neglected, which have focused primarily on applications of either supervised learning [@examples] or unsupervised learning [@examples].  In third learning paradigm in AI, reinforcement learning, a _software agent_ learns by repeated experience to select _actions_ to maximize some cumulative reward.  RL is an incredibly general approach, and the one that in principle looks most like artificial general intelligence.  RL has been notable for successes such as AlphaZero, a single agent that can beat the best human players in go, chess, and shogi [@alphazero], as well as applications in robotics [@robotics], but also faces major challenges [@henderson2017].  
 
-If RL has great promise, the approach also imposes great risk.  Lacking the tractability of classical methods, an RL agent can appear to solve a wide class of scenarios with ease, but fail unexpectedly under seemingly similar conditions.  Despite recent progress, Deep RL is a young field and stability and robustness of RL agents remain largely open problems. Giving algorithms direct influence over conservation policy may also raise ethical and political issues, particularly if those algorithms (or components thereof) are treated as proprietary intellectual property. 
+We believe RL approaches hold particular interest for conservation decision-making problems, for two reasons.  First, ecological systems are complex and difficult to represent accurately using models that remain tractable with classical approaches.  For example, convenient mathematical assumptions such as that a dynamical system is _autonomous_ (parameters do not vary in time) often required by classical techniques [@Marescot2013], stand in stark odds with the picture of an environment which is constantly changing.  Second, RL approaches do not require massive amounts of data, in stark contrast with other more widely used applications of ML.  Despite the expansion in data collection from remote sensors, citizen science, and other efforts, ecological data often remains too sparse in the details that matter.  And in a changing environment, no amount of historical data may be able to train supervised or unsupervised ML approaches to anticipate a future that has never been observed. However, RL are not trained by historical data alone, but rather, they rely on computer simulations.  Simulations are our most powerful approach to exploring future scenario, and simulated 'data' represents the largest contribution to the exponential growth of data in climate science [@].  As we illustrate here, a software agent can be trained to successfully navigate hypothetical scenarios through its experience in simulation that would be difficult or impossible to solve with classical methods.  In this manner, RL can compliment, rather than replace, existing empirical and theoretical research which would continue to form the basis for those simulations.
+
+If RL has great promise, the approach also imposes great risk.  Lacking the tractability of classical methods, an RL agent can appear to solve a wide class of scenarios with ease, but may fail unexpectedly under seemingly similar conditions.  Despite recent progress, Deep RL is a young field and stability and robustness of its methods remain largely open problems. Giving algorithms direct influence over conservation policy may also raise ethical and political issues, particularly if those algorithms (or components thereof) are treated as proprietary intellectual property.  We discuss these issues and potential ways forward.
+
+
+# Sequential Decision Problems and Reinforcement Learning
+
+Reinforcement learning focuses primarily on sequential decision problems: tasks in which a decision-maker or "agent" must repeatedly decide what action to take in response to new information about the "state" of the system they seek to manage, in order to maximize some objective (referred to  as the reward or utility).  Any conservation problem that considers the future possible scenarios is a sequential decision problem: even scenarios that face a one-off decision such as whether declare some region as a protected area, or list or de-list a species as endangered, are sequential decision problems if they must consider the timing of their actions.  In contrast, decisions that do not consider the future, such as deciding which of a collection of possible regions should be prioritized based only on the present: how many species currently inhabit a region, how much each region would cost to purchase today, are not sequential problems. Central to any sequential decision problem is the need to consider possible future states, the need to forecast.  Because the agent's actions will influence that future, agents facing sequential decision problems must further be able to forecast how each possible action available to them will change that forecast.  Consequentially, our lack of knowledge about the underlying models and inability to predict future environments in our rapidly changing world pose a fundamental challenge to conservation decision-making.   
+
+
+This framework raises two conceptual challenges.  First, sequential decision-making problem is distinct from the problem of model estimation.  A sequential decision problem will typically treat the model as given, typically with some uncertainty around the process and possibly the measurmeents and model estimates as well.  Thus, methods for solving sequential decision-making should not be mistaken as alternatives to methods designed for model estimation, such as regression, Bayesian heirarchical modeling, generalized additive models (GAMs) etc. Second, methods for describing and solving sequential decision-making problems are often given different terms by different communities to describe the same thing.  Sequential decision problems are common to behavioral ecology [@Mangel], conservation [@Marescot2013] natural resource economics [@Clark1990], and some engineering fields [] where they are known as "optimal control" problems, while computer science, neuroscience, and robotics typically refer to them as 'reinfocement learning'.    
+
+
+
+
+
 
 
 # RL essentials
+
+**Model-based vs Model-free RL**
+
+**Current algorithms**
 
 - terminology, problem definition
 - discussion / table of current benchmark algorithms (DQN, PPO, DDPG, A2C, TD3, SAC)
@@ -117,7 +136,55 @@ fig_sims / ( fig_policy + fig_reward)
 Note that the A2C policy learns to shut down fishing entirely below a certain stock size, without any variation.  However, it keeps the fishery closed even once stock sizes are slightly higher than $B_{MSY}$.  Once it begins fishing, it slightly under-harvests for stock sizes a little over $B_{MSY}$, but tends to over-harvest for very large stock sizes (rarely ever realized, as fishing pressure is enough to keep it out of this range). Note also that the harvest varies across replicates, creating a fuzzy region in the policy function. Under such a policy, A2C maintains a stock size on average significantly above $B_{MSY}$, though also sees higher volatility particularly on the low side.  Note that due to the stochastic nature of the environment, any given replicate A2C may out-perform the optimal policy, though on average the optimal policy provides consistently better yields.  
 
 
+## Beyond classic methods: Non-stationary models
+
+
+
+
+
+
+
+```{r}
+sims_df <-read_csv("figs/tipping_sims_df.csv")
+policy_df <- read_csv("figs/tipping_policy_df.csv")
+reward_df <- read_csv("figs/tipping_reward_df.csv")
+```
+
+
+```{r}
+fig_sims <- 
+  sims_df %>%
+   group_by(time, model) %>% 
+   summarise(ymin = ymin(state),
+            ymax = ymax(state),
+            state = mean(state), .groups = "drop") %>%
+  ggplot(aes(time, state, ymin = ymin, ymax = ymax, fill=model)) + 
+   geom_ribbon(alpha= 0.3) + geom_line(aes(col = model))
+
+fig_policy <- 
+  policy_df %>% ggplot(aes(state, action, 
+                           group=interaction(rep, model),
+                           col = model)) + 
+  geom_line(show.legend = FALSE) 
+
+fig_reward <- reward_df %>% 
+  ggplot(aes(time, mean_reward)) + 
+  geom_ribbon(aes(ymin = mean_reward - 2*sd, 
+                  ymax = mean_reward + 2*sd, fill = model),
+              alpha=0.25, show.legend = FALSE) + 
+  geom_line(aes(col = model), show.legend = FALSE) + 
+  ylab("reward")
+```
+
+```{r fig2, fig.cap=""}
+fig_sims / ( fig_policy + fig_reward)
+```
+
+
+
 ## Example of solving a problem that is difficult/impossible for conventional methods
+
+
 
 two use cases to consider: 
   - model is known but too complex to solve by (approximate) dynamic programming etc, or non-markovian
