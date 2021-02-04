@@ -266,14 +266,19 @@ fire gym?
 
 # Open issues
 
+Deep reinforcement learning has only become an established subfield of AI over the past decade; and, as with most young fields, there are a range of unsolved problems. In practice, the foremost problem with DRL is instability. For a range of reasons, including high variance and the exploration vs. exploitation trade-off, model-free and model-based algorithms tend to have unstable performance on environments with non-tabular state-action spaces [cite RL that matters]. For instance, it is not uncommon to observe vastly different behavior when two agents are initialized with different random seeds [cite ibid]. Since model-based and model-free algorithms typically have a large number of hyperparameters, each of which can contribute to training instability, it is practically impossible to identify the source of instability. The hope of the RL practitioner is that after doing an exhaustive hyperparameter search, the practitioner will find a set of hyperparameters that results in a robust, well-performing agent, but there are no guarantees that hyperparameter tuning will lead to this outcome. 
+
+In the context of conservation, we anticipate that there will be a host of challenges. Interpretability is likely to be the biggest barrier to adoption. Although there have been some attempts to increase the transparency of RL agents that use neural network as function approximators [cite], it is still very difficult to explain the behavior of an RL-trained agent. Another challenge is that DRL algorithms are very sample inefficient, and to overcome sample inefficiency for conservation decision-making problems that are often data poor, relying on simulations to train agents will be necessary. While there are positives to using simulated data, any assumptions or biases that are included in the model will affect agent behavior. 
+
+A problem that is central to AI safety is selecting the right objective. There have been many examples in which explicit reward design goes horribly wrong [cite]. ...
+
 - wild west of AI?
-- reproducibility
+-can separate RL from having gyms implemented -> how do you compare different models, 
+-mention that customization is probably the way to go, baselines only go so far
 
 - AI ethics, transparency
 
--model uncertainty part is concerning, you bake in assumptions into environment
--can separate RL from having gyms implemented -> how do you compare different models, 
--mention that customization is probably the way to go, baselines only go so far
+
 
 # a vision going forward
 
