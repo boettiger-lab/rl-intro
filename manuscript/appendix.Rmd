@@ -221,6 +221,8 @@ env <- gym$make("conservation-v6")
 
 ```{r}
 # Simulate management under the trained agent
+# See https://github.com/boettiger-lab/conservation-agents/blob/4baaa6c9b994085ca56c42364f7affcc58b0ef3b/conservation/TD3.py
+
 TD3 <- sb3$TD3$load("cache/td3-conservation")
 TD3_sims <- env$simulate(TD3, reps = 100L)
 TD3_policy <- env$policyfn(TD3, reps = 10L)
