@@ -44,15 +44,22 @@ txtcolor <- "#586e75"
 ```
 
 ```{r setup, cache = FALSE, message=FALSE}
+# R dependencies
 library(tidyverse)
 library(patchwork)
 library(reticulate)
 
+## Python dependencies loaded via R
+sb3         <- import ("stable_baselines3")
+gym         <- import ("gym")
+gym_fishing <- import("gym_fishing")
+gym_conservation <- import("gym_conservation")
+
+## reproducible settings
 np <- import("numpy")
 np$random$seed(42L)
-
-# force CPU-evaluation if needing perfect reproducibility
-Sys.setenv("CUDA_VISIBLE_DEVICES"="0")
+# Set to "" to force CPU-evaluation if needing perfect reproducibility
+Sys.setenv("CUDA_VISIBLE_DEVICES"="")
 
 ```
 
@@ -62,61 +69,13 @@ Sys.setenv("CUDA_VISIBLE_DEVICES"="0")
 ## Sustainable Harvest Quotas
 
 ```{r }
-## Python dependencies
-gym         <- import ("gym")
-gym_fishing <- import("gym_fishing")
-sb3         <- import ("stable_baselines3")
-
 ## initialize the environment
 env <- gym$make("fishing-v1", sigma = 0.1)
 ```
 
-```{r eval=!file.exists("cache/td3.zip")}
-# train an agent (model) on one of the environments:
 
 
-#Trial 15 finished with value: 7.6994757652282715 and parameters: 
-hyper = list('gamma'= 0.995, 'lr'= 0.0001355522450968401, 'batch_size'= 128L, 
-         'buffer_size'= 10000L, 'episodic'= FALSE, 'train_freq'= 128L, 
-         'noise_type'= 'normal', 'noise_std'= 0.6656948079225263, 
-         'net_arch'= 'big')
-policy_kwargs = list(net_arch=c(400L, 300L)) # big
-
-
-#non-episodic:
-hyper['gradient_steps'] = hyper['train_freq']
-hyper['n_episodes_rollout'] = -1
-n_actions = env$action_space$shape[0]
-hyper$action_noise = sb3$common$noise$NormalActionNoise(
-        mean=np$zeros(n_actions),
-        sigma= hyper[['noise_std']] * np$ones(n_actions)
-        )
-
-
-td3 = sb3$TD3('MlpPolicy', env,  verbose=0L, seed = 42L,
-            gamma = hyper[['gamma']],
-            learning_rate = hyper[['lr']],
-            batch_size = hyper[['batch_size']],            
-            buffer_size = hyper[['buffer_size']],
-            action_noise = hyper[['action_noise']],
-            train_freq = hyper[['train_freq']],
-            gradient_steps = hyper[['train_freq']],
-            n_episodes_rollout = hyper[['n_episodes_rollout']],
-            policy_kwargs=policy_kwargs)
-
-
-td3$learn(total_timesteps=300000L)
-td3$save("cache/td3")
-```
-
-```{r}
-# Simulate management under the trained agent
-td3 <- sb3$TD3$load("cache/td3")
-td3_sims <- env$simulate(td3, reps = 500L)
-td3_policy <- env$policyfn(td3, reps = 50L)
-```
-
-
+We train the A2C algorithm using default hyper-parameter settings, based on the original publication [@A2C; @SB3].  While default hyperparameters provide a useful starting place (particularly when the environment has been suitably normalized, a best-practice we discuss above), better performance can almost always be achived by _tuning_ the hyperparameter selection. 
 
 ```{r eval=!file.exists("cache/a2c.zip")}
 # train an agent (model) on one of the environments:
@@ -130,6 +89,58 @@ a2c$save("cache/a2c")
 a2c <- sb3$A2C$load("cache/a2c")
 a2c_sims <- env$simulate(a2c, reps = 500L)
 a2c_policy <- env$policyfn(a2c, reps = 50L)
+```
+
+
+
+Hyperparameters are selected through the process of model tuning, see.  
+
+```{r}
+# train an agent (model) on one of the environments:
+hyper = list('gamma'= 0.995, 'lr'= 0.0001355522450968401, 'batch_size'= 128L, 
+         'buffer_size'= 10000L, 'episodic'= FALSE, 'train_freq'= 128L, 
+         'noise_type'= 'normal', 'noise_std'= 0.6656948079225263, 
+         'net_arch'= 'big')
+policy_kwargs = list(net_arch=c(400L, 300L)) # "big"
+
+
+#non-episodic:
+hyper['gradient_steps'] = hyper['train_freq']
+hyper['n_episodes_rollout'] = -1 # deprecated in latest SB3
+n_actions = env$action_space$shape[0]
+hyper$action_noise = sb3$common$noise$NormalActionNoise(
+        mean=np$zeros(n_actions),
+        sigma= hyper[['noise_std']] * np$ones(n_actions)
+        )
+
+
+td3 = sb3$TD3( 'MlpPolicy', 
+               env,  
+               verbose=0L, 
+               seed = 42L,
+               policy_kwargs=policy_kwargs,
+               learning_rate = hyper[['lr']],
+               gamma = hyper[['gamma']],
+               batch_size = hyper[['batch_size']],            
+               buffer_size = hyper[['buffer_size']],
+               action_noise = hyper[['action_noise']],
+               train_freq = hyper[['train_freq']],
+               gradient_steps = hyper[['train_freq']],
+               n_episodes_rollout = hyper[['n_episodes_rollout']]
+              )
+```
+
+
+```{r eval=!file.exists("cache/td3.zip")}
+td3$learn(total_timesteps=300000L)
+td3$save("cache/td3")
+```
+
+```{r}
+# Simulate management under the trained agent
+td3 <- sb3$TD3$load("cache/td3")
+td3_sims <- env$simulate(td3, reps = 500L)
+td3_policy <- env$policyfn(td3, reps = 50L)
 ```
 
 
@@ -214,14 +225,13 @@ fig_sims / ( fig_policy + fig_reward)
 
 
 ```{r}
-gym_conservation <- import("gym_conservation")
 env <- gym$make("conservation-v6")
 ```
 
 
 ```{r}
 # Simulate management under the trained agent
-# See https://github.com/boettiger-lab/conservation-agents/blob/4baaa6c9b994085ca56c42364f7affcc58b0ef3b/conservation/TD3.py
+# See https://github.com/boettiger-lab/conservation-agents/blob//conservation/TD3-v6.py
 
 TD3 <- sb3$TD3$load("cache/td3-conservation")
 TD3_sims <- env$simulate(TD3, reps = 100L)
