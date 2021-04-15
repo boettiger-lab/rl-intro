@@ -136,13 +136,44 @@ Learning $Q^\pi$, commonly called the Q-value function, is more powerful than le
 
 **Survey of RL Algorithms**
 
-There is an ever increasing multitude of reinforcement learning algorithms, and while there are far too many algorithms to discuss in detail in this paper, we will herein classify and touch on some current methods. RL algorithms can generally be split into 2 groups, model-based and model-free RL. In model-based RL, the agent is attempting to learn the state transition operator, $T$. Once the transition model is known, the agent can then use the transition model to plan out what is the optimal action, often with Model Predictive Control [cite tassa 2012 MPC], or the agent can use the transition model to generate more samples to aid learning [cite Sutton dyna, alphago?]. In model-free RL, the agent does not attempt to learn a dynamics model and instead tries to either learn a parameterized policy, learn a value function, or try to learn both a parameterized policy and a value function. The general trade-off between model-free and model-based approaches is that in practice, model-based algorithms are often more sample efficient than model-free algorithms but often fail to surpass model-free algorithms in overall agent performance [cite?].
 
-A further distinction to be made amongst RL algorithms is in what policy the agent uses to select actions. If an agent uses the same policy to take actions as the policy that the agent attempts to evaulate or improve, then this algorithm is on-policy. If an agent uses a different policy to select actions than the policy that the agent evaluates or improves, then this algorithm is off-policy. The benefit of off-policy learning is that the agent does not need to collect a sample every time the agent updates its behavior; instead, the agent can learn from past experience, which increases sample efficiency [cite SAC paper]. Yet, on-policy algorithms tend to be more stable in practice [cite Q-prop].        
+<!-- 
 
-The field of reinforcement learning has proliferated over the past 10 years on account of contributions from deep learning. In every reinforcement learning algorithm, the agent is attempting to learn some function, whether it is a policy function and/or a value function. Neural networks, which have the property of being universal function approximators [cite], are thus a powerful tool in reinforcement learning since neural networks can be used to approximate policy and/or value functions which we do not know the form of. Additionally, the ability of neural networks to autonomously devise low-dimensional representatoins of data is very beneficial when state observations are high dimension, for instance in the case of image-based observations. The typical process for using neural networks in RL is that the agent is attempting to optimize a policy and/or value network using the backpropagation algorithm -- an exception is made here for evolutionary algorithms which did not employ gradient-based methods. Deep RL has excelled in solving sequential decision-making problems that have non-tabular state-action spaces, problems that are typically intractable with classical methods.
+Conceptual figure:
 
-In practice, the general process for attaining a good performing agent is to tune model hyperparameters then train an agent using the best hyperparameters. Hyperparameters refer to the parameters in a RL algorithm that are not directly learned during the training process. For example, a weight in the neural network is a model parameter, but the number of hidden layers in the neural network is a hyperparameter. Since the optimal hyperparameters cannot be found analytically, tuning should be done to find a good-performing set of hyperparameters. The hyperparameter tuning process consists of sampling then evaluating a set of hyperparameters, where tuning trials are often ranked by mean cumulative reward. Since one round of training can be time intensive, hyperparameter tuning, which consists of usually numerous rounds of training, can be particularly time intensive.
+Algorithm 
+  hyper-parameters specifying neural network, learning rate, etc.  
+  We refer to a particular selection of algorithm and hyperparameters as an "agent", which is then "trained" to solve one or more environments
+  internal 'parameters', estimated by "training" the agent. 
+  
+
+-->
+
+
+There is an ever increasing multitude of reinforcement learning algorithms, and while there are far too many algorithms to discuss in detail in this paper, we will herein classify and touch on some current methods. 
+RL algorithms can generally be split into 2 groups, model-based and model-free RL.
+In model-based RL, the agent is attempting to learn the state transition operator, $T$.
+Once the transition model is known, the agent can then use the transition model to plan out what is the optimal action, often with Model Predictive Control [cite tassa 2012 MPC], or the agent can use the transition model to generate more samples to aid learning [cite Sutton dyna, alphago?].
+In model-free RL, the agent does not attempt to learn a dynamics model and instead tries to either learn a parameterized policy, learn a value function, or try to learn both a parameterized policy and a value function. The general trade-off between model-free and model-based approaches is that in practice, model-based algorithms are often more sample efficient than model-free algorithms but often fail to surpass model-free algorithms in overall agent performance [cite?].
+
+A further distinction to be made amongst RL algorithms is in what policy the agent uses to select actions.
+If an agent uses the same policy to take actions as the policy that the agent attempts to evaulate or improve, then this algorithm is on-policy.
+If an agent uses a different policy to select actions than the policy that the agent evaluates or improves, then this algorithm is off-policy.
+The benefit of off-policy learning is that the agent does not need to collect a sample every time the agent updates its behavior; instead, the agent can learn from past experience, which increases sample efficiency [cite SAC paper]. Yet, on-policy algorithms tend to be more stable in practice [cite Q-prop].        
+
+The field of reinforcement learning has proliferated over the past 10 years on account of contributions from deep learning.
+In every reinforcement learning algorithm, the agent is attempting to learn some function, whether it is a policy function and/or a value function.
+Neural networks, which have the property of being universal function approximators [cite], are thus a powerful tool in reinforcement learning since neural networks can be used to approximate policy and/or value functions which we do not know the form of.
+Additionally, the ability of neural networks to autonomously devise low-dimensional representatoins of data is very beneficial when state observations are high dimension, for instance in the case of image-based observations.
+The typical process for using neural networks in RL is that the agent is attempting to optimize a policy and/or value network using the backpropagation algorithm -- an exception is made here for evolutionary algorithms which did not employ gradient-based methods.
+Deep RL has excelled in solving sequential decision-making problems that have non-tabular state-action spaces, problems that are typically intractable with classical methods.
+
+In practice, the general process for attaining a good performing agent is to tune model hyperparameters then train an agent using the best hyperparameters.
+Hyperparameters refer to the parameters in a RL algorithm that are not directly learned during the training process.
+For example, a weight in the neural network is a model parameter, but the number of hidden layers in the neural network is a hyperparameter.
+Since the optimal hyperparameters cannot be found analytically, tuning should be done to find a good-performing set of hyperparameters.
+The hyperparameter tuning process consists of sampling then evaluating a set of hyperparameters, where tuning trials are often ranked by mean cumulative reward.
+Since one round of training can be time intensive, hyperparameter tuning, which consists of usually numerous rounds of training, can be particularly time intensive.
 
 ```{=latex}
 \begin{center}
@@ -180,20 +211,29 @@ APE-X & Distributed Prioritized Experience Replay & Model-free & Off-policy & & 
 
 # Examples
 
+We provide three examples that illustrate the application and potential of deep RL to ecological and conservation problems, highlighting both the potential and challenges there-in.
+
+
 ## Sustainable harvest
 
-We provide three examples that illustrate the application and potential of deep RL to ecological and conservation problems, highlighting both the potential and challenges there-in.
-The first example focuses on the well-studied problem of setting harvest quotas in fisheries management [@Schaefer1954; @Clark1974; @Reed1979; @Worm2006; @Costello2018].
-Given an appropriately estimated model, the optimal harvest policy can be determined precisely (e.g. by stochastic dynamic programming, SDP, see @Marescot2013), and under most circumstances takes the form of a "constant-escapement" policy [see mathematical proof in @Reed1979].
+The first example focuses on the important but well-studied problem of setting harvest quotas in fisheries management.
+Determining fishing quotas is both a critical ecological issue [@Worm2005; @Worm2009; @Costello2018], and also a textbook example that has long informed the management of renewable resources within fisheries and beyond [@Clark1990].
+Global fisheries represent an essential source of nutrition and natural diversity worldwide with [@Worm2006; @Costello2018]
+Given a population growth model that predicts the total biomass of a fish stock in the following year as a function of the current biomass, it straight forward to determine what biomass corresponds to the maximum growth rate of the stock, or $B_{\textrm{MSY}}$, the biomass at Maximum Sustainable Yield (MSY) [@Schaefer1954].
+When the population growth rate is stochastic, the problem is slightly harder to solve, as the harvest quota must constantly adjust to the ups and downs of stochastic growth, but it is still possible to show the optimal strategy merely seeks to maintain the stock at $B_{\textrm{MSY}}$, adjusted for any discounting of future yields [@Reed1979].  
+
+
+
 This provides a natural first benchmark for deep RL approaches, since we can compare the RL solution to the mathematical optimum directly.
 The problem is also of interest because the RL approach can be extended to consider ecological dynamics that either surpass the complexity possible with SDP methods, or violate assumptions of such classical approaches).
 Moreover, fisheries management is both an important global challenge in it's own right [@Worm2006; @Costello2018] as well as a common test case to understand ecological dynamics and conservation management more broadly [@].
 
-For illustrative purposes, we consider the simplest version of the dynamic optimal harvest problem as outlined by @Clark1974 or @Reed1979 (covering the stochastic case).
+For illustrative purposes, we consider the simplest version of the dynamic optimal harvest problem as outlined by @Clark1974 (for the deterministic case) and @Reed1979 (under stochastic recruitment).
 In short, the manager seeks to optimize the net present value (discounted cumulative catch) of a fishery, observing the stock size each year and setting an appropriate harvest quota in response.
 In the classical approach, the best model of the fish population dynamics must first be estimated from data, potentially with posterior distributions over parameter estimates reflecting any uncertainty.
 From this model, the optimal harvest policy -- that is, the a function which returns the optimal quota for each possible observed stock size -- can be determined either by analytic [@Reed1979] or numerical [@Marescot2013] methods, depending on the complexity of the model.
-In a RL approach, the model is instead replaced by a computer simulation, usually referred to as an "environment."  The simplest simulation is merely an implementation of the estimated model itself.
+In a RL approach, the model is instead replaced by a computer simulation, usually referred to as an "environment."
+The simplest simulation is merely an implementation of the estimated model itself.
 However, unlike an analytic or SDP solution that is derived directly from the estimated model, the RL approach is in principle agnostic to the details of the simulation.
 
 
@@ -262,8 +302,7 @@ Under such a policy, A2C maintains a stock size on average significantly above $
 Note that due to the stochastic nature of the environment, any given replicate A2C may out-perform the optimal policy, though on average the optimal policy provides consistently better yields.  
 
 
-## Beyond classic methods: Non-stationary models
-
+## Ecological Tipping Points
 
 
 

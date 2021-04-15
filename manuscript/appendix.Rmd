@@ -43,6 +43,39 @@ pal <- ggthemes::solarized_pal()(8)
 txtcolor <- "#586e75"
 ```
 
+
+# Deep Reinforcement Learning Frameworks
+
+At the time of writing, several major frameworks exist which provide convenient access to baseline algorithms commonly used in deep reinforcement learning.  
+
+
+
+
+# Deep Reinforcement Learning in R
+
+All though all the necessary tooling for RL is implemented in python, the R language is more familiar to most ecologists.
+Fortunately, modern bindings such as the `reticulate` package [@reticulate] make it straight forward to use these tools without ever leaving the R interface.
+In this appendix, we detail this "pure R" approach, as well as a "pure python" approach.
+
+In the R based-approach, R functions take responsibility from the user for translating commands into python code before it is executed, an approach commonly referred to as meta-programming.
+This still requires a local python installation, which can be installed directly from R using the command `install_miniconda()` from the `reticulate` package in R.
+Alternately, users may prefer running the analysis inside a docker container.  
+The Rocker Project [@rocker] provides pre-built docker containers which include the necessary R and python environments, as well as CUDA libraries required to take advantage of GPU-based acceleration on suitable architectures.
+This can be particularly useful for users running ML algorithms on remote servers, as configuring R, python, and CUDA environments appropriately can be challenging.  
+
+
+Clone the repository <https://github.com/boettiger-lab/rl-intro>, e.g. using the New Project->From Version Control->Git menu in RStudio.
+From the project directory, we can then install all the necessary dependencies using `renv`, which helps ensure a reproducible environment of fixed versions of R packages and python modules.
+
+
+```{r}
+#install.packages("renv")
+renv::restore()
+```
+
+
+Once the packages have installed, we are ready to load the necessary libraries.  Note that the `import` function from `reticulate` package acts much like the `library` command in R, though it does not attach the package function to the global namespace.  To make it more convenient to access those functions, we can assign a shorthand name.  
+
 ```{r setup, cache = FALSE, message=FALSE}
 # R dependencies
 library(tidyverse)
@@ -54,10 +87,15 @@ sb3         <- import ("stable_baselines3")
 gym         <- import ("gym")
 gym_fishing <- import("gym_fishing")
 gym_conservation <- import("gym_conservation")
+```
 
+Numerical reproducibility can be challenging in machine learning problems, particularly when using GPU-based acceleration. In addition to setting a random seed in our python environment, we can optionally disable GPU use to improve reproducibility by setting the `CUDA_VISIBLE_DEVICES` to a blank value.  
+
+```{r}
 ## reproducible settings
 np <- import("numpy")
-np$random$seed(42L)
+seed <- 24L # integer
+np$random$seed(seed)
 # Set to "" to force CPU-evaluation if needing perfect reproducibility
 Sys.setenv("CUDA_VISIBLE_DEVICES"="")
 
@@ -68,6 +106,8 @@ Sys.setenv("CUDA_VISIBLE_DEVICES"="")
 
 ## Sustainable Harvest Quotas
 
+We begin by select an environment from `gym_fishing` by name, passing the optional parameter `sigma` to initialize the environment with multiplicative Gaussian environmental noise of sd of `0.1`.  
+
 ```{r }
 ## initialize the environment
 env <- gym$make("fishing-v1", sigma = 0.1)
@@ -75,65 +115,117 @@ env <- gym$make("fishing-v1", sigma = 0.1)
 
 
 
-We train the A2C algorithm using default hyper-parameter settings, based on the original publication [@A2C; @SB3].  While default hyperparameters provide a useful starting place (particularly when the environment has been suitably normalized, a best-practice we discuss above), better performance can almost always be achived by _tuning_ the hyperparameter selection. 
+At the heart of each algorithm is a neural network. The type, size and depth of network, choice of activation functions and so forth, are considered "hyper-parameters" of algorithm: 
+we must first make a selection for each of these hyper-parameters to define our (untrained) agent.  
+Other hyper-parameters determine other aspects of the training regime: such as how the agent chooses to explore possible actions, the learning rate, or how future rewards are discounted (gamma).
+Each algorithm may have different hyper-parameters. `stable-baselines3` provides default values for all hyperparameters based on the original papers that introduced the corresponding algorithms,
+for instance, the A2C algorithm originally described in @A2C. 
+Here, we train an agent using the A2C algorithm using default hyperparameter settings.
 
-```{r eval=!file.exists("cache/a2c.zip")}
-# train an agent (model) on one of the environments:
-a2c <- sb3$A2C('MlpPolicy', env, verbose=0L, seed = 42L) # Must use L for integers!
-a2c$learn(total_timesteps=300000L)
-a2c$save("cache/a2c")
+```{r}
+a2c <- sb3$A2C('MlpPolicy', env, verbose=0L, seed = seed) # L indicates a (Long) integer, not floating point
 ```
+
+
+Training is the main computationally intensive process, which can take anywhere from a few minutes to many days, depending on the complexity of the environment and the number of training iterations budgeted.
+Therefore, we save the trained agent to disk, and only execute the training method (`learn`) if no previously saved agent is found:
+
+```{r}
+if(!file.exists("cache/a2c.zip")) {
+
+  # Train the agent for a fixed number of timesteps
+  a2c$learn(total_timesteps=300000L)
+  
+  # Save our trained agent for future use
+  a2c$save("cache/a2c")
+}
+```
+
+
+Note that while default hyperparameters provide a useful starting place (particularly when the environment has been suitably normalized, a best-practice we discuss above), better performance can almost always be achieved by _tuning_ the hyperparameter selection. This is discussed further below. 
+
+
+We can load a trained agent and use `simulate` and `policyfn` methods provided by the `gym_fishing` environment to simulate the process for a fixed number of replicates.
 
 ```{r}
 # Simulate management under the trained agent
 a2c <- sb3$A2C$load("cache/a2c")
+```
+
+```{r}
+
+## represent the initial state size in the 'rescaled' state space.
+state <- env$get_state( 0.75 )
+
+for(i in 1:100){
+  
+  out <- a2c$predict(state)
+  action <- out[[1]]
+  result <- env$step(action)
+  state <- result[[1]]
+
+}
+
+```
+
+
+```{r}
 a2c_sims <- env$simulate(a2c, reps = 500L)
+```
+
+
+```{r}
 a2c_policy <- env$policyfn(a2c, reps = 50L)
 ```
 
 
 
-Hyperparameters are selected through the process of model tuning, see.  
+## TD3
+
+We train a second agent based on the TD3 algorithm.  
+This time, we will declare our choices for the hyper-parameters explicitly.
+Note that some of these hyperparameters, such as the `learning_rate` and discount rate, `gamma`, are also hyper-parameters of the A2C algorithm, while others, like the `action_noise` describing how new actions are proposed, are not used in A2C.
+Good choices for hyperparameters can be found through a process known as "hyper-parameter tuning", which simply uses standard function optimization approaches to vary the choice of hyper-parameters used in training to determine which maximizes the agent's performance. 
+For simplicity, we show only training with specified hyper-parameters here, example scripts for tuning the algorithm to discover these values can be found in <https://github.com/boettiger-lab/rl-toolkit>, and compare to the tuning utilities found in `stable-baselines3-zoo` [@zoo].  
 
 ```{r}
 # train an agent (model) on one of the environments:
-hyper = list('gamma'= 0.995, 'lr'= 0.0001355522450968401, 'batch_size'= 128L, 
-         'buffer_size'= 10000L, 'episodic'= FALSE, 'train_freq'= 128L, 
-         'noise_type'= 'normal', 'noise_std'= 0.6656948079225263, 
-         'net_arch'= 'big')
+
 policy_kwargs = list(net_arch=c(400L, 300L)) # "big"
-
-
-#non-episodic:
-hyper['gradient_steps'] = hyper['train_freq']
-hyper['n_episodes_rollout'] = -1 # deprecated in latest SB3
+# non-episodic action noise:
+noise_std = 0.6656948079225263
 n_actions = env$action_space$shape[0]
-hyper$action_noise = sb3$common$noise$NormalActionNoise(
+action_noise = sb3$common$noise$NormalActionNoise(
         mean=np$zeros(n_actions),
-        sigma= hyper[['noise_std']] * np$ones(n_actions)
+        sigma= noise_std * np$ones(n_actions)
         )
 
 
 td3 = sb3$TD3( 'MlpPolicy', 
                env,  
                verbose=0L, 
-               seed = 42L,
-               policy_kwargs=policy_kwargs,
-               learning_rate = hyper[['lr']],
-               gamma = hyper[['gamma']],
-               batch_size = hyper[['batch_size']],            
-               buffer_size = hyper[['buffer_size']],
-               action_noise = hyper[['action_noise']],
-               train_freq = hyper[['train_freq']],
-               gradient_steps = hyper[['train_freq']],
-               n_episodes_rollout = hyper[['n_episodes_rollout']]
+               seed = seed,
+               policy_kwargs = policy_kwargs,
+               learning_rate = 0.0001355522450968401,
+               gamma= 0.995, 
+               batch_size = 128L,
+               buffer_size = 10000L,
+               train_freq = 128L, 
+               n_episodes_rollout = -1, 
+               gradient_steps = 128L,
+               action_noise = action_noise
               )
 ```
 
+Once again, after our agent is defined we are ready to train it. 
 
-```{r eval=!file.exists("cache/td3.zip")}
-td3$learn(total_timesteps=300000L)
-td3$save("cache/td3")
+```{r }
+if(!file.exists("cache/td3.zip")){
+  
+  td3$learn(total_timesteps=300000L)
+  td3$save("cache/td3")
+  
+}
 ```
 
 ```{r}
@@ -227,6 +319,36 @@ fig_sims / ( fig_policy + fig_reward)
 ```{r}
 env <- gym$make("conservation-v6")
 ```
+
+
+```{r}
+
+noise_std = 0.4805935357322933
+action_noise = OrnsteinUhlenbeckActionNoise(mean = np.zeros(1),
+                                            sigma = noise_std * np.ones(1))
+
+model = TD3('MlpPolicy', 
+            env, 
+            verbose = 0, 
+            seed = seed,
+            "gamma": 0.995,
+            "learning_rate":  8.315382409902049e-05,
+            "batch_size": 512,
+            "buffer_size": 10000,
+            "train_freq": 1000,
+            "gradient_steps": 1000,
+            "n_episodes_rollout": -1,
+            "action_noise": action_noise,
+            "policy_kwargs": list("net_arch": c(64,64)))
+
+```
+
+
+```{r}
+model$learn(total_timesteps = 1500000)
+
+```
+
 
 
 ```{r}
