@@ -218,7 +218,6 @@ We provide three examples that illustrate the application and potential of deep 
 
 The first example focuses on the important but well-studied problem of setting harvest quotas in fisheries management.
 Determining fishing quotas is both a critical ecological issue [@Worm2005; @Worm2009; @Costello2018], and also a textbook example that has long informed the management of renewable resources within fisheries and beyond [@Clark1990].
-Global fisheries represent an essential source of nutrition and natural diversity worldwide with [@Worm2006; @Costello2018]
 Given a population growth model that predicts the total biomass of a fish stock in the following year as a function of the current biomass, it straight forward to determine what biomass corresponds to the maximum growth rate of the stock, or $B_{\textrm{MSY}}$, the biomass at Maximum Sustainable Yield (MSY) [@Schaefer1954].
 When the population growth rate is stochastic, the problem is slightly harder to solve, as the harvest quota must constantly adjust to the ups and downs of stochastic growth, but it is still possible to show the optimal strategy merely seeks to maintain the stock at $B_{\textrm{MSY}}$, adjusted for any discounting of future yields [@Reed1979].  
 
