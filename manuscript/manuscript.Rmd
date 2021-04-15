@@ -34,26 +34,70 @@ output:
 
 # Introduction
 
-<!-- no examples of issues / problems named!-->
+Deep Reinforcement Learning (RL), a machine learning technique in which a _software agent_ is trained to select actions which best maximize some cumulative reward, could hold significant untapped promise for solving complex ecological and conservation decision-making problems from wildfire management to biodiversity preservation to zoonotic pandemics.
+Unlike more widely recognized machine learning techniques for either _supervised_ learning (such as image classification, @species_ex, @satellite_ex) or unsupervised learning, RL focuses on solving _dynamic_ problems which require planning ahead, often in uncertain and changing environments.
+Of all machine learning techniques, RL most resembles a general artificial intelligence.
+Notable successes using RL include AlphaZero, in which a software agent learned to beat the world's best human players in games of chess, Go, and Shogi [@alphazero],
+and major advances in robotics, including decision-making in autonomous vehicles [@robotics_ex]. 
+These tasks all require the agent to not only anticipate future states of it's environment, but also respond to those changes to influence future outcomes.
 
-Despite rapidly expanding interest in machine learning (ML) and artificial intelligence (AI) applications to ecology, the use of reinforcement learning (RL) has been largely neglected, which have focused primarily on applications of either supervised learning [@examples] or unsupervised learning [@examples].  In third learning paradigm in AI, reinforcement learning, a _software agent_ learns by repeated experience to select _actions_ to maximize some cumulative reward.  RL is an incredibly general approach, and the one that in principle looks most like artificial general intelligence.  RL has been notable for successes such as AlphaZero, a single agent that can beat the best human players in go, chess, and shogi [@alphazero], as well as applications in robotics [@robotics], but also faces major challenges [@henderson2017].  
 
-We believe RL approaches hold particular interest for conservation decision-making problems, for two reasons.  First, ecological systems are complex and difficult to represent accurately using models that remain tractable with classical approaches.  For example, convenient mathematical assumptions such as that a dynamical system is _autonomous_ (parameters do not vary in time) often required by classical techniques [@Marescot2013], stand in stark odds with the picture of an environment which is constantly changing.  Second, RL approaches do not require massive amounts of data, in stark contrast with other more widely used applications of ML.  Despite the expansion in data collection from remote sensors, citizen science, and other efforts, ecological data often remains too sparse in the details that matter.  And in a changing environment, no amount of historical data may be able to train supervised or unsupervised ML approaches to anticipate a future that has never been observed. However, RL are not trained by historical data alone, but rather, they rely on computer simulations.  Simulations are our most powerful approach to exploring future scenario, and simulated 'data' represents the largest contribution to the exponential growth of data in climate science [@].  As we illustrate here, a software agent can be trained to successfully navigate hypothetical scenarios through its experience in simulation that would be difficult or impossible to solve with classical methods.  In this manner, RL can compliment, rather than replace, existing empirical and theoretical research which would continue to form the basis for those simulations.
+<!-- Millie help on this para? -->
+If conservation challenges are typically complex and dynamics, existing approaches are largely simple and static.
+The establishment of protected areas (cite MPAs, 30x30, etc) focuses on policies fixed in space and time to address challenges that are fixed in neither.
+The endangered species act ...
+Ecosystem services ....
+Such simplicity is in no small part due to the challenge associated in determining a 
+Some reference to @TomDietrich on potential for CS-based applciation.
 
-If RL has great promise, the approach also imposes great risk.  Lacking the tractability of classical methods, an RL agent can appear to solve a wide class of scenarios with ease, but may fail unexpectedly under seemingly similar conditions.  Despite recent progress, Deep RL is a young field and stability and robustness of its methods remain largely open problems. Giving algorithms direct influence over conservation policy may also raise ethical and political issues, particularly if those algorithms (or components thereof) are treated as proprietary intellectual property.  We discuss these issues and potential ways forward.
+
+In contrast to other ML methods, RL does not require massive data sets for training.  
+Despite the expansion in data collection from remote sensors, citizen science, and other efforts, ecological data remains very sparse on many necessary details.
+Moreover, no amount of data can train supervised or unsupervised ML approaches can predict a future which has no analog in the historical record.
+Mechanistic, process-based models remain our most powerful tool to explore scenarios of dynamic ecosystems in changing climates.
+Methods from _optimal control theory_ have long been used in conservation and resource economics literature [@] to determine optimal policies given such models [@Polasky2011].
+However, control theory approaches are also tightly constrained by the "curse of dimensionality" [@Mangel1980; @Marescot2013], limiting their application to only simple, stylized models.
+Deep reinforcement learning offers a way forward. 
+Deep RL agents are trained not with mountains of data, but by interacting with simulators.
+Most recent advances in Deep RL have illustrated algorithms trained by playing arcade game simulators such as Atari BreakOut, or physics-based simulations of robotics movement [@TD3; @SAC; @PPO; @A2C].
+Simulating from complex models is far simpler than solving them.
+The richest ecosystem models, such as the global circulation models (GCMs) used to generate future climate scenarios [@something], or individual-based models used to predict forest growth [@something] or wildfire spread [@something], are massive simulations. 
+Given sufficient computational power, RL can be trained and evaluated across a broad range of possible realistic scenarios well beyond the reach of classical methods.
+In this manner, RL would compliment, rather than replace, existing empirical and theoretical research which would continue to form the basis for those simulations.
+
+
+If RL has great promise, the approach also imposes great risk.  
+Lacking the tractability of classical methods, an RL agent can appear to solve a wide class of scenarios with ease, but may fail unexpectedly under seemingly similar conditions [@henderson2017].  
+Despite recent progress, Deep RL is a young field and stability and robustness of its methods remain largely open problems. 
+RL approaches are no pancea, and inproper design or testing can easily lead to negative outcomes.
+Technical issues are not the only pitfall of AI applications to conservation problems.
+Giving algorithms direct influence over conservation policy may also raise ethical and political issues, particularly if those algorithms (or components thereof) are treated as proprietary intellectual property.
+
+In this paper, we introduce the fundamentals of deep reinforcement learning and illustrate with simple examples how these approaches can be applied to important conservation decision-making problems, from overharvesting in global fisheries to ecosystem tipping points to wildfire dynamics.
+These examples span a range from problems for which an optimal analytic solution is already known, to problems not previously solved with classical methods, to problems not yet solved by RL. 
+We include a detailed appendix with complete examples in both python and R for training RL algorithms, as well as three stand-alone module "gyms" implementing the each of the conservation problems presented here using a standard benchmark [@gym], which we believe can facilitate future contributions both from researchers in RL searching for interesting and important open problems as well as ecologists who may seek to make those simulations more realistic and precise to specific application areas.
+We hope this paper serves as a port of entry to researchers and students from either field seeking to engage in work on RL applications to conservation. 
+We also hope these examples serve as illustration of both the potential and perils of such applications.
 
 
 # Sequential Decision Problems and Reinforcement Learning
 
-Reinforcement learning focuses primarily on sequential decision problems: tasks in which a decision-maker or "agent" must repeatedly decide what action to take in response to new information about the "state" of the system they seek to manage, in order to maximize some objective (referred to  as the reward or utility).  Any conservation problem that considers the future possible scenarios is a sequential decision problem: even scenarios that face a one-off decision such as whether declare some region as a protected area, or list or de-list a species as endangered, are sequential decision problems if they must consider the timing of their actions.  In contrast, decisions that do not consider the future, such as deciding which of a collection of possible regions should be prioritized based only on the present: how many species currently inhabit a region, how much each region would cost to purchase today, are not sequential problems. Central to any sequential decision problem is the need to consider possible future states, the need to forecast.  Because the agent's actions will influence that future, agents facing sequential decision problems must further be able to forecast how each possible action available to them will change that forecast.  Consequentially, our lack of knowledge about the underlying models and inability to predict future environments in our rapidly changing world pose a fundamental challenge to conservation decision-making.   
+<!-- meh, not sure we need this? -->
+
+Reinforcement learning focuses primarily on sequential decision problems: tasks in which a decision-maker or "agent" must repeatedly decide what action to take in response to new information about the "state" of the system they seek to manage, in order to maximize some objective (referred to  as the reward or utility).
+Any conservation problem that considers the future possible scenarios is a sequential decision problem: even scenarios that face a one-off decision such as whether declare some region as a protected area, or list or de-list a species as endangered, are sequential decision problems if they must consider the timing of their actions.
+In contrast, decisions that do not consider the future, such as deciding which of a collection of possible regions should be prioritized based only on the present: how many species currently inhabit a region, how much each region would cost to purchase today, are not sequential problems.
+Central to any sequential decision problem is the need to consider possible future states, the need to forecast.
+Because the agent's actions will influence that future, agents facing sequential decision problems must further be able to forecast how each possible action available to them will change that forecast.
+Consequentially, our lack of knowledge about the underlying models and inability to predict future environments in our rapidly changing world pose a fundamental challenge to conservation decision-making.
 
 
-This framework raises two conceptual challenges.  First, sequential decision-making problem is distinct from the problem of model estimation.  A sequential decision problem will typically treat the model as given, typically with some uncertainty around the process and possibly the measurmeents and model estimates as well.  Thus, methods for solving sequential decision-making should not be mistaken as alternatives to methods designed for model estimation, such as regression, Bayesian heirarchical modeling, generalized additive models (GAMs) etc. Second, methods for describing and solving sequential decision-making problems are often given different terms by different communities to describe the same thing.  Sequential decision problems are common to behavioral ecology [@Mangel], conservation [@Marescot2013] natural resource economics [@Clark1990], and some engineering fields [] where they are known as "optimal control" problems, while computer science, neuroscience, and robotics typically refer to them as 'reinfocement learning'.    
-
-
-
-
-
+This framework raises two conceptual challenges.
+First, sequential decision-making problem is distinct from the problem of model estimation.
+A sequential decision problem will typically treat the model as given, typically with some uncertainty around the process and possibly the measurmeents and model estimates as well.
+Thus, methods for solving sequential decision-making should not be mistaken as alternatives to methods designed for model estimation, such as regression, Bayesian heirarchical modeling, generalized additive models (GAMs) etc.
+Second, methods for describing and solving sequential decision-making problems are often given different terms by different communities to describe the same thing.
+Sequential decision problems are common to behavioral ecology [@Mangel], conservation [@Marescot2013] natural resource economics [@Clark1990], and some engineering fields [] where they are known as "optimal control" problems, while computer science, neuroscience, and robotics typically refer to them as 'reinfocement learning'.    
 
 
 # RL essentials
