@@ -27,6 +27,8 @@ keywords:
   - bloo
   - these are optional and can be removed
 bibliography: references.bib
+header-includes:
+  - \usepackage{amsmath}
 output: 
   rticles::arxiv_article:
     keep_tex: true
@@ -36,35 +38,99 @@ output:
 
 <!-- no examples of issues / problems named!-->
 
-Despite rapidly expanding interest in machine learning (ML) and artificial intelligence (AI) applications to ecology, the use of reinforcement learning (RL) has been largely neglected, which have focused primarily on applications of either supervised learning [@examples] or unsupervised learning [@examples].  In third learning paradigm in AI, reinforcement learning, a _software agent_ learns by repeated experience to select _actions_ to maximize some cumulative reward.  RL is an incredibly general approach, and the one that in principle looks most like artificial general intelligence.  RL has been notable for successes such as AlphaZero, a single agent that can beat the best human players in go, chess, and shogi [@alphazero], as well as applications in robotics [@robotics], but also faces major challenges [@henderson2017].  
+Despite a rapidly expanding interest in machine learning (ML) applications to ecology, the use of reinforcement learning (RL) has been largely neglected. To date, applications of machine learning to ecology have been predominantly limited to supervised learning [@examples], which attempts to solve problems in classification and regression, and unsupervised learning [@examples], which concentrates on data clustering. Reinforcement learning, meanwhile, is the unique subfield of machine learning that focuses on the problem of decision-making. The objective of reinforcement learning is to design a _software agent_ that learns by experience to select _actions_ to maximize some cumulative reward. RL is an incredibly general approach and has grown rapidly over the past 10 years as a consequence of the simultaneous rise of deep neural networks. In this short time, deep reinforcement learning has attained notable succeses such as AlphaZero, a single algorithm that can beat the best human players in go, chess, and shogi [@alphazero], as well as achieving dextrous manipulation in robotics [@robotics].  However, reinforcement learning faces significant challenges  that limit its application to many real world problems[@henderson2017].  
 
-We believe RL approaches hold particular interest for conservation decision-making problems, for two reasons.  First, ecological systems are complex and difficult to represent accurately using models that remain tractable with classical approaches.  For example, convenient mathematical assumptions such as that a dynamical system is _autonomous_ (parameters do not vary in time) often required by classical techniques [@Marescot2013], stand in stark odds with the picture of an environment which is constantly changing.  Second, RL approaches do not require massive amounts of data, in stark contrast with other more widely used applications of ML.  Despite the expansion in data collection from remote sensors, citizen science, and other efforts, ecological data often remains too sparse in the details that matter.  And in a changing environment, no amount of historical data may be able to train supervised or unsupervised ML approaches to anticipate a future that has never been observed. However, RL are not trained by historical data alone, but rather, they rely on computer simulations.  Simulations are our most powerful approach to exploring future scenario, and simulated 'data' represents the largest contribution to the exponential growth of data in climate science [@].  As we illustrate here, a software agent can be trained to successfully navigate hypothetical scenarios through its experience in simulation that would be difficult or impossible to solve with classical methods.  In this manner, RL can compliment, rather than replace, existing empirical and theoretical research which would continue to form the basis for those simulations.
+We believe RL approaches hold particular interest for conservation decision-making problems for two reasons.  First, ecological systems are complex and difficult to represent accurately using models that remain tractable with classical approaches.  For example, convenient mathematical assumptions such as that a dynamical system is _autonomous_ (parameters do not vary in time) are often required by classical techniques [@Marescot2013]; these assumptions stand in stark odds with the picture of an environment which is constantly changing.  RL, conversely, has excelled in solving a range of complex decision-making problems that were previously intractable with classical techniques like dynamic programming. Second, RL approaches do not require massive amounts of data in stark contrast with other more widely used applications of ML.  Despite the expansion in data collection from remote sensors, citizen science, and other efforts, ecological data often remains too sparse in the details that matter.  And in a changing environment, no amount of historical data may be able to train supervised or unsupervised ML approaches to anticipate a future that has never been observed. However, RL algorithms do not need to depend on historical data alone, but rather, they can rely on computer simulations.  Simulations are our most powerful approach to exploring future scenario, and simulated 'data' represents the largest contribution to the exponential growth of data in climate science [@].  As we illustrate here, a software agent can be trained to successfully navigate hypothetical scenarios through its experience in simulation that would be difficult or impossible to solve with classical methods.  In this manner, RL can compliment, rather than replace, existing empirical and theoretical research which would continue to form the basis for those simulations.
 
-If RL has great promise, the approach also imposes great risk.  Lacking the tractability of classical methods, an RL agent can appear to solve a wide class of scenarios with ease, but may fail unexpectedly under seemingly similar conditions.  Despite recent progress, Deep RL is a young field and stability and robustness of its methods remain largely open problems. Giving algorithms direct influence over conservation policy may also raise ethical and political issues, particularly if those algorithms (or components thereof) are treated as proprietary intellectual property.  We discuss these issues and potential ways forward.
+If RL has great promise, the approach also imposes great risk.  Lacking the tractability of classical methods, an RL agent can appear to solve a wide class of scenarios with ease, but may fail unexpectedly under seemingly similar conditions.  Despite recent progress, Deep RL is a young field for which stability and robustness of its methods remain largely open problems. Giving algorithms direct influence over conservation policy may also raise ethical and political issues, particularly if those algorithms (or components thereof) are treated as proprietary intellectual property.  We discuss these issues and potential ways forward.
 
 
 # Sequential Decision Problems and Reinforcement Learning
 
-Reinforcement learning focuses primarily on sequential decision problems: tasks in which a decision-maker or "agent" must repeatedly decide what action to take in response to new information about the "state" of the system they seek to manage, in order to maximize some objective (referred to  as the reward or utility).  Any conservation problem that considers the future possible scenarios is a sequential decision problem: even scenarios that face a one-off decision such as whether declare some region as a protected area, or list or de-list a species as endangered, are sequential decision problems if they must consider the timing of their actions.  In contrast, decisions that do not consider the future, such as deciding which of a collection of possible regions should be prioritized based only on the present: how many species currently inhabit a region, how much each region would cost to purchase today, are not sequential problems. Central to any sequential decision problem is the need to consider possible future states, the need to forecast.  Because the agent's actions will influence that future, agents facing sequential decision problems must further be able to forecast how each possible action available to them will change that forecast.  Consequentially, our lack of knowledge about the underlying models and inability to predict future environments in our rapidly changing world pose a fundamental challenge to conservation decision-making.   
+Reinforcement learning focuses primarily on sequential decision problems: tasks in which a decision-maker or "agent" must decide what action to take to maximize some objective or cumulative "reward" in response to new information about the "state" of the system the decision-maker seeks to manage.  Any conservation problem that considers the future possible scenarios is a sequential decision problem: even scenarios that face a one-off decision such as whether to declare some region as a protected area, or list or de-list a species as endangered, are sequential decision problems if they must consider the timing of their actions.  In contrast, decisions that do not consider the future, such as deciding which of a collection of possible regions should be prioritized based only on the present: how many species currently inhabit a region or how much each region would cost to purchase today are not sequential problems. Central to any sequential decision problem is the need to consider possible future states, the need to forecast.  Because the agent's actions will influence that future, agents facing sequential decision problems must further be able to forecast, explicitly or implicitly, how each possible action available to them will change that forecast.  Consequentially, our lack of knowledge about the underlying models and inability to predict future environments in our rapidly changing world pose a fundamental challenge to conservation decision-making.   
 
-
-This framework raises two conceptual challenges.  First, sequential decision-making problem is distinct from the problem of model estimation.  A sequential decision problem will typically treat the model as given, typically with some uncertainty around the process and possibly the measurmeents and model estimates as well.  Thus, methods for solving sequential decision-making should not be mistaken as alternatives to methods designed for model estimation, such as regression, Bayesian heirarchical modeling, generalized additive models (GAMs) etc. Second, methods for describing and solving sequential decision-making problems are often given different terms by different communities to describe the same thing.  Sequential decision problems are common to behavioral ecology [@Mangel], conservation [@Marescot2013] natural resource economics [@Clark1990], and some engineering fields [] where they are known as "optimal control" problems, while computer science, neuroscience, and robotics typically refer to them as 'reinfocement learning'.    
-
-
-
+This framework raises two conceptual challenges.  First, sequential decision-making problem is distinct from the problem of model estimation. A sequential decision problem will typically treat the model as given, perhaps with some uncertainty around the process, the measurements and model estimates as well. Thus, methods for solving sequential decision-making should not be mistaken as alternatives to methods designed for model estimation, such as regression, Bayesian heirarchical modeling, generalized additive models (GAMs) etc. Second, methods for describing and solving sequential decision-making problems are often given different terms by different communities to describe the same thing. Sequential decision problems are common to behavioral ecology [@Mangel], conservation [@Marescot2013] natural resource economics [@Clark1990], and some engineering fields [] where they are known as "optimal control" problems, while computer science, neuroscience, and robotics typically refer to them as 'reinfocement learning'.    
 
 
 
 
 # RL essentials
 
-**Model-based vs Model-free RL**
+Before providing some examples on how deep reinforcement learning can be applied to ecological and conservation problems, we will provide a brief, general introduction to RL. The basic problem set-up of RL is as follows: at a time step, $t$, the agent observes a representation of the environment's state, $s_t$, and must accordingly select an action, $a_t$; at the next time step, the agent will observe a new state, $s_{t+1}$, and will receive a numerical reward, $r_{t+1}$. This new state, $s_{t+1}$, and reward, $r_{t+1}$, are determined by the environment. The task for the agent is to learn a _policy_, $\pi$, that prescribes what action the agent should perform after observing a certain state. The agent interacts with the environment via trial and error in what is called the _training_ period, during which the agent continally updates its policy in order to maximize its expected cumulative sum of rewards.
 
-**Current algorithms**
+When the environment is fully observable, i.e. when the state that the agent observes fully characterizes the system, the reinforcement learning problem can be formalized as a Markov Decision Process (MDP). An MDP consists of the following: a set of states, $\mathcal{S}$, called the state space; a set of actions, $\mathcal{A}$, called the action space; a state transition operator, $T(s_{t+1}|s_t, a_t)$, which describes the dynamics of the system; a reward function, $r(s_t, a_t)$; an initial state distribution, $d_0(s_0)$; and a discount factor, $\gamma \in (0,1]$. As the agent interacts with the environment, the agent will create a trajectory in state-action space given as $\tau = (s_0, a_0, \dots, s_H, a_H)$ where H denotes the horizon or length of the state-action sequence. From this definition, we can provide an agent's trajectory distribution for a given policy as,
+$$
+  p_\pi(\tau) = d_0(s_0) \prod_{t=0}^H \pi(a_t \mid s_t) T(s_{t+1} \mid s_t, a_t)
+$$
 
-- terminology, problem definition
-- discussion / table of current benchmark algorithms (DQN, PPO, DDPG, A2C, TD3, SAC)
-- training, hyperparameter tuning
+When the agent cannot fully observe the state of the system, reinforcement learning can then be described by a Partially Observable Markov Decision Process (POMDP), wherein there is an additional distribution, $E(o_{t}| s_{t})$, which accounts for the observation being different from system's actual state. An important property of POMDPs and MDPs is that they are memoryless; the future, $s_{t+1}$, does not depend on the past but only on the state and action at the present time. This Markov property, which is often an unrealistic assumption, is held in most of the RL algorithms that we will discuss.
+
+In formal terms, the goal of reinforcement learning is to find an optimal policy distribution, $\pi^*(a_t | s_t)$ or $\pi^*(a_t|o_t)$ for MDP and POMDP cases respectively, that maximizes the expected cumulative, discounted reward:
+$$
+  \pi^* = \underset{\pi}{\text{argmax}} \,\, \mathbb{E}_{\tau \sim p_\pi(\tau)}\Big[\sum_{t=0}^{H} \gamma^t r(s_t, a_t) \Big]
+$$
+
+Note that this formalism extends to an infinite horizon case when $T= \infty$. While there are RL methods to deal with infinite horizon cases, we will only consider episodic MDP and POMDPs.
+
+Many reinforcement learning algorithms center around estimating value functions, which attempt to quantify the goodness of being in a state or taking an action from a state. Given that the objective of RL is to maximize the cumulative expected reward, "goodness" refers to the likelihood that a state or state-action pair will result in a high reward trajectory. There are 3 value functions that are commonly used across RL algorithms: the state value function, $V^\pi(s_t)$, the state-action value function, $Q^\pi(s_t, a_t)$, and the advantage function, $A^\pi(s_t, a_t)$. The state-value function is defined as the expected return from a given state,
+$$
+  V^\pi(s_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg]
+$$
+
+Meanwhile, the state-action-value or quality function, finds the expected return given a state and action,
+$$
+  Q^\pi(s_t, a_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t, a_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg]
+$$
+
+And lastly, the advantage function characterizes a relative state-action value in that it quantifies how valuable a state-action pair is over a baseline. The advantage function can then be succintly defined as
+$$
+  A^\pi(s_t, a_t) = Q^\pi(s_t, a_t) - V^\pi(s_t)
+$$
+Learning $Q^\pi$, commonly called the Q-value function, is more powerful than learning the state-value function as Q-values easily prescribe what action to take when in a certain state, $a_t^* = \underset{a_t}{\text{argmax}} \, Q^\pi (s_t, a_t)$. Conversely, if we know the state-value function, we would have to perform a maximization over an expected value to find the optimal action, $a_t^* = \underset{a_t}{\text{argmax}} \, \mathbb{E}_{s_{t+1} \sim \,T(s_{t+1} \mid s_t, a_t)}[V^\pi(s_{t+1})]$, which is less tractable. Yet, learning the advantage function is often preferred in practice as advantage estimators favorably have lower variance than state-value and Q-value estimators [cite schulman gae]. 
+
+**Survey of RL Algorithms**
+
+There is an ever increasing multitude of reinforcement learning algorithms, and while there are far too many algorithms to discuss in detail in this paper, we will herein classify and touch on some current methods. RL algorithms can generally be split into 2 groups, model-based and model-free RL. In model-based RL, the agent is attempting to learn the state transition operator, $T$. Once the transition model is known, the agent can then use the transition model to plan out what is the optimal action, often with Model Predictive Control [cite tassa 2012 MPC], or the agent can use the transition model to generate more samples to aid learning [cite Sutton dyna, alphago?]. In model-free RL, the agent does not attempt to learn a dynamics model and instead tries to either learn a parameterized policy, learn a value function, or try to learn both a parameterized policy and a value function. The general trade-off between model-free and model-based approaches is that in practice, model-based algorithms are often more sample efficient than model-free algorithms but often fail to surpass model-free algorithms in overall agent performance [cite?].
+
+A further distinction to be made amongst RL algorithms is in what policy the agent uses to select actions. If an agent uses the same policy to take actions as the policy that the agent attempts to evaulate or improve, then this algorithm is on-policy. If an agent uses a different policy to select actions than the policy that the agent evaluates or improves, then this algorithm is off-policy. The benefit of off-policy learning is that the agent does not need to collect a sample every time the agent updates its behavior; instead, the agent can learn from past experience, which increases sample efficiency [cite SAC paper]. Yet, on-policy algorithms tend to be more stable in practice [cite Q-prop].        
+
+The field of reinforcement learning has proliferated over the past 10 years on account of contributions from deep learning. In every reinforcement learning algorithm, the agent is attempting to learn some function, whether it is a policy function and/or a value function. Neural networks, which have the property of being universal function approximators [cite], are thus a powerful tool in reinforcement learning since neural networks can be used to approximate policy and/or value functions which we do not know the form of. Additionally, the ability of neural networks to autonomously devise low-dimensional representatoins of data is very beneficial when state observations are high dimension, for instance in the case of image-based observations. The typical process for using neural networks in RL is that the agent is attempting to optimize a policy and/or value network using the backpropagation algorithm -- an exception is made here for evolutionary algorithms which did not employ gradient-based methods. Deep RL has excelled in solving sequential decision-making problems that have non-tabular state-action spaces, problems that are typically intractable with classical methods.
+
+In practice, the general process for attaining a good performing agent is to tune model hyperparameters then train an agent using the best hyperparameters. Hyperparameters refer to the parameters in a RL algorithm that are not directly learned during the training process. For example, a weight in the neural network is a model parameter, but the number of hidden layers in the neural network is a hyperparameter. Since the optimal hyperparameters cannot be found analytically, tuning should be done to find a good-performing set of hyperparameters. The hyperparameter tuning process consists of sampling then evaluating a set of hyperparameters, where tuning trials are often ranked by mean cumulative reward. Since one round of training can be time intensive, hyperparameter tuning, which consists of usually numerous rounds of training, can be particularly time intensive.
+
+```{=latex}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Algorithm & Description & Model & Policy & Action Space & State Space \\
+\hline
+MBPO & Model-based Policy Optimization & Model-based & On-policy& &\\
+\hline
+MCTS & Monte Carlo Tree Search & Model-based & Either & & \\
+\hline
+A2C  & Advantage Actor Critic & Model-free & On-policy& &\\
+\hline
+A3C  & Asynchronous A2C & Model-free & On-policy & &\\
+\hline
+TRPO  & Trust Region Policy Optimization & Model-free & On-policy & &\\
+\hline
+PPO  & Proximal Policy Optimization & Model-free & On-policy & &\\
+\hline
+DQN & Deep Q Networks & Model-free & Off-policy& &\\
+\hline
+DDPG & Deep Deterministic Policy Gradient & Model-free & Off-policy & &\\
+\hline
+TD3 & Twin Delayed DDPG & Model-free & Off-policy & &\\
+\hline
+SAC & Soft Actor Critic & Model-free & Off-policy & &\\
+\hline
+IMPALA & Importance Weighted Actor Learner & Model-free & Off-policy & &\\
+\hline
+APE-X & Distributed Prioritized Experience Replay & Model-free & Off-policy & & \\
+\hline
+\end{tabular}
+\end{center}
+```
 
 # Examples
 
@@ -86,7 +152,6 @@ scale_colour_discrete <- function(...) ggthemes::scale_colour_solarized()
 scale_fill_discrete <- function(...) ggthemes::scale_fill_solarized()
 pal <- ggthemes::solarized_pal()(6)
 txtcolor <- "#586e75"
-
 ```
 
 
@@ -199,13 +264,26 @@ fire gym?
 
 # Open issues
 
+Deep reinforcement learning has only become an established subfield of AI over the past decade; and, as with most young fields, there are a range of unsolved problems. In practice, the foremost problem with DRL is instability. For a range of reasons, including high variance and the exploration vs. exploitation trade-off, model-free and model-based algorithms tend to have unstable performance on environments with non-tabular state-action spaces [cite RL that matters]. For instance, it is not uncommon to observe vastly different behavior when two agents are initialized with different random seeds [cite ibid]. Since model-based and model-free algorithms typically have a large number of hyperparameters, each of which can contribute to training instability, it is practically impossible to identify the source of instability. The hope of the RL practitioner is that after doing an exhaustive hyperparameter search, the practitioner will find a set of hyperparameters that results in a robust, well-performing agent, but there are no guarantees that hyperparameter tuning will lead to this outcome. 
+
+In the context of conservation, we anticipate that there will be a host of specific challenges to using DRL methods. Interpretability is likely to be the biggest barrier to adoption. Although there have been some attempts to increase the transparency of RL agents that use neural network as function approximators [cite], it is still very difficult to explain the behavior of RL-trained agents. Another challenge is that DRL algorithms are very sample inefficient, and to overcome sample inefficiency for conservation decision-making problems that are often data poor, relying on simulations to train agents will be necessary. While there are positives to using simulated data, any assumptions or biases that are included in the model will determine agent behavior. 
+
+An issue that is central to any applied optimization problem is using the right objective. There have been many examples in which explicit reward design goes horribly wrong [cite]. And for ecological systems, which are often very complex and impossible to fully observe, it seems that bad reward design is quite likely. Moreover, specifying a reward function for conservation brings up various ethical concerns -- e.g. who gets to specify the reward function and will the values of the greater community be represented in the reward function. One recently proposed framework to overcome challenges with explicit reward design is called AI alignment, wherein the agent observes humans, infers the preferences of humans and then acts as to satisfy human preferences. Yet, in the context of training an agent to say conserve a species, there are questions that could easily arise, foremost will the agent infer that humans don't care about a certain species so acts in a way that leads to that species' extinction? There is a definite need for exploration of the ethics of using DRL for conservation.
+
+Ultimately, we anticipate that getting DRL to work well on fully detailed conservation decision-making problems will be challenging. Beyond typically having large state-action spaces for agents to explore, conservation problems tend to have sparse reward structures. E.g. rarely does an action in conservation lead to immediate rewards; instead, benefits are typically observed after actions have been performed. Sparse reward structures are challenging for DRL agents, because of the credit assignment problem [cite]. To solve sparse reward environments, many researchers have employed customized algorithms to achieve better performance than standard DRL methods [cite Montezuma]. For conservation, we anticipate that there will likely be a similar pattern, wherein bespoke RL methods will attain better performance than general methods.
+
 - wild west of AI?
-- reproducibility
+-can separate RL from having gyms implemented -> how do you compare different models, 
+-mention that customization is probably the way to go, baselines only go so far
+
 - AI ethics, transparency
+
+
 
 # a vision going forward
 
+
+
 - our public/open source environments and agents, leaderboard
 - the need for collaborative/competitive development both to make better benchmark environments and better agents
-
 
