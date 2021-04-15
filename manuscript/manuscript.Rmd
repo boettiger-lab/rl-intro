@@ -27,6 +27,8 @@ keywords:
   - bloo
   - these are optional and can be removed
 bibliography: references.bib
+header-includes:
+  - \usepackage{amsmath}
 output: 
   rticles::arxiv_article:
     keep_tex: true
@@ -69,21 +71,19 @@ In this manner, RL would compliment, rather than replace, existing empirical and
 If RL has great promise, the approach also imposes great risk.  
 Lacking the tractability of classical methods, an RL agent can appear to solve a wide class of scenarios with ease, but may fail unexpectedly under seemingly similar conditions [@henderson2017].  
 Despite recent progress, Deep RL is a young field and stability and robustness of its methods remain largely open problems. 
-RL approaches are no pancea, and inproper design or testing can easily lead to negative outcomes.
+RL approaches are no panacea, and improper design or testing can easily lead to negative outcomes.
 Technical issues are not the only pitfall of AI applications to conservation problems.
 Giving algorithms direct influence over conservation policy may also raise ethical and political issues, particularly if those algorithms (or components thereof) are treated as proprietary intellectual property.
 
-In this paper, we introduce the fundamentals of deep reinforcement learning and illustrate with simple examples how these approaches can be applied to important conservation decision-making problems, from overharvesting in global fisheries to ecosystem tipping points to wildfire dynamics.
+In this paper, we introduce the fundamentals of deep reinforcement learning and illustrate with simple examples how these approaches can be applied to important conservation decision-making problems, from over-harvesting in global fisheries to ecosystem tipping points to wildfire dynamics.
 These examples span a range from problems for which an optimal analytic solution is already known, to problems not previously solved with classical methods, to problems not yet solved by RL. 
 We include a detailed appendix with complete examples in both python and R for training RL algorithms, as well as three stand-alone module "gyms" implementing the each of the conservation problems presented here using a standard benchmark [@gym], which we believe can facilitate future contributions both from researchers in RL searching for interesting and important open problems as well as ecologists who may seek to make those simulations more realistic and precise to specific application areas.
 We hope this paper serves as a port of entry to researchers and students from either field seeking to engage in work on RL applications to conservation. 
 We also hope these examples serve as illustration of both the potential and perils of such applications.
 
-
 # Sequential Decision Problems and Reinforcement Learning
 
 <!-- meh, not sure we need this? -->
-
 Reinforcement learning focuses primarily on sequential decision problems: tasks in which a decision-maker or "agent" must repeatedly decide what action to take in response to new information about the "state" of the system they seek to manage, in order to maximize some objective (referred to  as the reward or utility).
 Any conservation problem that considers the future possible scenarios is a sequential decision problem: even scenarios that face a one-off decision such as whether declare some region as a protected area, or list or de-list a species as endangered, are sequential decision problems if they must consider the timing of their actions.
 In contrast, decisions that do not consider the future, such as deciding which of a collection of possible regions should be prioritized based only on the present: how many species currently inhabit a region, how much each region would cost to purchase today, are not sequential problems.
@@ -102,21 +102,99 @@ Sequential decision problems are common to behavioral ecology [@Mangel], conserv
 
 # RL essentials
 
-**Model-based vs Model-free RL**
+Before providing some examples on how deep reinforcement learning can be applied to ecological and conservation problems, we will provide a brief, general introduction to RL. The basic problem set-up of RL is as follows: at a time step, $t$, the agent observes a representation of the environment's state, $s_t$, and must accordingly select an action, $a_t$; at the next time step, the agent will observe a new state, $s_{t+1}$, and will receive a numerical reward, $r_{t+1}$. This new state, $s_{t+1}$, and reward, $r_{t+1}$, are determined by the environment. The task for the agent is to learn a _policy_, $\pi$, that prescribes what action the agent should perform after observing a certain state. The agent interacts with the environment via trial and error in what is called the _training_ period, during which the agent continally updates its policy in order to maximize its expected cumulative sum of rewards.
 
-**Current algorithms**
+When the environment is fully observable, i.e. when the state that the agent observes fully characterizes the system, the reinforcement learning problem can be formalized as a Markov Decision Process (MDP). An MDP consists of the following: a set of states, $\mathcal{S}$, called the state space; a set of actions, $\mathcal{A}$, called the action space; a state transition operator, $T(s_{t+1}|s_t, a_t)$, which describes the dynamics of the system; a reward function, $r(s_t, a_t)$; an initial state distribution, $d_0(s_0)$; and a discount factor, $\gamma \in (0,1]$. As the agent interacts with the environment, the agent will create a trajectory in state-action space given as $\tau = (s_0, a_0, \dots, s_H, a_H)$ where H denotes the horizon or length of the state-action sequence. From this definition, we can provide an agent's trajectory distribution for a given policy as,
+$$
+  p_\pi(\tau) = d_0(s_0) \prod_{t=0}^H \pi(a_t \mid s_t) T(s_{t+1} \mid s_t, a_t)
+$$
 
-- terminology, problem definition
-- discussion / table of current benchmark algorithms (DQN, PPO, DDPG, A2C, TD3, SAC)
-- training, hyperparameter tuning
+When the agent cannot fully observe the state of the system, reinforcement learning can then be described by a Partially Observable Markov Decision Process (POMDP), wherein there is an additional distribution, $E(o_{t}| s_{t})$, which accounts for the observation being different from system's actual state. An important property of POMDPs and MDPs is that they are memoryless; the future, $s_{t+1}$, does not depend on the past but only on the state and action at the present time. This Markov property, which is often an unrealistic assumption, is held in most of the RL algorithms that we will discuss.
+
+In formal terms, the goal of reinforcement learning is to find an optimal policy distribution, $\pi^*(a_t | s_t)$ or $\pi^*(a_t|o_t)$ for MDP and POMDP cases respectively, that maximizes the expected cumulative, discounted reward:
+$$
+  \pi^* = \underset{\pi}{\text{argmax}} \,\, \mathbb{E}_{\tau \sim p_\pi(\tau)}\Big[\sum_{t=0}^{H} \gamma^t r(s_t, a_t) \Big]
+$$
+
+Note that this formalism extends to an infinite horizon case when $T= \infty$. While there are RL methods to deal with infinite horizon cases, we will only consider episodic MDP and POMDPs.
+
+Many reinforcement learning algorithms center around estimating value functions, which attempt to quantify the goodness of being in a state or taking an action from a state. Given that the objective of RL is to maximize the cumulative expected reward, "goodness" refers to the likelihood that a state or state-action pair will result in a high reward trajectory. There are 3 value functions that are commonly used across RL algorithms: the state value function, $V^\pi(s_t)$, the state-action value function, $Q^\pi(s_t, a_t)$, and the advantage function, $A^\pi(s_t, a_t)$. The state-value function is defined as the expected return from a given state,
+$$
+  V^\pi(s_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg]
+$$
+
+Meanwhile, the state-action-value or quality function, finds the expected return given a state and action,
+$$
+  Q^\pi(s_t, a_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t, a_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg]
+$$
+
+And lastly, the advantage function characterizes a relative state-action value in that it quantifies how valuable a state-action pair is over a baseline. The advantage function can then be succintly defined as
+$$
+  A^\pi(s_t, a_t) = Q^\pi(s_t, a_t) - V^\pi(s_t)
+$$
+Learning $Q^\pi$, commonly called the Q-value function, is more powerful than learning the state-value function as Q-values easily prescribe what action to take when in a certain state, $a_t^* = \underset{a_t}{\text{argmax}} \, Q^\pi (s_t, a_t)$. Conversely, if we know the state-value function, we would have to perform a maximization over an expected value to find the optimal action, $a_t^* = \underset{a_t}{\text{argmax}} \, \mathbb{E}_{s_{t+1} \sim \,T(s_{t+1} \mid s_t, a_t)}[V^\pi(s_{t+1})]$, which is less tractable. Yet, learning the advantage function is often preferred in practice as advantage estimators favorably have lower variance than state-value and Q-value estimators [cite schulman gae]. 
+
+**Survey of RL Algorithms**
+
+There is an ever increasing multitude of reinforcement learning algorithms, and while there are far too many algorithms to discuss in detail in this paper, we will herein classify and touch on some current methods. RL algorithms can generally be split into 2 groups, model-based and model-free RL. In model-based RL, the agent is attempting to learn the state transition operator, $T$. Once the transition model is known, the agent can then use the transition model to plan out what is the optimal action, often with Model Predictive Control [cite tassa 2012 MPC], or the agent can use the transition model to generate more samples to aid learning [cite Sutton dyna, alphago?]. In model-free RL, the agent does not attempt to learn a dynamics model and instead tries to either learn a parameterized policy, learn a value function, or try to learn both a parameterized policy and a value function. The general trade-off between model-free and model-based approaches is that in practice, model-based algorithms are often more sample efficient than model-free algorithms but often fail to surpass model-free algorithms in overall agent performance [cite?].
+
+A further distinction to be made amongst RL algorithms is in what policy the agent uses to select actions. If an agent uses the same policy to take actions as the policy that the agent attempts to evaulate or improve, then this algorithm is on-policy. If an agent uses a different policy to select actions than the policy that the agent evaluates or improves, then this algorithm is off-policy. The benefit of off-policy learning is that the agent does not need to collect a sample every time the agent updates its behavior; instead, the agent can learn from past experience, which increases sample efficiency [cite SAC paper]. Yet, on-policy algorithms tend to be more stable in practice [cite Q-prop].        
+
+The field of reinforcement learning has proliferated over the past 10 years on account of contributions from deep learning. In every reinforcement learning algorithm, the agent is attempting to learn some function, whether it is a policy function and/or a value function. Neural networks, which have the property of being universal function approximators [cite], are thus a powerful tool in reinforcement learning since neural networks can be used to approximate policy and/or value functions which we do not know the form of. Additionally, the ability of neural networks to autonomously devise low-dimensional representatoins of data is very beneficial when state observations are high dimension, for instance in the case of image-based observations. The typical process for using neural networks in RL is that the agent is attempting to optimize a policy and/or value network using the backpropagation algorithm -- an exception is made here for evolutionary algorithms which did not employ gradient-based methods. Deep RL has excelled in solving sequential decision-making problems that have non-tabular state-action spaces, problems that are typically intractable with classical methods.
+
+In practice, the general process for attaining a good performing agent is to tune model hyperparameters then train an agent using the best hyperparameters. Hyperparameters refer to the parameters in a RL algorithm that are not directly learned during the training process. For example, a weight in the neural network is a model parameter, but the number of hidden layers in the neural network is a hyperparameter. Since the optimal hyperparameters cannot be found analytically, tuning should be done to find a good-performing set of hyperparameters. The hyperparameter tuning process consists of sampling then evaluating a set of hyperparameters, where tuning trials are often ranked by mean cumulative reward. Since one round of training can be time intensive, hyperparameter tuning, which consists of usually numerous rounds of training, can be particularly time intensive.
+
+```{=latex}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Algorithm & Description & Model & Policy & Action Space & State Space \\
+\hline
+MBPO & Model-based Policy Optimization & Model-based & On-policy& &\\
+\hline
+MCTS & Monte Carlo Tree Search & Model-based & Either & & \\
+\hline
+A2C  & Advantage Actor Critic & Model-free & On-policy& &\\
+\hline
+A3C  & Asynchronous A2C & Model-free & On-policy & &\\
+\hline
+TRPO  & Trust Region Policy Optimization & Model-free & On-policy & &\\
+\hline
+PPO  & Proximal Policy Optimization & Model-free & On-policy & &\\
+\hline
+DQN & Deep Q Networks & Model-free & Off-policy& &\\
+\hline
+DDPG & Deep Deterministic Policy Gradient & Model-free & Off-policy & &\\
+\hline
+TD3 & Twin Delayed DDPG & Model-free & Off-policy & &\\
+\hline
+SAC & Soft Actor Critic & Model-free & Off-policy & &\\
+\hline
+IMPALA & Importance Weighted Actor Learner & Model-free & Off-policy & &\\
+\hline
+APE-X & Distributed Prioritized Experience Replay & Model-free & Off-policy & & \\
+\hline
+\end{tabular}
+\end{center}
+```
 
 # Examples
 
 ## Sustainable harvest
 
-We provide three examples that illustrate the application and potential of deep RL to ecological and conservation problems, highlighting both the potential and challenges there-in.  The first example focuses on the well-studied problem of setting harvest quotas in fisheries management [@Schaefer1954; @Clark1974; @Reed1979; @Worm2006; @Costello2018].  Given an appropriately estimated model, the optimal harvest policy can be determined precisely (e.g. by stochastic dynamic programming, SDP, see @Marescot2013), and under most circumstances takes the form of a "constant-escapement" policy [see mathematical proof in @Reed1979]. This provides a natural first benchmark for deep RL approaches, since we can compare the RL solution to the mathematical optimum directly.  The problem is also of interest because the RL approach can be extended to consider ecological dynamics that either surpass the complexity possible with SDP methods, or violate assumptions of such classical approaches). Moreover, fisheries management is both an important global challenge in it's own right [@Worm2006; @Costello2018] as well as a common test case to understand ecological dynamics and conservation management more broadly [@].
+We provide three examples that illustrate the application and potential of deep RL to ecological and conservation problems, highlighting both the potential and challenges there-in.
+The first example focuses on the well-studied problem of setting harvest quotas in fisheries management [@Schaefer1954; @Clark1974; @Reed1979; @Worm2006; @Costello2018].
+Given an appropriately estimated model, the optimal harvest policy can be determined precisely (e.g. by stochastic dynamic programming, SDP, see @Marescot2013), and under most circumstances takes the form of a "constant-escapement" policy [see mathematical proof in @Reed1979].
+This provides a natural first benchmark for deep RL approaches, since we can compare the RL solution to the mathematical optimum directly.
+The problem is also of interest because the RL approach can be extended to consider ecological dynamics that either surpass the complexity possible with SDP methods, or violate assumptions of such classical approaches).
+Moreover, fisheries management is both an important global challenge in it's own right [@Worm2006; @Costello2018] as well as a common test case to understand ecological dynamics and conservation management more broadly [@].
 
-For illustrative purposes, we consider the simplest version of the dynamic optimal harvest problem as outlined by @Clark1974 or @Reed1979 (covering the stochastic case).  In short, the manager seeks to optimize the net present value (discounted cumulative catch) of a fishery, observing the stock size each year and setting an appropriate harvest quota in response.  In the classical approach, the best model of the fish population dynamics must first be estimated from data, potentially with posterior distributions over parameter estimates reflecting any uncertainty. From this model, the optimal harvest policy -- that is, the a function which returns the optimal quota for each possible observed stock size -- can be determined either by analytic [@Reed1979] or numerical [@Marescot2013] methods, depending on the complexity of the model.  In a RL approach, the model is instead replaced by a computer simulation, usually referred to as an "environment."  The simplest simulation is merely an implementation of the estimated model itself.  However, unlike an analytic or SDP solution that is derived directly from the estimated model, the RL approach is in principle agnostic to the details of the simulation.
+For illustrative purposes, we consider the simplest version of the dynamic optimal harvest problem as outlined by @Clark1974 or @Reed1979 (covering the stochastic case).
+In short, the manager seeks to optimize the net present value (discounted cumulative catch) of a fishery, observing the stock size each year and setting an appropriate harvest quota in response.
+In the classical approach, the best model of the fish population dynamics must first be estimated from data, potentially with posterior distributions over parameter estimates reflecting any uncertainty.
+From this model, the optimal harvest policy -- that is, the a function which returns the optimal quota for each possible observed stock size -- can be determined either by analytic [@Reed1979] or numerical [@Marescot2013] methods, depending on the complexity of the model.
+In a RL approach, the model is instead replaced by a computer simulation, usually referred to as an "environment."  The simplest simulation is merely an implementation of the estimated model itself.
+However, unlike an analytic or SDP solution that is derived directly from the estimated model, the RL approach is in principle agnostic to the details of the simulation.
 
 
 ```{r knitr, include = FALSE}
@@ -130,7 +208,6 @@ scale_colour_discrete <- function(...) ggthemes::scale_colour_solarized()
 scale_fill_discrete <- function(...) ggthemes::scale_fill_solarized()
 pal <- ggthemes::solarized_pal()(6)
 txtcolor <- "#586e75"
-
 ```
 
 
@@ -177,7 +254,12 @@ fig_sims / ( fig_policy + fig_reward)
 ```
 
 
-Note that the A2C policy learns to shut down fishing entirely below a certain stock size, without any variation.  However, it keeps the fishery closed even once stock sizes are slightly higher than $B_{MSY}$.  Once it begins fishing, it slightly under-harvests for stock sizes a little over $B_{MSY}$, but tends to over-harvest for very large stock sizes (rarely ever realized, as fishing pressure is enough to keep it out of this range). Note also that the harvest varies across replicates, creating a fuzzy region in the policy function. Under such a policy, A2C maintains a stock size on average significantly above $B_{MSY}$, though also sees higher volatility particularly on the low side.  Note that due to the stochastic nature of the environment, any given replicate A2C may out-perform the optimal policy, though on average the optimal policy provides consistently better yields.  
+Note that the A2C policy learns to shut down fishing entirely below a certain stock size, without any variation.
+However, it keeps the fishery closed even once stock sizes are slightly higher than $B_{MSY}$.
+Once it begins fishing, it slightly under-harvests for stock sizes a little over $B_{MSY}$, but tends to over-harvest for very large stock sizes (rarely ever realized, as fishing pressure is enough to keep it out of this range).
+Note also that the harvest varies across replicates, creating a fuzzy region in the policy function.
+Under such a policy, A2C maintains a stock size on average significantly above $B_{MSY}$, though also sees higher volatility particularly on the low side.
+Note that due to the stochastic nature of the environment, any given replicate A2C may out-perform the optimal policy, though on average the optimal policy provides consistently better yields.  
 
 
 ## Beyond classic methods: Non-stationary models
@@ -243,13 +325,26 @@ fire gym?
 
 # Open issues
 
+Deep reinforcement learning has only become an established subfield of AI over the past decade; and, as with most young fields, there are a range of unsolved problems. In practice, the foremost problem with DRL is instability. For a range of reasons, including high variance and the exploration vs. exploitation trade-off, model-free and model-based algorithms tend to have unstable performance on environments with non-tabular state-action spaces [cite RL that matters]. For instance, it is not uncommon to observe vastly different behavior when two agents are initialized with different random seeds [cite ibid]. Since model-based and model-free algorithms typically have a large number of hyperparameters, each of which can contribute to training instability, it is practically impossible to identify the source of instability. The hope of the RL practitioner is that after doing an exhaustive hyperparameter search, the practitioner will find a set of hyperparameters that results in a robust, well-performing agent, but there are no guarantees that hyperparameter tuning will lead to this outcome. 
+
+In the context of conservation, we anticipate that there will be a host of specific challenges to using DRL methods. Interpretability is likely to be the biggest barrier to adoption. Although there have been some attempts to increase the transparency of RL agents that use neural network as function approximators [cite], it is still very difficult to explain the behavior of RL-trained agents. Another challenge is that DRL algorithms are very sample inefficient, and to overcome sample inefficiency for conservation decision-making problems that are often data poor, relying on simulations to train agents will be necessary. While there are positives to using simulated data, any assumptions or biases that are included in the model will determine agent behavior. 
+
+An issue that is central to any applied optimization problem is using the right objective. There have been many examples in which explicit reward design goes horribly wrong [cite]. And for ecological systems, which are often very complex and impossible to fully observe, it seems that bad reward design is quite likely. Moreover, specifying a reward function for conservation brings up various ethical concerns -- e.g. who gets to specify the reward function and will the values of the greater community be represented in the reward function. One recently proposed framework to overcome challenges with explicit reward design is called AI alignment, wherein the agent observes humans, infers the preferences of humans and then acts as to satisfy human preferences. Yet, in the context of training an agent to say conserve a species, there are questions that could easily arise, foremost will the agent infer that humans don't care about a certain species so acts in a way that leads to that species' extinction? There is a definite need for exploration of the ethics of using DRL for conservation.
+
+Ultimately, we anticipate that getting DRL to work well on fully detailed conservation decision-making problems will be challenging. Beyond typically having large state-action spaces for agents to explore, conservation problems tend to have sparse reward structures. E.g. rarely does an action in conservation lead to immediate rewards; instead, benefits are typically observed after actions have been performed. Sparse reward structures are challenging for DRL agents, because of the credit assignment problem [cite]. To solve sparse reward environments, many researchers have employed customized algorithms to achieve better performance than standard DRL methods [cite Montezuma]. For conservation, we anticipate that there will likely be a similar pattern, wherein bespoke RL methods will attain better performance than general methods.
+
 - wild west of AI?
-- reproducibility
+-can separate RL from having gyms implemented -> how do you compare different models, 
+-mention that customization is probably the way to go, baselines only go so far
+
 - AI ethics, transparency
+
+
 
 # a vision going forward
 
+
+
 - our public/open source environments and agents, leaderboard
 - the need for collaborative/competitive development both to make better benchmark environments and better agents
-
 
