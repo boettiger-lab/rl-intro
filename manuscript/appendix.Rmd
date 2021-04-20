@@ -120,7 +120,7 @@ we must first make a selection for each of these hyper-parameters to define our 
 Other hyper-parameters determine other aspects of the training regime: such as how the agent chooses to explore possible actions, the learning rate, or how future rewards are discounted (gamma).
 Each algorithm may have different hyper-parameters. `stable-baselines3` provides default values for all hyperparameters based on the original papers that introduced the corresponding algorithms,
 for instance, the A2C algorithm originally described in @A2C. 
-Here, we train an agent using the A2C algorithm using default hyperparameter settings.
+Here, we train an agent using the A2C algorithm using default hyperparameter settings, utilizing a multi-layer perceptron neural network composed of two 64-neuron layers.
 
 ```{r}
 a2c <- sb3$A2C('MlpPolicy', env, verbose=0L, seed = seed) # L indicates a (Long) integer, not floating point
@@ -143,21 +143,42 @@ if(!file.exists("cache/a2c.zip")) {
 
 
 Note that while default hyperparameters provide a useful starting place (particularly when the environment has been suitably normalized, a best-practice we discuss above), better performance can almost always be achieved by _tuning_ the hyperparameter selection. This is discussed further below. 
-
-
-We can load a trained agent and use `simulate` and `policyfn` methods provided by the `gym_fishing` environment to simulate the process for a fixed number of replicates.
+Having saved our trained agent to disk (`cache/a2c.zip`), we can then re-load this agent for evaluation or to continue training.  Note that a copy of the trained agents are included in the corresponding GitHub repository.
 
 ```{r}
 # Simulate management under the trained agent
 a2c <- sb3$A2C$load("cache/a2c")
 ```
 
+
+We can supply an observation to our trained agent and it will return it's proposed action using the `predict` method. 
+This is all we need to evaluate or employ the agent on a decision-making task.
+Recall that state space and action space in the fishing gym have been re-scaled to a (-1, 1) interval.
+Note that this is equivalent to a choice of appropriate units -- we can re-scale the interval without loss of generality.
+This is often a critical step in the design of an RL environment to facilitate successful training.
+Following the `gym` standard, the core methods such as `predict` and `step` operate on the re-scaled units,
+so it is necessary to first transform the original units into this re-scaled state space.
+For example, if we wish to start a simulation with a stock size of 0.75, we can use the helper
+method `get_state()`, to determine the corresponding value in the re-scaled state space.  
+Unlike `predict` and `step`, `get_state()` is not a standard method of all gym environments -- typically
+a user must first inspect the state space of an environment and choose themselves how to re-scale their
+problem into that state space.  
+
 ```{r}
 
 ## represent the initial state size in the 'rescaled' state space.
 state <- env$get_state( 0.75 )
+state
+```
 
-for(i in 1:100){
+
+With an initial state in hand, we are ready to simulate management using our agent.
+The iteration is simple: we use the agent to predict what action we should take given the current state,
+and then we take said action and examine the result to determine the future state. 
+Because these methods return additional information as well, a little extra sub-setting is required in R:
+
+```{r}
+for(i in 1:10){
   
   out <- a2c$predict(state)
   action <- out[[1]]
@@ -168,11 +189,18 @@ for(i in 1:100){
 
 ```
 
+For convenience, `gym_fishing` defines the helper routine `simulate` to perform the above iteration `reps` number of times. The `simulate` method returns the state, action, and reward resulting from each time step of each replicate:
+
 
 ```{r}
 a2c_sims <- env$simulate(a2c, reps = 500L)
 ```
 
+
+Because the agent typically attempts to retain the fish population near a specific value, simulations with well-trained agents will usually not explore the full range of possible states.
+To get a better idea of how the agent behaves across the full state space, it common to consider a policy function: a plot of the action taken at each possible state.
+Some agents are non-deterministic, so we may want to use replicate draws at each state to get a better picture of the agent's behavior.
+Note that the `policyfn` method is another custom method and not part of the `gym` standard, and the use of a policy function will not make sense for agents that consider the history of many previous states in selecting their action, such as agents which utilize recurrent neural network architectures like LSTM [@LSTM].
 
 ```{r}
 a2c_policy <- env$policyfn(a2c, reps = 50L)
@@ -182,10 +210,13 @@ a2c_policy <- env$policyfn(a2c, reps = 50L)
 
 ## TD3
 
-We train a second agent based on the TD3 algorithm.  
+We train a second agent based on the TD3 algorithm. 
+This illustrates some of the salient differences between the different algorithms used in reinfocement learning.
+Bear in mind that the best algorithm for any given environment will depend on the details of the environment, as well
+as the length of training and the selection of hyper-parameters, including the agent's underlying neural networks which provide the 'brains' of the agent's decision-making ability.
 This time, we will declare our choices for the hyper-parameters explicitly.
-Note that some of these hyperparameters, such as the `learning_rate` and discount rate, `gamma`, are also hyper-parameters of the A2C algorithm, while others, like the `action_noise` describing how new actions are proposed, are not used in A2C.
-Good choices for hyperparameters can be found through a process known as "hyper-parameter tuning", which simply uses standard function optimization approaches to vary the choice of hyper-parameters used in training to determine which maximizes the agent's performance. 
+Note that some of these hyper-parameters, such as the `learning_rate` and discount rate, `gamma`, are also hyper-parameters of the A2C algorithm, while others, like the `action_noise` describing how new actions are proposed, are not used in A2C.
+Good choices for hyper-parameters can be found through a process known as "hyper-parameter tuning", which simply uses standard function optimization approaches to vary the choice of hyper-parameters used in training to determine which maximizes the agent's performance. 
 For simplicity, we show only training with specified hyper-parameters here, example scripts for tuning the algorithm to discover these values can be found in <https://github.com/boettiger-lab/rl-toolkit>, and compare to the tuning utilities found in `stable-baselines3-zoo` [@zoo].  
 
 ```{r}
@@ -217,7 +248,7 @@ td3 = sb3$TD3( 'MlpPolicy',
               )
 ```
 
-Once again, after our agent is defined we are ready to train it. 
+Once again, after our agent is defined we are ready to train it:
 
 ```{r }
 if(!file.exists("cache/td3.zip")){
@@ -228,6 +259,8 @@ if(!file.exists("cache/td3.zip")){
 }
 ```
 
+With our trained agent, we can simulate replicate scenarios or scan across states to determine the implicit policy function:
+
 ```{r}
 # Simulate management under the trained agent
 td3 <- sb3$TD3$load("cache/td3")
@@ -236,6 +269,12 @@ td3_policy <- env$policyfn(td3, reps = 50L)
 ```
 
 
+We compare the performance of these two RL agents trained using the algorithms A2C and TD3 respectively to the known optimal policy for this particular environment.  
+Recall that under the assumptions of the simple model used in the `fishing-v1` environment, we can determine the optimal harvest policy analytically if the model and parameters are known precisely [@Reed1979].
+The optimal strategy is a policy of 'constant escapement', designed to keep the remaining stock size (the population that 'escapes' fishing harvest) at the biomass corresponding to a maximum growth rate, i.e. at $B = K/2$ in this model.
+`gym_fishing` defines a collection of non-RL agents in the `models` submodule, including the a human agent that merely asks to enter their desired quota manually. 
+The `escapement` model implements the provably optimal constant escapement rule.
+A third model, `msy`, implements a policy based on "Maximum Sustainable Yield" policy [@Schaefer1954], which is actually more commonly used as a basis for management than constant escapement, despite only being optimal at the steady state under deterministic dynamics.  
 
 ```{r}
 # Simulate under the optimal solution (given the model)
@@ -243,6 +282,10 @@ opt <- gym_fishing$models$escapement(env)
 opt_sims <- env$simulate(opt, reps = 500L)
 opt_policy <- env$policyfn(opt)
 ```
+
+
+Having performed simulations under each method, we gather the results under each management strategy together into a single data frame for simulations (`sims_df`), the policy function (`policy_df`) and the cumulative reward, used to make the plots in the corresponding panels.  
+We preserve a copy of each data frames in local `.csv` text files for maximum cross-platform compatibility.
 
 ```{r}
 sims_df <- bind_rows(td3_sims, a2c_sims, opt_sims, .id = "model") %>%
@@ -259,14 +302,14 @@ reward_df <- sims_df %>%
   summarise(mean_reward = mean(cum_reward), 
             sd = sd(cum_reward), .groups = "drop")
 
-```
 
-
-```{r}
 write_csv(sims_df, "figs/sims_df.csv")
 write_csv(policy_df, "figs/policy_df.csv")
 write_csv(reward_df, "figs/reward_df.csv")
 ```
+
+
+Standard R methods are used to plot the results summarized across the replicates:
 
 ```{r}
 ymin <- function(x) last(x[(ntile(x, 20)==1)])
@@ -312,6 +355,9 @@ fig_sims / ( fig_policy + fig_reward)
 
 ## Ecological tipping points
 
+Our second example utilizes our `gym_conservation` to provide the necessary environment to simulate an ecosystem approaching a tipping point.
+For simplicity we will train only a TD3-based agent this time.  
+
 
 
 
@@ -355,7 +401,6 @@ if(!file.exists("cache/td3-conservation.zip")){
 ```
 
 
-
 ```{r}
 # Simulate management under the trained agent
 # See https://github.com/boettiger-lab/conservation-agents/blob//conservation/TD3-v6.py
@@ -366,7 +411,13 @@ TD3_policy <- env$policyfn(TD3, reps = 10L)
 ```
 
 
+In general, the optimal solution depends on the ecological dynamics, the benefit of the ecosystem services and the costs associated with a management response.
+Because the tipping point problem is non-autonomous, we cannot solve for the optimal policy even given the model and objective (utility) function using Markov Decision Process methods.
+However, a simple heuristic solution provides a reasonable starting point for comparison.
 
+
+As discussed in the main text, we have no existing optimal solution to the tipping point problem, and so rely on a common heuristic strategy instead:
+select a fixed level of conservation investment that is sufficient to counter-balance any further side towards the tipping point, preserving it in it's current state.  
 
 ```{r}
 # Simulate under the steady-state solution (given the model)
