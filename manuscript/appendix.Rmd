@@ -324,28 +324,33 @@ env <- gym$make("conservation-v6")
 ```{r}
 
 noise_std = 0.4805935357322933
-action_noise = OrnsteinUhlenbeckActionNoise(mean = np.zeros(1),
-                                            sigma = noise_std * np.ones(1))
+action_noise = sb3$common$noise$OrnsteinUhlenbeckActionNoise(mean = np$zeros(1L),
+                                            sigma = noise_std * np$ones(1L))
 
-model = TD3('MlpPolicy', 
+model = sb3$TD3('MlpPolicy', 
             env, 
             verbose = 0, 
             seed = seed,
-            "gamma": 0.995,
-            "learning_rate":  8.315382409902049e-05,
-            "batch_size": 512,
-            "buffer_size": 10000,
-            "train_freq": 1000,
-            "gradient_steps": 1000,
-            "n_episodes_rollout": -1,
-            "action_noise": action_noise,
-            "policy_kwargs": list("net_arch": c(64,64)))
+            "gamma"= 0.995,
+            "learning_rate"=  8.315382409902049e-05,
+            "batch_size"= 512L,
+            "buffer_size"= 10000L,
+            "train_freq"= 1000L,
+            "gradient_steps"= 1000L,
+            "n_episodes_rollout"= -1L,
+            "action_noise"= action_noise,
+            "policy_kwargs"= list("net_arch"= c(64L,64L)))
 
 ```
 
 
 ```{r}
-model$learn(total_timesteps = 1500000)
+if(!file.exists("cache/td3-conservation.zip")){
+
+  model$learn(total_timesteps=1500000L)
+  model$save("cache/td3-conservation")
+  
+}
 
 ```
 
