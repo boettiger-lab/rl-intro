@@ -38,7 +38,7 @@ output:
 
 ```{r knitr, include = FALSE}
 knitr::opts_chunk$set(echo=TRUE, message = FALSE, warning = FALSE,
-                      fig.width = 7, fig.height = 4)
+                      fig.width = 7, fig.height = 4, cache = TRUE)
 ggplot2::theme_set(ggplot2::theme_bw())
 
 scale_colour_discrete <- function(...) ggthemes::scale_colour_solarized()
@@ -351,9 +351,11 @@ fig_reward <- reward_df %>%
   ylab("reward")
 ```
 
+## Manuscript Figure 1
 
+<!-- Not sure if it's helpful to duplicate figures from the paper in the appendix...-->
 
-```{r fig1, fig.cap="", include=FALSE}
+```{r fig1}
 fig_sims / ( fig_policy + fig_reward)
 ```
 
@@ -379,6 +381,17 @@ X_{t+1} \sim \text{lognormal}(\mu_t, \sigma)
 where we take $r=0.7$, $K=1.2$, $q=3$, $b=0.15$, $a_0 = 0.19$ and $\sigma = 0.2$ 
 Slow change over time in the parameter $a_t$ represents a process of environmental degradation, modeled as a constant increment $a_{t+1} = a_t + \alpha$, where we will take $\alpha = 0.001$.
 This model supports the dynamics of a fold bifurcation, widely used to model critical transitions in both theory and empirical manipulation in systems from microbes [@Dai2012] to lakes [@Carptenter2011] to the planet biosphere [@Barnosky2014].  
+
+
+
+```{r message=FALSE, fig.cap="Bifurcation diagram for tipping point scenario. The ecosystem begins in the desirable 'high' state under an evironmental parameter (e.g. global mean temperature, arbitrary units) of 0.19.  In the absence of conservation action, the environment worsens (e.g. rising mean temperature) as the parameter increases.  This results in only a slow degredation of the stable state, until the parameter crosses the tipping point threshold at about 0.215, where the upper stable branch is anihilated in a fold bifurcation and the system rapidly transitions to lower stable branch, around state of 0.1.   Recovery to the upper branch requires a much greater conservation investment, reducing the parameter all the way to 0.165 where the reverse bifurcation will carry it back to the upper stable branch."}
+bifur_df <- read_csv("figs/bifur.csv", col_types = "dccd")
+bifur_df %>%
+  ggplot(aes(parameter, state, lty=equilibrium, group = group)) + 
+  geom_line()
+
+```
+
 
 We assume the benefit provided by the ecosystem state is assumed to be directly proportional to the state itself, $b x_t$.  
 We further assume that each year the manager has the option to slow or reverse the environmental degradation by taking action $A_t$, such that under management, the resulting environment in the next time step is given by
@@ -534,7 +547,9 @@ fig_reward <- reward_df %>%
   ylab("reward")
 ```
 
-```{r fig2, include=FALSE}
+### Manuscript Figure 3
+
+```{r fig3}
 fig_sims / ( fig_policy + fig_reward)
 ```
 
