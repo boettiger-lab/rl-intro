@@ -96,8 +96,8 @@ Numerical reproducibility can be challenging in machine learning problems, parti
 np <- import("numpy")
 seed <- 24L # integer
 np$random$seed(seed)
-# Set to "" to force CPU-evaluation if needing perfect reproducibility
-Sys.setenv("CUDA_VISIBLE_DEVICES"="")
+# Optionally set to "" to force CPU-evaluation if needing perfect reproducibility
+# Sys.setenv("CUDA_VISIBLE_DEVICES"="")
 
 ```
 
@@ -346,20 +346,50 @@ fig_reward <- reward_df %>%
   ylab("reward")
 ```
 
-```{r fig1, fig.cap=""}
+
+
+```{r fig1, fig.cap="", include=FALSE}
 fig_sims / ( fig_policy + fig_reward)
 ```
 
 
 
 
-## Ecological tipping points
+# Ecological tipping points
 
 Our second example utilizes our `gym_conservation` to provide the necessary environment to simulate an ecosystem approaching a tipping point.
-For simplicity we will train only a TD3-based agent this time.  
+
+## Tipping point model
+
+The tipping point model is based on the consumer-resource model of @May1977, which creates alternative stable states, 
+which we subject to log-normal environmental noise:
+
+\begin{equation}
+\mu_{t} = X_t + X_t r \left(1 - \frac{X_t}{K}) - \frac{a_t X_t^q}{X_t^q + b^q} 
+X_{t+1} \sim \lognormal(\mut_t, \sigma)
+\end{equation}
+
+where we take $r=0.7$, $K=1.2$, $q=3$, $b=0.15$, $a_0 = 0.19$ and $\sigma = 0.2$ 
+Slow change over time in the parameter $a_t$ represents a process of environmental degradation, modeled as a constant increment $a_{t+1} = a_t + \alpha$, where we will take $\alpha = 0.001$.
+This model supports the dynamics of a fold bifurcation, widely used to model critical transitions in both theory and empirical manipulation in systems from microbes [@Dai2012] to lakes [@Carptenter2011] to the planet biosphere [@Barnosky2014].  
+
+We assume the benefit provided by the ecosystem state is assumed to be directly proportional to the state itself, $b x_t$.  
+We further assume that each year the manager has the option to slow or reverse the environmental degradation by taking action $A_t$, such that under management, the resulting environment in the next time step is given by
+
+\beign{equation}
+a_{t+1} = a_t + \alpha - A_t
+\end{equation}
+
+We assume the cost associated with that action to be proportional to the square of the action, such that large actions are proportionally more costly than small ones.
+Consequently, the utility at time $t$ is given by the sum of costs and benefits:
+
+$$U(X_t, A_t) = b X_t - c A_t ^2$$
+where we will take $b = 1$ and $c=1$.  
+Our implementation in `gym_conservation` allows the user to consider alternative parameter choices, alternative models for the ecological dynamics, and alternate types of actions, such as manipulating the ecosystem state directly rather than manipulating the environmental parameter. 
+For some such scenarios the optimal solution is known or can be determined by stochastic dynamic programming, while for others, including the scenario of focus here, the optimal solution is unknown.
 
 
-
+For simplicity of illustration, we will train only a TD3-based agent on this scenario.
 
 
 ```{r}
@@ -393,7 +423,7 @@ model = sb3$TD3('MlpPolicy',
 ```{r}
 if(!file.exists("cache/td3-conservation.zip")){
 
-  model$learn(total_timesteps=1500000L)
+  model$learn(total_timesteps=3000000L)
   model$save("cache/td3-conservation")
   
 }
@@ -405,9 +435,9 @@ if(!file.exists("cache/td3-conservation.zip")){
 # Simulate management under the trained agent
 # See https://github.com/boettiger-lab/conservation-agents/blob//conservation/TD3-v6.py
 
-TD3 <- sb3$TD3$load("cache/td3-conservation")
-TD3_sims <- env$simulate(TD3, reps = 100L)
-TD3_policy <- env$policyfn(TD3, reps = 10L)
+model <- sb3$TD3$load("cache/td3-conservation")
+TD3_sims <- env$simulate(model, reps = 100L)
+TD3_policy <- env$policyfn(model, reps = 10L)
 ```
 
 

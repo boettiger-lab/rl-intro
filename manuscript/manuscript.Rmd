@@ -29,6 +29,8 @@ keywords:
 bibliography: references.bib
 header-includes:
   - \usepackage{amsmath}
+  - \usepackage{amssymb}
+
 output: 
   rticles::arxiv_article:
     keep_tex: true
@@ -50,14 +52,14 @@ The establishment of protected areas (cite MPAs, 30x30, etc) focuses on policies
 The endangered species act ...
 Ecosystem services ....
 Such simplicity is in no small part due to the challenge associated in determining a 
-Some reference to @TomDietrich on potential for CS-based applciation.
+Some reference to @TomDietrich on potential for CS-based application.
 
 
 In contrast to other ML methods, RL does not require massive data sets for training.  
 Despite the expansion in data collection from remote sensors, citizen science, and other efforts, ecological data remains very sparse on many necessary details.
 Moreover, no amount of data can train supervised or unsupervised ML approaches can predict a future which has no analog in the historical record.
 Mechanistic, process-based models remain our most powerful tool to explore scenarios of dynamic ecosystems in changing climates.
-Methods from _optimal control theory_ have long been used in conservation and resource economics literature [@] to determine optimal policies given such models [@Polasky2011].
+Methods from _optimal control theory_ have long been used in conservation and resource economics literature [@Clark1990] to determine optimal policies given such models [@Polasky2011].
 However, control theory approaches are also tightly constrained by the "curse of dimensionality" [@Mangel1980; @Marescot2013], limiting their application to only simple, stylized models.
 Deep reinforcement learning offers a way forward. 
 Deep RL agents are trained not with mountains of data, but by interacting with simulators.
@@ -113,37 +115,38 @@ An MDP consists of the following: a set of states, $\mathcal{S}$, called the sta
 As the agent interacts with the environment, the agent will create a trajectory in state-action space given as $\tau = (s_0, a_0, \dots, s_H, a_H)$ where H denotes the horizon or length of the state-action sequence.
 From this definition, we can provide an agent's trajectory distribution for a given policy as,
 
-$$
+\[
   p_\pi(\tau) = d_0(s_0) \prod_{t=0}^H \pi(a_t \mid s_t) T(s_{t+1} \mid s_t, a_t)
-$$
+\]
 
 When the agent cannot fully observe the state of the system, reinforcement learning can then be described by a Partially Observable Markov Decision Process (POMDP), wherein there is an additional distribution, $E(o_{t}| s_{t})$, which accounts for the observation being different from system's actual state.
 An important property of POMDPs and MDPs is that they are memoryless; the future, $s_{t+1}$, does not depend on the past but only on the state and action at the present time.
 This Markov property, which is often an unrealistic assumption, is held in most of the RL algorithms that we will discuss.
 
 In formal terms, the goal of reinforcement learning is to find an optimal policy distribution, $\pi^*(a_t | s_t)$ or $\pi^*(a_t|o_t)$ for MDP and POMDP cases respectively, that maximizes the expected cumulative, discounted reward:
-$$
+
+\[
   \pi^* = \underset{\pi}{\text{argmax}} \,\, \mathbb{E}_{\tau \sim p_\pi(\tau)}\Big[\sum_{t=0}^{H} \gamma^t r(s_t, a_t) \Big]
-$$
+\]
 
 Note that this formalism extends to an infinite horizon case when $T= \infty$. While there are RL methods to deal with infinite horizon cases, we will only consider episodic MDP and POMDPs.
 
 Many reinforcement learning algorithms center around estimating value functions, which attempt to quantify the goodness of being in a state or taking an action from a state. Given that the objective of RL is to maximize the cumulative expected reward, "goodness" refers to the likelihood that a state or state-action pair will result in a high reward trajectory.
 There are 3 value functions that are commonly used across RL algorithms: the state value function, $V^\pi(s_t)$, the state-action value function, $Q^\pi(s_t, a_t)$, and the advantage function, $A^\pi(s_t, a_t)$. The state-value function is defined as the expected return from a given state,
 
-$$
+\[
   V^\pi(s_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg]
-$$
+\]
 
 Meanwhile, the state-action-value or quality function, finds the expected return given a state and action,
-$$
+\[
   Q^\pi(s_t, a_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t, a_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg]
-$$
+\]
 
 And lastly, the advantage function characterizes a relative state-action value in that it quantifies how valuable a state-action pair is over a baseline. The advantage function can then be succintly defined as
-$$
+\[
   A^\pi(s_t, a_t) = Q^\pi(s_t, a_t) - V^\pi(s_t)
-$$
+\]
 Learning $Q^\pi$, commonly called the Q-value function, is more powerful than learning the state-value function as Q-values easily prescribe what action to take when in a certain state, $a_t^* = \underset{a_t}{\text{argmax}} \, Q^\pi (s_t, a_t)$. 
 Conversely, if we know the state-value function, we would have to perform a maximization over an expected value to find the optimal action, $a_t^* = \underset{a_t}{\text{argmax}} \, \mathbb{E}_{s_{t+1} \sim \,T(s_{t+1} \mid s_t, a_t)}[V^\pi(s_{t+1})]$, which is less tractable.
 Yet, learning the advantage function is often preferred in practice as advantage estimators favorably have lower variance than state-value and Q-value estimators [cite schulman gae].
@@ -246,7 +249,7 @@ txtcolor <- "#586e75"
 ## Sustainable harvest
 
 The first example focuses on the important but well-studied problem of setting harvest quotas in fisheries management.
-Determining fishing quotas is both a critical ecological issue [@Worm2005; @Worm2009; @Costello2018], and also a textbook example that has long informed the management of renewable resources within fisheries and beyond [@Clark1990].
+Determining fishing quotas is both a critical ecological issue [@Worm2006; @Worm2009; @Costello2018], and also a textbook example that has long informed the management of renewable resources within fisheries and beyond [@Clark1990].
 Given a population growth model that predicts the total biomass of a fish stock in the following year as a function of the current biomass, it straight forward to determine what biomass corresponds to the maximum growth rate of the stock, or $B_{\textrm{MSY}}$, the biomass at Maximum Sustainable Yield (MSY) [@Schaefer1954].
 When the population growth rate is stochastic, the problem is slightly harder to solve, as the harvest quota must constantly adjust to the ups and downs of stochastic growth, but it is still possible to show the optimal strategy merely seeks to maintain the stock at $B_{\textrm{MSY}}$, adjusted for any discounting of future yields [@Reed1979].  
 
@@ -306,18 +309,24 @@ fig_reward <- reward_df %>%
   ylab("reward")
 ```
 
-```{r fig1, fig.cap=""}
+```{r fig1, fig.cap="Fisheries management using neural network agents trained with RL algorithms A2C and TD3 compared to optimal management.  Top panel: mean fish population size over time across 100 replicates. Shaded region shows the 95% confidence interval over simulations.  Lower left: The optimal solution is policy of constant escapement. Below the target escapement of 0.5, no harvest occurs, while any stock above that level is immediately harvested back down (red line).  RL agents both adopt a policies that cease any harvest below this level, while allowing a somewhat higher escapement than optimal just above the optimal escapement level.  A2C policy is non-deterministic, and overharvest from very high stock sizes.  Lower Right: Mean cumulative reward over time across simulations. TD3 achieves nearly-optimal mean utility. Mean reward under A2C is lower, though the confidence interval still overlaps the mean reward of optimal management."}
 fig_sims / ( fig_policy + fig_reward)
 ```
 
 
-Note that the A2C policy learns to shut down fishing entirely below a certain stock size, without any variation.
-However, it keeps the fishery closed even once stock sizes are slightly higher than $B_{MSY}$.
+Note that the A2C policy learns to shut down fishing entirely below a certain stock size, without fail.
+A2C also keeps the fishery closed even once stock sizes are slightly higher than $B_{MSY}$.
 Once it begins fishing, it slightly under-harvests for stock sizes a little over $B_{MSY}$, but tends to over-harvest for very large stock sizes (rarely ever realized, as fishing pressure is enough to keep it out of this range).
 Note also that the harvest varies across replicates, creating a fuzzy region in the policy function.
 Under such a policy, A2C maintains a stock size on average significantly above $B_{MSY}$, though also sees higher volatility particularly on the low side.
-Note that due to the stochastic nature of the environment, any given replicate A2C may out-perform the optimal policy, though on average the optimal policy provides consistently better yields.  
+Note that due to the stochastic nature of the environment, any given replicate A2C may out-perform the optimal policy, though on average the optimal policy provides a higher reward.
 
+These features highlight a common challenge in the design and training of RL algorithms.
+RL cares only about improving the realized cumulative reward, and may sometimes achieve this in unexpected ways.
+Because these simulations rarely take stock sizes close to a state of 1.0, the heavy overfishing behavior A2C has in this range has little consequence.
+Likewise it is more difficult for TD3 to learn the appropriate harvest level at these high states that are rarely sampled in the course of training.
+Just as intuition would suggest, it is possible to devise alternative training schemes which may do a better job sampling the simulation dynamics at high stock levels.
+Training these agents in a variety of alternative contexts can improve there ability to generalize to other scenarios.
 
 ## Ecological Tipping Points
 
@@ -325,16 +334,24 @@ Our second example focuses on a case for which we do not already have an existin
 We consider the generic problem of an ecosystem facing slowly deteriorating environmental conditions which move the dynamics closer towards a tipping point [Fig 2].
 This model of a critical transition has been posited widely in ecological systems, from the simple consumer-resource model of @May1977 on which our dynamics are based, to microbial dynamics [@Dai2013] lake ecosystem communities [@Carpenter2008] to planetary ecosystems [@Barnkosky2014].
 On top of these ecological dynamics we introduce an explicit ecosystem service model quantifying the value of more desirable 'high' state relative to the 'low' state.
-For simplicity, we assume a proportional benefit $b$ associated with the ecosystem state $x(t)$.
-Thus when the ecosystem is near the 'high' equilibrium $\hat x_H$, the corresponding ecosystem benefit $b \hat x_H$ is higher than at the low equilibrium, $b x_L$, consistent with the intuitive description of ecosystem tipping points [@Barknosky2014]. 
+For simplicity, we assume a proportional benefit $b$ associated with the ecosystem state $X(t)$.
+Thus when the ecosystem is near the 'high' equilibrium $\hat X_H$, the corresponding ecosystem benefit $b \hat X_H$ is higher than at the low equilibrium, $b x_L$, consistent with the intuitive description of ecosystem tipping points [@Barnosky2014]. 
 We also enumerate the possible actions which a manager may take in response to environmental degradation. 
 In the absence of any management response, we assume the environment deteriorates at a fixed rate $\alpha$, which can be thought of as the incremental increase in global mean temperature or similar anthropogenic forcing term.
-Management can respond to slow or even reverse this trend by choosing an opposing action $a_t$.
-We assume that large actions are proportionally more costly than small actions, consistent with the expectation of diminishing returns: taking the cost associated with an action $a_t$ as equal to $c a_t^2$.
+Management can respond to slow or even reverse this trend by choosing an opposing action $A_t$.
+We assume that large actions are proportionally more costly than small actions, consistent with the expectation of diminishing returns: taking the cost associated with an action $A_t$ as equal to $c A_t^2$.
 Many alterations of these basic assumptions are also possible: our `gym_conservation` implements a range of different scenarios with user-configurable settings.
-In each case, the manager observes the current state of the system each year and must then select the policy response that year.
+In each case, the manager observes the current state of the system each year and must then select the policy response that year. 
 
 
+
+```{r message=FALSE, fig.cap="Bifurcation diagram for tipping point scenario. The ecosystem begins in the desirable 'high' state under an evironmental parameter (e.g. global mean temperature, arbitrary units) of 0.19.  In the absence of conservation action, the environment worsens (e.g. rising mean temperature) as the parameter increases.  This results in only a slow degredation of the stable state, until the parameter crosses the tipping point threshold at about 0.215, where the upper stable branch is anihilated in a fold bifurcation and the system rapidly transitions to lower stable branch, around state of 0.1.   Recovery to the upper branch requires a much greater conservation investment, reducing the parameter all the way to 0.165 where the reverse bifurcation will carry it back to the upper stable branch."}
+bifur_df <- read_csv("figs/bifur.csv", col_types = "dccd")
+bifur_df %>%
+  ggplot(aes(parameter, state, lty=equilibrium, group = group)) + 
+  geom_line()
+
+```
 
 Because this problem involves a parameter whose value changes over time (the slowly deteriorating environment), the resulting ecosystem dynamics are not autonomous.
 This precludes our ability to solve for the optimal management policy using classical theory such as for Markov Decision Processes (MDP, @Marescot2013), typically used to solve sequential decision-making problems.
@@ -342,7 +359,7 @@ However, it is often argued that simple rules can achieve nearly optimal managem
 A common conservation strategy employs a fixed response level rather than a dynamic policy which is toggled up or down each year: for example, declaring certain regions as protected areas in perpetuity.
 An intuitive strategy faced with an ecosystem tipping point would be 'perfect conservation', in which the management response is perfectly calibrated to counter-balance any further decline.
 While the precise rate of such decline may not be known in practice (and will not be known to RL algorithms before-hand either), it is easy to implement such a policy in simulation for comparative purposes. 
-We compare this rule-of-thumb to the optimal policy found by training an agent using the TD3 algorithm:
+We compare this rule-of-thumb to the optimal policy found by training an agent using the TD3 algorithm.
 
 
 ```{r}
@@ -352,7 +369,7 @@ reward_df <- read_csv("figs/tipping_reward_df.csv")
 ```
 
 
-```{r}
+```{r fig.cap="Ecosystem dynamics under management using the steady-state rule-of-thumb strategy compared to management using a neural network trained using the TD3 RL algorithm.  Top panel: mean and 95% confidence interval of ecosystem state over 100 replicate simulations.  As more replicates cross the tipping point threshold under steady-state strategy, the mean slowly decreases, while the TD3 agent preserves most replicates safely above the tipping point.  Lower left: the policy function learned using TD3 relative to the policy function under the steady state.  Lower right: mean rewards under TD3 management evenutally exceed those expected under the steady state strategy as a large initial investment in conservation eventually pays off."}
 fig_sims <- 
   sims_df %>%
    group_by(time, model) %>% 
@@ -383,11 +400,13 @@ fig_sims / ( fig_policy + fig_reward)
 
 The TD3-trained neural network agent proves far more successful in preventing chance transitions across the tipping point, consistently achieving a higher cumulative ecosystem service value across replicates than the steady-state strategy.
 
-Examining the replicate management trajectories and corresponding rewards reveal that the RL agent incurs significantly higher costs in the initial phases of the simulation, dipping the cumulative reward into negative territory on average and well below the reward realized by the simple steady-state strategy.
+Examining the replicate management trajectories and corresponding rewards [Fig 3] reveal that the RL agent incurs significantly higher costs in the initial phases of the simulation, dipping the cumulative reward into negative territory on average and well below the reward realized by the simple steady-state strategy.
 This initial investment then begins to pay off -- by about 200th time step the RL agent has surpassed the performance of the steady state strategy.  
 The policy plot provides more intuition for the RL agent's strategy: at very high state values, the RL agent opts for no conservation action -- so far from the tipping point, no response is required.
 Near the tipping point, the RL agent steeply ramps up the conservation effort, and retains this effort even as the system falls below the critical threshold, where a sufficiently aggressive response can tip the system back into recovery.
 For a system at or very close to the zero-state, the RL agent gives up, opting for no action.
+Recall that the quadratic scaling of cost makes the rapid response of the TD3 algorithm much more costly to achieve the same net environmental improvement divided into smaller increments over a longer timeline.
+However, our RL agent has discovered that the extra investment for a rapid response is well justified as the risk of crossing a tipping point increases.
 
 A close examination of the trajectories of individual simulations which cross the tipping point under either management strategy (see appendix, fig S1, S2) further highlights the difference between these two approaches.
 Under the steady-state strategy, the system remains poised too close to the tipping point: stochastic noise eventually drives most replicates across the threshold, where the steady-state strategy is too weak to bring them back once they collapse.
@@ -399,29 +418,68 @@ Only 3 out of 100 replicates degrade far enough for the RL agent to give up the 
 Such examination makes it clear how the RL agent's use of a more dynamic strategy out-preforms the steady-state strategy.
 The various kinks in the RL policy function also suggest that this solution is nevertheless surely not the optimal solution -- such features are typical of RL-based policies, where such spandral features from early experimentation may become baked into the long-term strategy if adjusting them has little improvement on the final reward.
 Further tuning of hyper-parameters, increased training, alterations to the training algorithm or an entirely different training algorithm would likely be able to further improve upon this performance.
-
-In particular, the use of a recurrent neural network architecture instead of the multi-layer perceptron used here would open the door for the policy to reflect the non-autonomous dynamics more directly.
+The use of a recurrent neural network architecture instead of the multi-layer perceptron used here would open the door for the policy to reflect the non-autonomous dynamics more directly.
 A recurrent neural network, such as long-short-term-memory (LSTM), could learn a strategy which reflects not only the current system state, but also latent information such as the time elapsed.
 
 
-
-## Example of an open problem without an RL solution
-
+# Discussion
 
 
+<!-- 
 
-fire gym?
+1. Return to theme of RL vs supervised/unsupervised learning.
+
+
+-->
+
+<!-- Something about relevance to both the _theory_ and practice of ecological conservation. (e.g. "strategic" 1-D models have probably had a greater influence, (for better or worse!) on real world policies than complex, detail-specific, precise "tactical" models) -->
+
+
+## Open Problems
+
+The examples presented here only scrape the surface of possible RL applicaations to conservation problems.
+The examples we have focused on are intentionally quite simple, though it is worth remembering that these very same simple models have a long history of relevance and application in both research and policy contexts.
+Despite their simplicity, the optimal strategy is not always obvious before hand, however intutive it may appear in retrospect.
+In the case of the ecosystem tipping point scenario, the optimal strategy is unknown, and the approximate solution found by our RL implementation could almost certainly be improved upon.
+
+
+Even at it's best, an RL-trained agent can only be as good as the scenarios on which it has been trained. 
+In these simple examples in which the simulation implements a single model, training is analgous to classical methods which take the model as given [@Marescot2013].
+But classical approaches can be difficult to generalize when the underlying model is unknown: alternative models may require a completely different approach.
+In contrast, the process of training an RL algorithm on a more complex problem is no different than the simple one: we only need access to a simulation which can generate plausible future states in response to possible actions.
+Many of our most realistic ecological models exist only as numerical simulations of lower-level dynamics, such as the individual-based models used in the management of forests and wildfire [@sortie; @firemodel], disease [@disease], marine ecosystems [@ecopath], or global climate change [@gcm].
+
+
+
+
+
+
+# Discussion
+
 
 
 # Open issues
 
-Deep reinforcement learning has only become an established subfield of AI over the past decade; and, as with most young fields, there are a range of unsolved problems. In practice, the foremost problem with DRL is instability. For a range of reasons, including high variance and the exploration vs. exploitation trade-off, model-free and model-based algorithms tend to have unstable performance on environments with non-tabular state-action spaces [cite RL that matters]. For instance, it is not uncommon to observe vastly different behavior when two agents are initialized with different random seeds [cite ibid]. Since model-based and model-free algorithms typically have a large number of hyperparameters, each of which can contribute to training instability, it is practically impossible to identify the source of instability. The hope of the RL practitioner is that after doing an exhaustive hyperparameter search, the practitioner will find a set of hyperparameters that results in a robust, well-performing agent, but there are no guarantees that hyperparameter tuning will lead to this outcome. 
+Deep reinforcement learning has only become an established subfield of AI over the past decade; and, as with most young fields, there are a range of unsolved problems. 
+In practice, the foremost problem with DRL is instability. 
+For a range of reasons, including high variance and the exploration vs. exploitation trade-off, model-free and model-based algorithms tend to have unstable performance on environments with non-tabular state-action spaces [cite RL that matters]. 
+For instance, it is not uncommon to observe vastly different behavior when two agents are initialized with different random seeds [cite ibid].
+Since model-based and model-free algorithms typically have a large number of hyperparameters, each of which can contribute to training instability, it is practically impossible to identify the source of instability. 
+The hope of the RL practitioner is that after doing an exhaustive hyperparameter search, the practitioner will find a set of hyperparameters that results in a robust, well-performing agent, but there are no guarantees that hyperparameter tuning will lead to this outcome. 
 
-In the context of conservation, we anticipate that there will be a host of specific challenges to using DRL methods. Interpretability is likely to be the biggest barrier to adoption. Although there have been some attempts to increase the transparency of RL agents that use neural network as function approximators [cite], it is still very difficult to explain the behavior of RL-trained agents. Another challenge is that DRL algorithms are very sample inefficient, and to overcome sample inefficiency for conservation decision-making problems that are often data poor, relying on simulations to train agents will be necessary. While there are positives to using simulated data, any assumptions or biases that are included in the model will determine agent behavior. 
+In the context of conservation, we anticipate that there will be a host of specific challenges to using DRL methods. 
+Interpretability is likely to be the biggest barrier to adoption. 
+Although there have been some attempts to increase the transparency of RL agents that use neural network as function approximators [cite], it is still very difficult to explain the behavior of RL-trained agents. 
+Another challenge is that DRL algorithms are very sample inefficient, and to overcome sample inefficiency for conservation decision-making problems that are often data poor, relying on simulations to train agents will be necessary. While there are positives to using simulated data, any assumptions or biases that are included in the model will determine agent behavior. 
 
-An issue that is central to any applied optimization problem is using the right objective. There have been many examples in which explicit reward design goes horribly wrong [cite]. And for ecological systems, which are often very complex and impossible to fully observe, it seems that bad reward design is quite likely. Moreover, specifying a reward function for conservation brings up various ethical concerns -- e.g. who gets to specify the reward function and will the values of the greater community be represented in the reward function. One recently proposed framework to overcome challenges with explicit reward design is called AI alignment, wherein the agent observes humans, infers the preferences of humans and then acts as to satisfy human preferences. Yet, in the context of training an agent to say conserve a species, there are questions that could easily arise, foremost will the agent infer that humans don't care about a certain species so acts in a way that leads to that species' extinction? There is a definite need for exploration of the ethics of using DRL for conservation.
+An issue that is central to any applied optimization problem is using the right objective. 
+There have been many examples in which explicit reward design goes horribly wrong [cite]. 
+And for ecological systems, which are often very complex and impossible to fully observe, it seems that bad reward design is quite likely. 
+Moreover, specifying a reward function for conservation brings up various ethical concerns -- e.g. who gets to specify the reward function and will the values of the greater community be represented in the reward function. One recently proposed framework to overcome challenges with explicit reward design is called AI alignment, wherein the agent observes humans, infers the preferences of humans and then acts as to satisfy human preferences. 
+Yet, in the context of training an agent to say conserve a species, there are questions that could easily arise, foremost will the agent infer that humans don't care about a certain species so acts in a way that leads to that species' extinction? There is a definite need for exploration of the ethics of using DRL for conservation.
 
-Ultimately, we anticipate that getting DRL to work well on fully detailed conservation decision-making problems will be challenging. Beyond typically having large state-action spaces for agents to explore, conservation problems tend to have sparse reward structures. E.g. rarely does an action in conservation lead to immediate rewards; instead, benefits are typically observed after actions have been performed. Sparse reward structures are challenging for DRL agents, because of the credit assignment problem [cite]. To solve sparse reward environments, many researchers have employed customized algorithms to achieve better performance than standard DRL methods [cite Montezuma]. For conservation, we anticipate that there will likely be a similar pattern, wherein bespoke RL methods will attain better performance than general methods.
+Ultimately, we anticipate that getting DRL to work well on fully detailed conservation decision-making problems will be challenging. 
+Beyond typically having large state-action spaces for agents to explore, conservation problems tend to have sparse reward structures. E.g. rarely does an action in conservation lead to immediate rewards; instead, benefits are typically observed after actions have been performed. Sparse reward structures are challenging for DRL agents, because of the credit assignment problem [cite]. To solve sparse reward environments, many researchers have employed customized algorithms to achieve better performance than standard DRL methods [cite Montezuma]. For conservation, we anticipate that there will likely be a similar pattern, wherein bespoke RL methods will attain better performance than general methods.
 
 - wild west of AI?
 -can separate RL from having gyms implemented -> how do you compare different models, 

@@ -259,6 +259,13 @@
       "Repository": "RSPM",
       "Hash": "4ded8b439797f7b1693bd3d238d0106b"
     },
+    "ggthemes": {
+      "Package": "ggthemes",
+      "Version": "4.2.4",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "617fb2c300f68e8b1ba21043fba88fd7"
+    },
     "glue": {
       "Package": "glue",
       "Version": "1.4.2",
@@ -576,10 +583,10 @@
     },
     "rticles": {
       "Package": "rticles",
-      "Version": "0.17",
+      "Version": "0.19",
       "Source": "Repository",
       "Repository": "RSPM",
-      "Hash": "12e9c0d85a390d72ec84e703ab129a39"
+      "Hash": "87b3f5ddfdd8fb6510855be5370bc029"
     },
     "rvest": {
       "Package": "rvest",
@@ -660,10 +667,10 @@
     },
     "tinytex": {
       "Package": "tinytex",
-      "Version": "0.27",
+      "Version": "0.31",
       "Source": "Repository",
       "Repository": "RSPM",
-      "Hash": "264b4a31d35bb6833566a7763356ab63"
+      "Hash": "25b572f764f3c19fef9aac33b5724f3d"
     },
     "utf8": {
       "Package": "utf8",
