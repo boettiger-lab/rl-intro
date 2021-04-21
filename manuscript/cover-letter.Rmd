@@ -5,7 +5,7 @@ output: pdf_document
 
 Dear John Drake,
 
-We are pleased to present a proposal for an article discussing the potential use of deep Reinforcement Learning in theoretical and applied ecological conservation.
+We are pleased to present a proposal for an article discussing the potential use of deep Reinforcement Learning in theoretical and applied ecological conservation for the Methods section of Ecology Letters.
 
 Advances in both available data and computing power have begun to open the door to a greater role for machine learning (ML) in addressing some of our planet's most pressing environmental problems, such as the growing frequency and intensity of wildfire, over-exploited fisheries, declining biodiversity, and zoonotic pandemics. 
 Will such approaches really help us tackle a changing planet? 
