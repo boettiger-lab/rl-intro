@@ -12,7 +12,7 @@ Will such approaches really help us tackle a changing planet?
 Machine learning is traditionally divided into three categories: supervised learning, unsupervised learning and reinforcement learning.
 Of these three branches, reinforcement learning has garnered the least amount of attention from ecologists despite it potentially being the most impactful for ecological conservation.
 The goal of RL is to train a software agent to maximize some objective in a dynamic environment -- notable examples include navigation in autonomous robots or Google's AlphaZero. 
-An advantage of RL is that unlike the other branches of ML, RL can rely entirely on simulators to achieve optimal agent performance.
+An advantage of RL is that unlike other branches of ML, RL can rely entirely on simulators to achieve optimal performance.
 
 Rather than seeking to displace process-based models of the past century with opaque machines, we illustrate how we can use such mechanistic models to drive realistic simulations which we can then train leading RL algorithms to manage. 
 We demonstrate this approach using examples from fisheries management, ecosystem tipping points, and wildfire spread. 
