@@ -14,7 +14,7 @@ Of these three branches, reinforcement learning has garnered the least amount of
 The goal of RL is to train a software agent to maximize some objective in a dynamic environment -- notable examples include navigation in autonomous robots or Google's AlphaZero. 
 An advantage of RL is that unlike other branches of ML, RL can rely entirely on simulators to achieve optimal performance.
 
-Rather than seeking to displace process-based models of the past century with opaque machines, we illustrate how we can use such mechanistic models to drive realistic simulations which we can then train leading RL algorithms to manage. 
+Rather than seeking to displace process-based models of the past century with opaque machines, we illustrate how we can use such mechanistic models to build realistic simulators that the RL agents will learn from.
 We demonstrate this approach using examples from fisheries management, ecosystem tipping points, and wildfire spread. 
 Although our examples are primarily a proof-of-principle, they serve to illuminate both the promise as well as potential pitfalls. 
 Those pitfalls are not only technical, but include issues of ethics and power, particularly if the algorithms or data are proprietary. 
