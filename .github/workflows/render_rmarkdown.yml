@@ -1,0 +1,32 @@
+
+on: push
+
+name: Render manuscript
+
+jobs:
+  render:
+    name: Render RMarkdown
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: r-lib/actions/setup-r@master
+      - uses: r-lib/actions/setup-pandoc@v1
+      - uses: r-lib/actions/setup-tinytex@master
+      - name: Cache Renv packages
+        uses: actions/cache@v2
+        with:
+          path: $HOME/.local/share/renv
+          key: r-${{ hashFiles('renv.lock') }}
+          restore-keys: r-
+
+      - name: Install packages
+        run: |
+          R -e 'install.packages("renv")'
+          R -e 'renv::restore()'
+      - name: Appendix
+        run: |-
+          Rscript -e "rmarkdown::render('manuscript/appendix.Rmd')"
+      - name: Manuscript
+        run: |-
+          Rscript -e "rmarkdown::render('manuscript/manuscript.Rmd')"
+
