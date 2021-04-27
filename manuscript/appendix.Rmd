@@ -57,19 +57,19 @@ At the time of writing, several major frameworks exist which provide convenient 
 
 # Deep Reinforcement Learning in R
 
-All though all the necessary tooling for RL is implemented in python, the R language is more familiar to most ecologists.
-Fortunately, modern bindings such as the `reticulate` package [@reticulate] make it straight forward to use these tools without ever leaving the R interface.
-In this appendix, we detail this "pure R" approach, as well as a "pure python" approach.
+Although all the necessary tooling for RL is implemented in Python, the R language is more familiar to most ecologists.
+Fortunately, modern bindings such as the `reticulate` package [@reticulate] make it straightforward to use these tools without ever leaving the R interface.
+In this appendix, we detail this "pure R" approach, as well as a "pure Python" approach.
 
-In the R based-approach, R functions take responsibility from the user for translating commands into python code before it is executed, an approach commonly referred to as meta-programming.
-This still requires a local python installation, which can be installed directly from R using the command `install_miniconda()` from the `reticulate` package in R.
+In the R based-approach, R functions take responsibility from the user for translating commands into Python code before it is executed, an approach commonly referred to as meta-programming.
+This still requires a local Python installation, which can be installed directly from R using the command `install_miniconda()` from the `reticulate` package in R.
 Alternately, users may prefer running the analysis inside a docker container.  
-The Rocker Project [@rocker] provides pre-built docker containers which include the necessary R and python environments, as well as CUDA libraries required to take advantage of GPU-based acceleration on suitable architectures.
-This can be particularly useful for users running ML algorithms on remote servers, as configuring R, python, and CUDA environments appropriately can be challenging.  
+The Rocker Project [@rocker] provides pre-built docker containers which include the necessary R and Python environments, as well as CUDA libraries required to take advantage of GPU-based acceleration on suitable architectures.
+This can be particularly useful for users running ML algorithms on remote servers, as configuring R, Python, and CUDA environments appropriately can be challenging.  
 
 
 Clone the repository <https://github.com/boettiger-lab/rl-intro>, e.g. using the New Project->From Version Control->Git menu in RStudio.
-From the project directory, we can then install all the necessary dependencies using `renv`, which helps ensure a reproducible environment of fixed versions of R packages and python modules.
+From the project directory, we can then install all the necessary dependencies using `renv`, which helps ensure a reproducible environment of fixed versions of R packages and Python modules.
 
 
 ```{r}
@@ -93,7 +93,7 @@ gym_fishing <- import("gym_fishing")
 gym_conservation <- import("gym_conservation")
 ```
 
-Numerical reproducibility can be challenging in machine learning problems, particularly when using GPU-based acceleration. In addition to setting a random seed in our python environment, we can optionally disable GPU use to improve reproducibility by setting the `CUDA_VISIBLE_DEVICES` to a blank value.  
+Numerical reproducibility can be challenging in machine learning problems, particularly when using GPU-based acceleration. In addition to setting a random seed in our Python environment, we can optionally disable GPU use to improve reproducibility by setting the `CUDA_VISIBLE_DEVICES` to a blank value.  
 
 ```{r}
 ## reproducible settings
@@ -110,28 +110,26 @@ set.seed(seed)
 
 ## Sustainable Harvest Quotas
 
-We begin by select an environment from `gym_fishing` by name, passing the optional parameter `sigma` to initialize the environment with multiplicative Gaussian environmental noise of sd of `0.1`.  
+We begin by selecting an environment from `gym_fishing` by name, passing the optional parameter `sigma` to initialize the environment with multiplicative Gaussian environmental noise of sd of `0.1`.  
 
 ```{r }
 ## initialize the environment
 env <- gym$make("fishing-v1", sigma = 0.1)
 ```
 
-
-
-At the heart of each algorithm is a neural network. The type, size and depth of network, choice of activation functions and so forth, are considered "hyper-parameters" of algorithm: 
-we must first make a selection for each of these hyper-parameters to define our (untrained) agent.  
-Other hyper-parameters determine other aspects of the training regime: such as how the agent chooses to explore possible actions, the learning rate, or how future rewards are discounted (gamma).
-Each algorithm may have different hyper-parameters. `stable-baselines3` provides default values for all hyperparameters based on the original papers that introduced the corresponding algorithms,
-for instance, the A2C algorithm originally described in @A2C. 
-Here, we train an agent using the A2C algorithm using default hyperparameter settings, utilizing a multi-layer perceptron neural network composed of two 64-neuron layers.
+At the heart of each deep RL algorithm is a neural network or a collection of neural networks. The RL agent uses these networks to approximate a policy function and/or a value function. The policy function is the agent's mapping of states to actions -- i.e. the agent's strategy. Value functions attempt to evaluate the goodness of a state or state-action pair towards achieving the RL objective of maximizing cumulative rewards. 
+Confusingly, the parameters of a RL algorithm that detail the overall learning process are called _hyper-parameters_ while the parameters of a RL algorithm that are learned during training are called parameters. For example, the number of layers in a neural network is a hyper-parameter but a weight in the neural net is referred to as a parameter.
+Before training an agent, we must first specify the hyper-parameters; the algorithm's parameters are often randomly initialized.
+Each algorithm may have different hyper-parameters. `stable-baselines3` provides default values for all hyper-parameters based on the original papers that introduced the corresponding algorithms,
+for instance, the A2C algorithm originally described in @A2C.
+Here, we train an agent using the A2C algorithm using default hyper-parameter settings with a multi-layer perceptron policy and value network composed of two 64-neuron layers.
 
 ```{r}
 a2c <- sb3$A2C('MlpPolicy', env, verbose=0L, seed = seed) # L indicates a (Long) integer, not floating point
 ```
 
 
-Training is the main computationally intensive process, which can take anywhere from a few minutes to many days, depending on the complexity of the environment and the number of training iterations budgeted.
+Training is the main computationally intensive process, which can take anywhere from a few minutes to many days, depending on the complexity of the environment, the neural network architecture and the number of training iterations budgeted.
 Therefore, we save the trained agent to disk, and only execute the training method (`learn`) if no previously saved agent is found:
 
 ```{r}
@@ -146,7 +144,7 @@ if(!file.exists("cache/a2c.zip")) {
 ```
 
 
-Note that while default hyperparameters provide a useful starting place (particularly when the environment has been suitably normalized, a best-practice we discuss above), better performance can almost always be achieved by _tuning_ the hyperparameter selection. This is discussed further below. 
+Note that while default hyper-parameters provide a useful starting place (particularly when the environment has been suitably normalized, a best-practice we discuss above), better performance can almost always be achieved by _tuning_ the hyper-parameter selection. This is discussed further below. 
 Having saved our trained agent to disk (`cache/a2c.zip`), we can then re-load this agent for evaluation or to continue training.  Note that a copy of the trained agents are included in the corresponding GitHub repository.
 
 ```{r}
@@ -159,7 +157,7 @@ We can supply an observation to our trained agent and it will return it's propos
 This is all we need to evaluate or employ the agent on a decision-making task.
 Recall that state space and action space in the fishing gym have been re-scaled to a (-1, 1) interval.
 Note that this is equivalent to a choice of appropriate units -- we can re-scale the interval without loss of generality.
-This is often a critical step in the design of an RL environment to facilitate successful training.
+This is often an important step in the design of an RL environment to facilitate successful training.
 Following the `gym` standard, the core methods such as `predict` and `step` operate on the re-scaled units,
 so it is necessary to first transform the original units into this re-scaled state space.
 For example, if we wish to start a simulation with a stock size of 0.75, we can use the helper
@@ -177,8 +175,7 @@ state
 
 
 With an initial state in hand, we are ready to simulate management using our agent.
-The iteration is simple: we use the agent to predict what action we should take given the current state,
-and then we take said action and examine the result to determine the future state. 
+The iteration is simple: we use the agent to predict what action we should take given the current state. Then, we take said action and examine the result to determine the future state. 
 Because these methods return additional information as well, a little extra sub-setting is required in R:
 
 ```{r}
@@ -202,9 +199,9 @@ a2c_sims <- env$simulate(a2c, reps = 500L)
 
 
 Because the agent typically attempts to retain the fish population near a specific value, simulations with well-trained agents will usually not explore the full range of possible states.
-To get a better idea of how the agent behaves across the full state space, it common to consider a policy function: a plot of the action taken at each possible state.
+To get a better idea of how the agent behaves across the full state space, it is common to examine the policy function: to do this, we'll plot the action taken at every possible state.
 Some agents are non-deterministic, so we may want to use replicate draws at each state to get a better picture of the agent's behavior.
-Note that the `policyfn` method is another custom method and not part of the `gym` standard, and the use of a policy function will not make sense for agents that consider the history of many previous states in selecting their action, such as agents which utilize recurrent neural network architectures like LSTM [@LSTM].
+Note that the `policyfn` method is another custom method and not part of the `gym` standard. The use of `policyfn` will not make sense for agents that consider the history of many previous states in selecting their action, such as agents which utilize recurrent neural network architectures like LSTMs [@LSTM].
 
 ```{r}
 a2c_policy <- env$policyfn(a2c, reps = 50L)
@@ -215,12 +212,12 @@ a2c_policy <- env$policyfn(a2c, reps = 50L)
 ## TD3
 
 We train a second agent based on the TD3 algorithm. 
-This illustrates some of the salient differences between the different algorithms used in reinfocement learning.
-Bear in mind that the best algorithm for any given environment will depend on the details of the environment, as well
-as the length of training and the selection of hyper-parameters, including the agent's underlying neural networks which provide the 'brains' of the agent's decision-making ability.
+This illustrates some of the salient differences between the different algorithms used in reinforcement learning.
+Bear in mind that the best algorithm for any given environment will depend on the details of the environment as well
+as the length of training and the selection of hyper-parameters.
 This time, we will declare our choices for the hyper-parameters explicitly.
 Note that some of these hyper-parameters, such as the `learning_rate` and discount rate, `gamma`, are also hyper-parameters of the A2C algorithm, while others, like the `action_noise` describing how new actions are proposed, are not used in A2C.
-Good choices for hyper-parameters can be found through a process known as "hyper-parameter tuning", which simply uses standard function optimization approaches to vary the choice of hyper-parameters used in training to determine which maximizes the agent's performance. 
+Good choices for hyper-parameters can be found through a process known as "hyper-parameter tuning", which uses standard function optimization approaches to vary the choice of hyper-parameters to determine which hyper-parameters maximize the agent's performance. 
 For simplicity, we show only training with specified hyper-parameters here, example scripts for tuning the algorithm to discover these values can be found in <https://github.com/boettiger-lab/rl-toolkit>, and compare to the tuning utilities found in `stable-baselines3-zoo` [@zoo].  
 
 ```{r}
@@ -556,7 +553,7 @@ fig_sims / ( fig_policy + fig_reward)
 
 Because it is difficult to get a feel for the dynamics of individual replicate simulations from ensemble statistics, we select a few example trajectories to examine directly. 
 Of the 100 replicate simulations, we pick 4 examples that dip below a state value of 0.2 for over 15 consecutive timesteps, indicating a transition into the lower basin of attraction. 
-Comparing the dynamics under the rule of thumb steady-state strategy to that of the RL-trained agent, it is clear that RL agent does a better job at both avoiding tipping points and promoting the recovery of those selected trajectories that cross into the lower attractor. 
+Comparing the dynamics under the rule of thumb steady-state strategy to that of the RL-trained agent, it is clear that the RL agent does a better job at both avoiding tipping points and promoting the recovery of those selected trajectories that cross into the lower attractor. 
 
 
 
