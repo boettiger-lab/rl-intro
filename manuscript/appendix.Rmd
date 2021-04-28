@@ -38,7 +38,7 @@ output:
 
 ```{r knitr, include = FALSE}
 knitr::opts_chunk$set(echo=TRUE, message = FALSE, warning = FALSE,
-                      fig.width = 7, fig.height = 4, cache = TRUE)
+                      fig.width = 7, fig.height = 4, cache = FALSE)
 ggplot2::theme_set(ggplot2::theme_bw())
 
 scale_colour_discrete <- function(...) ggthemes::scale_colour_solarized()
@@ -357,6 +357,81 @@ fig_sims / ( fig_policy + fig_reward)
 ```
 
 
+## Applying an RL agent to real data
+
+
+We use historical data from Argentine Hake to illustrate how an RL agent might be applied in practice.
+
+Historical biomass and catch data for Argentine Hake can be found in the R.A. Myers Legacy Stock Assessment Database [@ramlegacy].
+We will use the agent we have just trained using the `gym_fishing` simulator above, 
+
+```{r}
+# Simulate management under the trained agent
+env <- gym$make("fishing-v1", r = 1.0379274,	K = 1.197693, sigma = 0.1121662)
+td3 <- sb3$TD3$load("cache/td3")
+
+```
+
+
+
+```{r}
+hake <- read_csv("../data/hake.csv")
+x0 <- hake %>%
+ filter(year == min(year)) %>%
+  pull(scaled_biomass)
+Tmax <- 15
+years <-1986:2000
+
+td3_state <- td3_action <- numeric(Tmax)
+td3_state[1] <- x0
+td3_action[1] <- NA
+
+```
+
+
+Our hindcast considers the scenario of managing catch quotas using TD3, beginning in 1986. 
+We compare both the anticipated harvest and resulting stock biomass to the historically recorded harvest and biomass.
+This shows that quotas set by TD3 would have been lower than historical values throughout the late 80s and early 90s, which
+saw a sharp decline in estimated biomass of the Argentine Hake.
+For the same or higher estimated stock sizes from the historical record, we see that TD3 would recommend a lower quota.
+We also see that under TD3 the stock recovers sufficiently to predict higher quotas by the second half of the 90s than were
+being set in the now-depleted stock.  
+Whether the TD3 quotas would have truly been sufficient to permit recovery in stock sizes shown in the simulation clearly depends on the accuracy of the underlying simulation.
+However, the fact that TD3 would set a lower quota than the historical management given the same or even higher estimate of stock size is independent of the Hake simulation.
+Combined with the observed historical declines, this provides some evidence that the RL agent could have decreased or avoided the over-harvesting in this case. 
+
+
+```{r}
+env$reset()
+## represent the initial state size in the 'rescaled' state space.
+state <- env$get_state( x0 )
+
+for(i in 2:Tmax){
+  
+  # RL-recommended harvest action:
+  out <- td3$predict(state)
+  action <- out[[1]]
+  
+  # Record state and resulting action
+  td3_state[i] <- env$get_fish_population(state)
+  td3_action[i] <- env$get_quota(action)
+  
+  # Implement RL-recommended harvest. 
+  result <- env$step(action)
+  state <- result[[1]]
+  
+  #state <- env$get_state(hake$scaled_biomass[i+1])
+}
+
+df <- bind_rows(
+  tibble(year = years, state = td3_state, action = td3_action, model = "TD3"),
+  tibble(year = years, state = hake$scaled_biomass, action = hake$scaled_catch, model = "historical"))
+
+df %>% ggplot(aes(year, state, col=model)) + geom_line() + geom_point(aes(year, action, col=model))
+
+```
+
+
 
 
 # Ecological tipping points
@@ -416,15 +491,15 @@ env <- gym$make("conservation-v6")
 
 
 ```{r}
-
 noise_std = 0.4805935357322933
-action_noise = sb3$common$noise$OrnsteinUhlenbeckActionNoise(mean = np$zeros(1L),
-                                            sigma = noise_std * np$ones(1L))
+
+OU <- sb3$common$noise$OrnsteinUhlenbeckActionNoise
+action_noise = OU(mean = np$zeros(1L),  sigma = noise_std * np$ones(1L))
 
 model = sb3$TD3('MlpPolicy', 
             env, 
             verbose = 0, 
-            seed = seed,
+            seed = 42L,
             "gamma"= 0.995,
             "learning_rate"=  8.315382409902049e-05,
             "batch_size"= 512L,

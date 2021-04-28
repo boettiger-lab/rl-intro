@@ -55,8 +55,8 @@ Such simplicity is in no small part due to the challenge associated in determini
 Some reference to @TomDietrich on potential for CS-based application.
 
 
-In contrast to other ML methods, RL does not require massive data sets for training.  
-Despite the expansion in data collection from remote sensors, citizen science, and other efforts, ecological data remains very sparse on many necessary details.
+In contrast to other ML methods, RL does not require massive data sets for training, relying instead on model simulations based on the best available ecological data and knowledge of underlying processes.
+Despite the expansion in data collection from remote sensors, citizen science, and other efforts, ecological data remains sparse and unevenly sampled [CITE].
 Moreover, no amount of data can train supervised or unsupervised ML approaches can predict a future which has no analog in the historical record.
 Mechanistic, process-based models remain our most powerful tool to explore scenarios of dynamic ecosystems in changing climates.
 Methods from _optimal control theory_ have long been used in conservation and resource economics literature [@Clark1990] to determine optimal policies given such models [@Polasky2011].
