@@ -12,13 +12,13 @@ We would like to propose an article for the Methods section of Ecology Letters w
 Advances in both available data and computing power have begun to open the door to a greater role for machine learning (ML) in addressing some of our planet's most pressing environmental problems, such as the growing frequency and intensity of wildfire, over-exploited fisheries, declining biodiversity, and zoonotic pandemics. 
 But will ML approaches really help us tackle a changing planet?
 Applications of ML in ecology have begun to illustrate the promise of both supervised learning (e.g. image recognition) and unsupervised learning (including clustering and prediction), but have so far largely overlooked the third and possibly most promising approach in the ML triad: Reinforcement Learning (RL).
-Supervised and unsupervised learning approaches require massive amounts of historical data to learn underlying patterns.  
+Supervised and unsupervised learning approaches often require massive amounts of historical data to learn underlying patterns.
 Even when such data is eventually available, they may prove reliable for relatively static tasks such as species identification from audio or visual recordings, yet be a poor guide to a future climate we have never observed.  
 The task of selecting actions in an uncertain and changing environment to maximize some objective is the explicit focus of RL.
 
-To date, the uncertain and changing environments considered by RL research have largely been drawn from examples in robotic movement and games. 
-_Nature_ recently featured RL agents achieving superhuman performance on classic Atari games, _Science_ described the success of Deepmind's AlphaZero against grandmasters in Go, Chess, and Shogi.
-We believe that similar techniques could improve decision-making in managing ecological environments as well. 
+To date, the uncertain and changing environments considered by RL research have largely been drawn from examples in robotic movement and video games. 
+_Nature_ recently featured RL agents achieving superhuman performance on classic Atari games, and _Science_ described the success of Deepmind's AlphaZero against grandmasters in Go, Chess, and Shogi.
+We believe that similar techniques could improve decision-making in managing ecological environments as well. <!-- Having trouble reconciling lines 21-23, trying to say that these simulators are like the grand challenges and given RL's track record of solving intractable decision-making problems, perhaps RL could shed light here? I think having a sentence asserting that RL would use ecological models not replace them would be good somewhere in here.-->
 Already, complex ecological simulators -- SORTIE in forest ecosystems, EcoPath with EcoSim in marine systems, GCM models in climate -- are the Atari games of our policy grandmasters.
 Detailed, process-based models allow a window into the future scenarios of ecological management.
 Drawing on examples from fisheries management, ecosystem tipping points, and wildfire spread, we illustrate how ecological models and simulations can be used to successfully train RL agents that match or exceed the performance of available management strategies.
