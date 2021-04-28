@@ -112,11 +112,14 @@ set.seed(seed)
 
 We begin by selecting an environment from `gym_fishing` by name, passing the optional parameter `sigma` to initialize the environment with multiplicative Gaussian environmental noise of sd of `0.1`.  
 
+<!-- Kari: a brief explaination of the gym$function syntax would probably be helpful - is that a reticulate thing? Just reading later it looks like you reference it as a "method"?-->
+
 ```{r }
 ## initialize the environment
 env <- gym$make("fishing-v1", sigma = 0.1)
 ```
 
+<!-- Kari: the role neural networks play in RL is not very well explained in the paper, more detail there would probably make this part more intuitive --> 
 At the heart of each deep RL algorithm is a neural network or a collection of neural networks. The RL agent uses these networks to approximate a policy function and/or a value function. The policy function is the agent's mapping of states to actions -- i.e. the agent's strategy. Value functions attempt to evaluate the goodness of a state or state-action pair towards achieving the RL objective of maximizing cumulative rewards. 
 Confusingly, the parameters of a RL algorithm that detail the overall learning process are called _hyper-parameters_ while the parameters of a RL algorithm that are learned during training are called parameters. For example, the number of layers in a neural network is a hyper-parameter but a weight in the neural net is referred to as a parameter.
 Before training an agent, we must first specify the hyper-parameters; the algorithm's parameters are often randomly initialized.
