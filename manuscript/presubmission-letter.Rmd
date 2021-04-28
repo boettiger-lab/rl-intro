@@ -13,7 +13,7 @@ Advances in both available data and computing power have begun to open the door 
 But will ML approaches really help us tackle a changing planet?
 Applications of ML in ecology have begun to illustrate the promise of both supervised learning (e.g. image recognition) and unsupervised learning (including clustering and prediction), but have so far largely overlooked the third and possibly most promising approach in the ML triad: Reinforcement Learning (RL).
 Supervised and unsupervised learning approaches often require massive amounts of historical data to learn underlying patterns.
-Even when such data is eventually available, they may prove reliable for relatively static tasks such as species identification from audio or visual recordings, yet be a poor guide to a future climate we have never observed.  
+Even when such data is eventually available, these two methods may prove reliable for relatively static tasks such as species identification from audio or visual recordings, yet be a poor guide to a future climate we have never observed.  
 The task of selecting actions in an uncertain and changing environment to maximize some objective is the explicit focus of RL.
 
 To date, the uncertain and changing environments considered by RL research have largely been drawn from examples in robotic movement and video games. 
