@@ -53,8 +53,8 @@ The establishment of protected areas (cite MPAs, 30x30, etc) focuses on policies
 The endangered species act ... Ecosystem services ....
 Such simplicity is in no small part due to the challenge associated in determining a Some reference to [@TomDietrich] on potential for CS-based application.
 
-In contrast to other ML methods, RL does not require massive data sets for training.\
-Despite the expansion in data collection from remote sensors, citizen science, and other efforts, ecological data remains very sparse on many necessary details.
+In contrast to other ML methods, RL does not require massive data sets for training, relying instead on model simulations based on the best available ecological data and knowledge of underlying processes.
+Despite the expansion in data collection from remote sensors, citizen science, and other efforts, ecological data remains sparse and unevenly sampled [CITE].
 Moreover, no amount of data can train supervised or unsupervised ML approaches can predict a future which has no analog in the historical record.
 Mechanistic, process-based models remain our most powerful tool to explore scenarios of dynamic ecosystems in changing climates.
 Methods from *optimal control theory* have long been used in conservation and resource economics literature [@Clark1990] to determine optimal policies given such models [@Polasky2011].
@@ -67,8 +67,8 @@ The richest ecosystem models, such as the global circulation models (GCMs) used 
 Given sufficient computational power, RL can be trained and evaluated across a broad range of possible realistic scenarios well beyond the reach of classical methods.
 In this manner, RL would compliment, rather than replace, existing empirical and theoretical research which would continue to form the basis for those simulations.
 
-If RL has great promise, the approach also imposes great risk.\
-Lacking the tractability of classical methods, an RL agent can appear to solve a wide class of scenarios with ease, but may fail unexpectedly under seemingly similar conditions [@henderson2017].\
+If RL has great promise, the approach also imposes great risk.
+Lacking the tractability of classical methods, an RL agent can appear to solve a wide class of scenarios with ease, but may fail unexpectedly under seemingly similar conditions [@henderson2017].
 Despite recent progress, Deep RL is a young field and stability and robustness of its methods remain largely open problems
 . RL approaches are no panacea, and improper design or testing can easily lead to negative outcomes
 . Technical issues are not the only pitfall of AI applications to conservation problems
@@ -87,9 +87,6 @@ We also hope these examples serve as illustration of both the potential and peri
 
 -   model (underlying ecological model)
 
-```{=html}
-<!-- -->
-```
 -   agent
 
 -   trained agent (model)
@@ -173,7 +170,6 @@ Yet, learning the advantage function is often preferred in practice as advantage
 
 **Survey of RL Algorithms**
 
-```{=html}
 <!-- 
 
 Conceptual figure:
@@ -185,7 +181,8 @@ Algorithm
   
 
 -->
-```
+
+
 There is an ever increasing multitude of reinforcement learning algorithms, and while there are far too many algorithms to discuss in detail in this paper, we will herein classify and touch on some current methods.
 RL algorithms can generally be split into 2 groups, model-based and model-free RL.
 In model-based RL, the agent is attempting to learn the state transition operator, $T$.
