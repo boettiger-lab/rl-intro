@@ -214,6 +214,8 @@ Since one round of training can be time intensive, hyperparameter tuning, which 
 
 <!-- Kari: I think we need more background on what a neural network is, how it fits in, and what other options are - maybe use examples of hyperparameters that would be in all RL approaches not just those that use neural nets -->
 
+<!-- Can we add citations to each please -->
+
 ```{=latex}
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|c|}
