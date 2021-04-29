@@ -41,18 +41,48 @@ knitr::opts_chunk$set(echo=TRUE, message = FALSE, warning = FALSE,
                       fig.width = 7, fig.height = 4, cache = FALSE)
 ggplot2::theme_set(ggplot2::theme_bw())
 
-scale_colour_discrete <- function(...) ggthemes::scale_colour_solarized()
-scale_fill_discrete <- function(...) ggthemes::scale_fill_solarized()
-pal <- ggthemes::solarized_pal()(8)
-txtcolor <- "#586e75"
+scale_colour_discrete = function(...) ggthemes::scale_colour_solarized()
+scale_fill_discrete = function(...) ggthemes::scale_fill_solarized()
+pal = ggthemes::solarized_pal()(8)
+txtcolor = "#586e75"
 ```
+
+
+# Overview
+
+Development of any deep reinforcement learning application can be divided into two components: an _environment_ and an _agent_.
+An environment is typically a computer simulation, though it is certainly possible to learn from real world environments, such as teaching physical robots to walk and navigate obstacles.
+An agent is typically a computational neural network trained using an appropriate algorithm to suggest an action based on available information about the environment.
+
+Somewhat confusingly, frameworks will often refer to a trained agent as a "model", while also referring to the approaches used to implement and train the agent as "model free" because the agent does not attempt to form an internal model of the environmental process.  We will attempt to mitigate this confusion by referring to the software component used to predict actions as an "agent", and reserving the use of "model" to refer to the ecological model(s) embedded in the environmental simulator.  
+
+
+@brockman2016 identified (1) the lack of standardization of environments used in publication and (2) the need for better benchmark environments as two core problems limiting more rapid advancement of RL research, and proposed the creation of the OpenAI `gym` framework to address both poblems. 
+
+
+
+A rapidly growing set of material for learning about deep reinforcement learning is now freely available.  
 
 
 # Deep Reinforcement Learning Frameworks
 
-At the time of writing, several major frameworks exist which provide convenient access to baseline algorithms commonly used in deep reinforcement learning.  
+At the time of writing, several major frameworks exist which provide convenient access to baseline algorithms commonly used in deep reinforcement learning.
+While we do not seek to provide a comprehensive review of available frameworks, some familiarity with current frameworks can be helpful.
+Like many machine learning libraries, these frameworks are themselves each built around one of two popular machine learning libraries, PyTorch [@torch] or Tensorflow [@tensorflow], and all are based in Python.
+Existing frameworks we evaluated include Keras-RL [@keras-rl], Tensorflow Agents [@tensorflow-agents],  OpenAI Spinning Up [@spinningup] OpenAI Baselines, Stable-Baselines2 [@sb2], and Stable-Baselines3 [@sb3]. 
+Keras-RL saw widespread early adoption, but is built on Tensorflow version 1.x. It is incompatible with Tensorflow 2.x and not actively maintained.
+Tensorflow Agents is developed by the Tensorflow team, a recent and actively developed framework with support for both Tensorflow 1.x and 2.x and good support for low-level customization of RL algorithms.
+However, higher-level interfaces and high-level documentation are still relatively limited.
+OpenAI's SpinningUp is an education-targeted framework useful for developers wanting to become more familiar with the internal methods of RL algorithms.  
+OpenAI's Baselines is primarily Tensorflow 1.x-based implementation of many recently published RL algorithms.
+Researchers at Ensta Paris Tech first created Stable Baselines as a fork of the OpenAI implementation, rigorously addressing numerous issues in documentation, testing, and coding style that have helped make their fork see even greater adoption. 
+Stable-Baselines3 is the most recent version (Feb 2021), a ground-up rewrite which switches to a PyTorch-based implementation and further strengthens internal checks such as static types.
+The examples here all use the Stable-Baselines3 framework, though researchers in this area should expect frameworks to continue to emerge and evolve. 
+Grand challenge problems will likely require significant development beyond the current algorithms and capabilities available in existing frameworks.
 
+# Building a simulation environment `gym`
 
+[@openai_gym]
 
 
 # Deep Reinforcement Learning in R
@@ -87,18 +117,18 @@ library(patchwork)
 library(reticulate)
 
 ## Python dependencies loaded via R
-sb3         <- import ("stable_baselines3")
-gym         <- import ("gym")
-gym_fishing <- import("gym_fishing")
-gym_conservation <- import("gym_conservation")
+sb3         = import ("stable_baselines3")
+gym         = import ("gym")
+gym_fishing = import("gym_fishing")
+gym_conservation = import("gym_conservation")
 ```
 
 Numerical reproducibility can be challenging in machine learning problems, particularly when using GPU-based acceleration. In addition to setting a random seed in our Python environment, we can optionally disable GPU use to improve reproducibility by setting the `CUDA_VISIBLE_DEVICES` to a blank value.  
 
 ```{r}
 ## reproducible settings
-np <- import("numpy")
-seed <- 24L # integer
+np = import("numpy")
+seed = 24L # integer
 np$random$seed(seed)
 # Optionally set to "" to force CPU-evaluation if needing perfect reproducibility
 Sys.setenv("CUDA_VISIBLE_DEVICES"="")
@@ -116,7 +146,7 @@ We begin by selecting an environment from `gym_fishing` by name, passing the opt
 
 ```{r }
 ## initialize the environment
-env <- gym$make("fishing-v1", sigma = 0.1)
+env = gym$make("fishing-v1", sigma = 0.1)
 ```
 
 <!-- Kari: the role neural networks play in RL is not very well explained in the paper, more detail there would probably make this part more intuitive --> 
@@ -128,7 +158,7 @@ for instance, the A2C algorithm originally described in @A2C.
 Here, we train an agent using the A2C algorithm using default hyper-parameter settings with a multi-layer perceptron policy and value network composed of two 64-neuron layers.
 
 ```{r}
-a2c <- sb3$A2C('MlpPolicy', env, verbose=0L, seed = seed) # L indicates a (Long) integer, not floating point
+a2c = sb3$A2C('MlpPolicy', env, verbose=0L, seed = seed) # L indicates a (Long) integer, not floating point
 ```
 
 
@@ -152,7 +182,7 @@ Having saved our trained agent to disk (`cache/a2c.zip`), we can then re-load th
 
 ```{r}
 # Simulate management under the trained agent
-a2c <- sb3$A2C$load("cache/a2c")
+a2c = sb3$A2C$load("cache/a2c")
 ```
 
 
@@ -172,7 +202,7 @@ problem into that state space.
 ```{r}
 
 ## represent the initial state size in the 'rescaled' state space.
-state <- env$get_state( 0.75 )
+state = env$get_state( 0.75 )
 state
 ```
 
@@ -184,10 +214,10 @@ Because these methods return additional information as well, a little extra sub-
 ```{r}
 for(i in 1:10){
   
-  out <- a2c$predict(state)
-  action <- out[[1]]
-  result <- env$step(action)
-  state <- result[[1]]
+  out = a2c$predict(state)
+  action = out[[1]]
+  result = env$step(action)
+  state = result[[1]]
 
 }
 
@@ -197,7 +227,7 @@ For convenience, `gym_fishing` defines the helper routine `simulate` to perform 
 
 
 ```{r}
-a2c_sims <- env$simulate(a2c, reps = 500L)
+a2c_sims = env$simulate(a2c, reps = 500L)
 ```
 
 
@@ -207,7 +237,7 @@ Some agents are non-deterministic, so we may want to use replicate draws at each
 Note that the `policyfn` method is another custom method and not part of the `gym` standard. The use of `policyfn` will not make sense for agents that consider the history of many previous states in selecting their action, such as agents which utilize recurrent neural network architectures like LSTMs [@LSTM].
 
 ```{r}
-a2c_policy <- env$policyfn(a2c, reps = 50L)
+a2c_policy = env$policyfn(a2c, reps = 50L)
 ```
 
 
@@ -267,9 +297,9 @@ With our trained agent, we can simulate replicate scenarios or scan across state
 
 ```{r}
 # Simulate management under the trained agent
-td3 <- sb3$TD3$load("cache/td3")
-td3_sims <- env$simulate(td3, reps = 500L)
-td3_policy <- env$policyfn(td3, reps = 50L)
+td3 = sb3$TD3$load("cache/td3")
+td3_sims = env$simulate(td3, reps = 500L)
+td3_policy = env$policyfn(td3, reps = 50L)
 ```
 
 
@@ -282,9 +312,9 @@ A third model, `msy`, implements a policy based on "Maximum Sustainable Yield" p
 
 ```{r}
 # Simulate under the optimal solution (given the model)
-opt <- gym_fishing$models$escapement(env)
-opt_sims <- env$simulate(opt, reps = 500L)
-opt_policy <- env$policyfn(opt)
+opt = gym_fishing$models$escapement(env)
+opt_sims = env$simulate(opt, reps = 500L)
+opt_policy = env$policyfn(opt)
 ```
 
 
@@ -292,14 +322,14 @@ Having performed simulations under each method, we gather the results under each
 We preserve a copy of each data frames in local `.csv` text files for maximum cross-platform compatibility.
 
 ```{r}
-sims_df <- bind_rows(td3_sims, a2c_sims, opt_sims, .id = "model") %>%
+sims_df = bind_rows(td3_sims, a2c_sims, opt_sims, .id = "model") %>%
   mutate(model = c("TD3", "A2C", "optimal")[as.integer(model)])
 
-policy_df <- bind_rows(td3_policy, a2c_policy, opt_policy, .id = "model") %>%
+policy_df = bind_rows(td3_policy, a2c_policy, opt_policy, .id = "model") %>%
   mutate(model = c("TD3", "A2C", "optimal")[as.integer(model)])
 
-gamma <- 1 #discount
-reward_df <- sims_df %>% 
+gamma = 1 #discount
+reward_df = sims_df %>% 
   group_by(rep, model) %>%
   mutate(cum_reward = cumsum(reward * gamma^time)) %>%
   group_by(time, model) %>%
@@ -317,10 +347,10 @@ write_csv(reward_df, "figs/reward_df.csv")
 Standard R methods are used to plot the results summarized across the replicates:
 
 ```{r}
-ymin <- function(x) last(x[(ntile(x, 20)==1)])
-ymax <- function(x) last(x[(ntile(x, 20)==19)])
+ymin = function(x) last(x[(ntile(x, 20)==1)])
+ymax = function(x) last(x[(ntile(x, 20)==19)])
 
-fig_sims <- 
+fig_sims = 
 sims_df %>% 
   group_by(time, model) %>% 
   summarise(ymin = ymin(state),
@@ -332,7 +362,7 @@ sims_df %>%
 
 
 ```{r}
-fig_policy <- 
+fig_policy = 
   policy_df %>% ggplot(aes(state, action, 
                            group=interaction(rep, model),
                            col = model)) + 
@@ -342,7 +372,7 @@ fig_policy <-
 
 ```{r}
 
-fig_reward <- reward_df %>% 
+fig_reward = reward_df %>% 
   ggplot(aes(time, mean_reward)) + 
   geom_ribbon(aes(ymin = mean_reward - 2*sd, 
                   ymax = mean_reward + 2*sd, fill = model),
@@ -370,24 +400,24 @@ We will use the agent we have just trained using the `gym_fishing` simulator abo
 
 ```{r}
 # Simulate management under the trained agent
-env <- gym$make("fishing-v1", r = 1.0379274,	K = 1.197693, sigma = 0.1121662)
-td3 <- sb3$TD3$load("cache/td3")
+env = gym$make("fishing-v1", r = 1.0379274,	K = 1.197693, sigma = 0.1121662)
+td3 = sb3$TD3$load("cache/td3")
 
 ```
 
 
 
 ```{r}
-hake <- read_csv("../data/hake.csv")
-x0 <- hake %>%
+hake = read_csv("../data/hake.csv")
+x0 = hake %>%
  filter(year == min(year)) %>%
   pull(scaled_biomass)
-Tmax <- 15
-years <-1986:2000
+Tmax = 15
+years =1986:2000
 
-td3_state <- td3_action <- numeric(Tmax)
-td3_state[1] <- x0
-td3_action[1] <- NA
+td3_state = td3_action = numeric(Tmax)
+td3_state[1] = x0
+td3_action[1] = NA
 
 ```
 
@@ -407,26 +437,26 @@ Combined with the observed historical declines, this provides some evidence that
 ```{r}
 env$reset()
 ## represent the initial state size in the 'rescaled' state space.
-state <- env$get_state( x0 )
+state = env$get_state( x0 )
 
 for(i in 2:Tmax){
   
   # RL-recommended harvest action:
-  out <- td3$predict(state)
-  action <- out[[1]]
+  out = td3$predict(state)
+  action = out[[1]]
   
   # Record state and resulting action
-  td3_state[i] <- env$get_fish_population(state)
-  td3_action[i] <- env$get_quota(action)
+  td3_state[i] = env$get_fish_population(state)
+  td3_action[i] = env$get_quota(action)
   
   # Implement RL-recommended harvest. 
-  result <- env$step(action)
-  state <- result[[1]]
+  result = env$step(action)
+  state = result[[1]]
   
-  #state <- env$get_state(hake$scaled_biomass[i+1])
+  #state = env$get_state(hake$scaled_biomass[i+1])
 }
 
-df <- bind_rows(
+df = bind_rows(
   tibble(year = years, state = td3_state, action = td3_action, model = "TD3"),
   tibble(year = years, state = hake$scaled_biomass, action = hake$scaled_catch, model = "historical"))
 
@@ -460,7 +490,7 @@ This model supports the dynamics of a fold bifurcation, widely used to model cri
 
 
 ```{r message=FALSE, fig.cap="Bifurcation diagram for tipping point scenario. The ecosystem begins in the desirable 'high' state under an evironmental parameter (e.g. global mean temperature, arbitrary units) of 0.19.  In the absence of conservation action, the environment worsens (e.g. rising mean temperature) as the parameter increases.  This results in only a slow degredation of the stable state, until the parameter crosses the tipping point threshold at about 0.215, where the upper stable branch is anihilated in a fold bifurcation and the system rapidly transitions to lower stable branch, around state of 0.1.   Recovery to the upper branch requires a much greater conservation investment, reducing the parameter all the way to 0.165 where the reverse bifurcation will carry it back to the upper stable branch."}
-bifur_df <- read_csv("figs/bifur.csv", col_types = "dccd")
+bifur_df = read_csv("figs/bifur.csv", col_types = "dccd")
 bifur_df %>%
   ggplot(aes(parameter, state, lty=equilibrium, group = group)) + 
   geom_line()
@@ -489,14 +519,14 @@ For simplicity of illustration, we will train only a TD3-based agent on this sce
 
 
 ```{r}
-env <- gym$make("conservation-v6")
+env = gym$make("conservation-v6")
 ```
 
 
 ```{r}
 noise_std = 0.4805935357322933
 
-OU <- sb3$common$noise$OrnsteinUhlenbeckActionNoise
+OU = sb3$common$noise$OrnsteinUhlenbeckActionNoise
 action_noise = OU(mean = np$zeros(1L),  sigma = noise_std * np$ones(1L))
 
 model = sb3$TD3('MlpPolicy', 
@@ -531,9 +561,9 @@ if(!file.exists("cache/td3-conservation.zip")){
 # Simulate management under the trained agent
 # See https://github.com/boettiger-lab/conservation-agents/blob//conservation/TD3-v6.py
 
-model <- sb3$TD3$load("cache/td3-conservation")
-TD3_sims <- env$simulate(model, reps = 100L)
-TD3_policy <- env$policyfn(model, reps = 10L)
+model = sb3$TD3$load("cache/td3-conservation")
+TD3_sims = env$simulate(model, reps = 100L)
+TD3_policy = env$policyfn(model, reps = 10L)
 ```
 
 
@@ -550,23 +580,23 @@ This is implemented using the `fixed_action` method provided in our `gym_conserv
 # Simulate under the steady-state solution (given the model)
 K = 1.5
 alpha = 0.001
-opt <- gym_conservation$models$fixed_action(env, fixed_action = alpha * 100 * 2 * K )
-opt_sims <- env$simulate(opt, reps = 100L)
-opt_policy <- env$policyfn(opt)
+opt = gym_conservation$models$fixed_action(env, fixed_action = alpha * 100 * 2 * K )
+opt_sims = env$simulate(opt, reps = 100L)
+opt_policy = env$policyfn(opt)
 ```
 
 
 We gather together the results under the RL agent and steady-state policy as before,
 
 ```{r}
-sims_df <- bind_rows(TD3_sims, opt_sims, .id = "model") %>%
+sims_df = bind_rows(TD3_sims, opt_sims, .id = "model") %>%
   mutate(model = c("TD3", "steady-state")[as.integer(model)])
 
-policy_df <- bind_rows(TD3_policy, opt_policy, .id = "model") %>%
+policy_df = bind_rows(TD3_policy, opt_policy, .id = "model") %>%
   mutate(model = c("TD3", "steady-state")[as.integer(model)])
 
-gamma <- 1 #discount
-reward_df <- sims_df %>% 
+gamma = 1 #discount
+reward_df = sims_df %>% 
   group_by(rep, model) %>%
   mutate(cum_reward = cumsum(reward * gamma^time)) %>%
   group_by(time, model) %>%
@@ -589,10 +619,10 @@ write_csv(reward_df, "figs/tipping_reward_df.csv")
 
 ```{r}
 # ensemble statistics
-ymin <- function(x) last(x[(ntile(x, 20)==1)])
-ymax <- function(x) last(x[(ntile(x, 20)==19)])
+ymin = function(x) last(x[(ntile(x, 20)==1)])
+ymax = function(x) last(x[(ntile(x, 20)==19)])
 
-fig_sims <- 
+fig_sims = 
   sims_df %>%
    group_by(time, model) %>% 
    summarise(ymin = ymin(state),
@@ -604,7 +634,7 @@ fig_sims <-
 
 
 ```{r}
-fig_policy <- 
+fig_policy = 
   policy_df %>% ggplot(aes(state, action, 
                            group=interaction(rep, model),
                            col = model)) + 
@@ -613,7 +643,7 @@ fig_policy <-
 
 ```{r}
 
-fig_reward <- reward_df %>% 
+fig_reward = reward_df %>% 
   ggplot(aes(time, mean_reward)) + 
   geom_ribbon(aes(ymin = mean_reward - 2*sd, 
                   ymax = mean_reward + 2*sd, fill = model),
@@ -639,7 +669,7 @@ Comparing the dynamics under the rule of thumb steady-state strategy to that of 
 # Some individual replicates, for comparison
 
 ## First 4 of the TD3 reps falling below .2 for more than 15 steps
-is_low <- sims_df %>% 
+is_low = sims_df %>% 
   filter(model == "TD3") %>% 
   group_by(rep, model) %>% 
   summarize(low = sum(state < .2) > 10) %>% 
@@ -654,7 +684,7 @@ sims_df %>% inner_join(is_low) %>%
 
 ```{r}
 # Some individual replicates, for comparison
-is_low <- sims_df %>% filter(model == "steady-state") %>%
+is_low = sims_df %>% filter(model == "steady-state") %>%
   group_by(rep, model) %>% summarize(low = sum(state < .2) > 10) %>% 
   filter(low) %>% head(6)
 sims_df %>% inner_join(is_low) %>%
