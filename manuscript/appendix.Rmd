@@ -75,6 +75,8 @@ While this library of environments span a range of difficulties from classic con
 We use the `gym` framework to turn several existing ecological models into valid environmental simulators that can similarly be used in any Reinforcement Learning framework.
 
 
+
+
 ## Designing and training an agent
 
 The training an agent on an environment involves allowing the agent to experience and respond to repeated simulations from the environment, thousands or even millions of times. 
