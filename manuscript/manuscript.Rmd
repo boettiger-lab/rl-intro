@@ -61,6 +61,9 @@ What do we mean by an "environment"?
   
   
 What do we mean by an "agent"?
+
+  Model-based vs Model free.  We focus on Model free agents which use Neural networks, a subset of deep RL
+
   Components of an agent: 
     - *neural network*, whose *parameters* are estimated by *training* +
     - an RL algorithm, whose *hyperparameters* (including NN structure) are estimated by *tuning*
@@ -117,8 +120,10 @@ Before providing some examples on how deep reinforcement learning can be applied
 The basic problem set-up of RL is as follows: at a time step, $t$, the agent observes a representation of the environment's state, $s_t$, and must accordingly select an action, $a_t$; at the next time step, the agent will observe a new state, $s_{t+1}$, and will receive a numerical reward, $r_{t+1}$.
 This new state, $s_{t+1}$, and reward, $r_{t+1}$, are determined by the environment.
 The task for the agent is to learn a *policy*, $\pi$, that prescribes what action the agent should perform after observing a certain state.
-The agent interacts with the environment via trial and error in what is called the *training* period, during which the agent continally updates its policy in order to maximize its expected cumulative sum of rewards.
+The agent interacts with the environment via trial and error in what is called the *training* period, during which the agent continually updates its policy in order to maximize its expected cumulative sum of rewards.
 
+
+<!-- Still can't decide if this statement is too strong; i.e. that at least theoretically / LSTM, RL permits learning processes which are not Markovian in the observed variables -->
 When the environment is fully observable, i.e. when the state that the agent observes fully characterizes the system, the reinforcement learning problem can be formalized as a Markov Decision Process (MDP).
 An MDP consists of the following: a set of states, $\mathcal{S}$, called the state space; a set of actions, $\mathcal{A}$, called the action space; a state transition operator, $T(s_{t+1}|s_t, a_t)$, which describes the dynamics of the system; a reward function, $r(s_t, a_t)$; an initial state distribution, $d_0(s_0)$; and a discount factor, $\gamma \in (0,1]$. As the agent interacts with the environment, the agent will create a trajectory in state-action space given as $\tau = (s_0, a_0, \dots, s_H, a_H)$ where H denotes the horizon or length of the state-action sequence.
 From this definition, we can provide an agent's trajectory distribution for a given policy as,
@@ -141,8 +146,8 @@ Note that this formalism extends to an infinite horizon case when $T= \infty$.
 While there are RL methods to deal with infinite horizon cases, we will only consider episodic MDP and POMDPs.
 
 Many reinforcement learning algorithms center around estimating value functions, which attempt to quantify the goodness of being in a state or taking an action from a state.
-Given that the objective of RL is to maximize the cumulative expected reward, "goodness" refers to the likelihood that a state or state-action pair will result in a high reward trajectory.
-There are 3 value functions that are commonly used across RL algorithms: the state value function, $V^\pi(s_t)$, the state-action value function, $Q^\pi(s_t, a_t)$, and the advantage function, $A^\pi(s_t, a_t)$.
+Given that the objective of RL is to maximize the cumulative expected reward, "goodness" refers to the likelihood that a state or state-action pair will result in a high cumulative reward trajectory.
+There are 3 value functions that are commonly used across RL algorithms: the state-value function, $V^\pi(s_t)$, the state-action value function, $Q^\pi(s_t, a_t)$, and the advantage function, $A^\pi(s_t, a_t)$.
 The state-value function is defined as the expected return from a given state,
 
 $$
@@ -154,9 +159,12 @@ Meanwhile, the state-action-value or quality function, finds the expected return
 $$
 
 And lastly, the advantage function characterizes a relative state-action value in that it quantifies how valuable a state-action pair is over a baseline.
-The advantage function can then be succintly defined as $$
+The advantage function can then be succinctly defined as 
+
+$$
   A^\pi(s_t, a_t) = Q^\pi(s_t, a_t) - V^\pi(s_t)
-$$ Learning $Q^\pi$, commonly called the Q-value function, is more powerful than learning the state-value function as Q-values easily prescribe what action to take when in a certain state, $a_t^* = \underset{a_t}{\text{argmax}} \, Q^\pi (s_t, a_t)$.
+$$ 
+Learning $Q^\pi$, commonly called the Q-value function, is more powerful than learning the state-value function as Q-values easily prescribe what action to take when in a certain state, $a_t^* = \underset{a_t}{\text{argmax}} \, Q^\pi (s_t, a_t)$.
 Conversely, if we know the state-value function, we would have to perform a maximization over an expected value to find the optimal action, $a_t^* = \underset{a_t}{\text{argmax}} \, \mathbb{E}_{s_{t+1} \sim \,T(s_{t+1} \mid s_t, a_t)}[V^\pi(s_{t+1})]$, which is less tractable.
 Yet, learning the advantage function is often preferred in practice as advantage estimators favorably have lower variance than state-value and Q-value estimators [cite schulman gae].
 
@@ -181,23 +189,24 @@ In model-based RL, the agent is attempting to learn the state transition operato
 Once the transition model is known, the agent can then use the transition model to plan out what is the optimal action, often with Model Predictive Control [cite tassa 2012 MPC], or the agent can use the transition model to generate more samples to aid learning [cite Sutton dyna, alphago?]. <!-- For most recent methods focus on an approximate solution, since optimal is computationally impossible.  In contrast most readers will assume this step is trivial, if the transition matrix is known there's nothing more to do but "look" at the predicted transitions and make a choice. -->
 In model-free RL, the agent does not attempt to learn a dynamics model and instead tries to either learn a parameterized policy, learn a value function, or try to learn both a parameterized policy and a value function.
 The general trade-off between model-free and model-based approaches is that in practice, model-based algorithms are often more sample efficient than model-free algorithms but often fail to surpass model-free algorithms in overall agent performance [cite?]
-.
+
 
 A further distinction to be made amongst RL algorithms is in what policy the agent uses to select actions.
-If an agent uses the same policy to take actions as the policy that the agent attempts to evaulate or improve, then this algorithm is on-policy.
+If an agent uses the same policy to take actions as the policy that the agent attempts to evaluate or improve, then this algorithm is on-policy.  <!-- Unclear what "to evaluate or improve" means.  Perhaps an example would help? -->
 If an agent uses a different policy to select actions than the policy that the agent evaluates or improves, then this algorithm is off-policy.
-The benefit of off-policy learning is that the agent does not need to collect a sample every time the agent updates its behavior; instead, the agent can learn from past experience, which increases sample efficiency [cite SAC paper].
-Yet, on-policy algorithms tend to be more stable in practice [cite Q-prop].
+The benefit of off-policy learning is that the agent does not need to collect a sample every time the agent updates its behavior; instead, the agent can learn from past experience, which increases sample efficiency [cite SAC paper]. <!-- Not clear what this means -->
+Yet, on-policy algorithms tend to be more stable in practice [cite Q-prop]. <!-- not clear how "stable" is defined/measured -->
 
 The field of reinforcement learning has proliferated over the past 10 years on account of contributions from deep learning.
 In every reinforcement learning algorithm, the agent is attempting to learn some function, whether it is a policy function and/or a value function.
-Neural networks, which have the property of being universal function approximators [cite], are thus a powerful tool in reinforcement learning since neural networks can be used to approximate policy and/or value functions which we do not know the form of.
-Additionally, the ability of neural networks to autonomously devise low-dimensional representatoins of data is very beneficial when state observations are high dimension, for instance in the case of image-based observations.
-The typical process for using neural networks in RL is that the agent is attempting to optimize a policy and/or value network using the backpropagation algorithm -- an exception is made here for evolutionary algorithms which did not employ gradient-based methods.
-Deep RL has excelled in solving sequential decision-making problems that have non-tabular state-action spaces, problems that are typically intractable with classical methods.
+Neural networks, which have the property of being universal function approximators [cite], are thus a powerful tool in reinforcement learning since neural networks can be used to approximate policy and/or value functions whose form is unknown.
+Additionally, the ability of neural networks to autonomously devise low-dimensional representations of data is very beneficial when state observations are high dimension, for instance in the case of image-based observations. <!-- Yes! should stress why that matters -->
+The typical process for using neural networks in RL is that the agent is attempting to optimize a policy and/or value network using the backpropagation algorithm -- an exception is made here for evolutionary algorithms which did not employ gradient-based methods. <!-- Fixme: needs to be clear that NN parameters are being fit by the "training" step. No point mentioning back-propagation, evolutionary algorithms, or gradient methdos if we are not going to define them.  -->
 
-In practice, the general process for attaining a good performing agent is to tune model hyperparameters then train an agent using the best hyperparameters.
-Hyperparameters refer to the parameters in a RL algorithm that are not directly learned during the training process.
+Deep RL has excelled in solving sequential decision-making problems that have non-tabular state-action spaces, problems that are typically intractable with classical methods. <!-- non-tabular undefined -->
+
+In practice, the general process for attaining a good performing agent is to tune model hyperparameters then train an agent using the best hyperparameters. 
+Hyperparameters refer to the parameters in a RL algorithm that are not directly learned during the training process. <!-- better to define before using in opening sentence.  -->
 For example, a weight in the neural network is a model parameter, but the number of hidden layers in the neural network is a hyperparameter.
 Since the optimal hyperparameters cannot be found analytically, tuning should be done to find a good-performing set of hyperparameters.
 The hyperparameter tuning process consists of sampling then evaluating a set of hyperparameters, where tuning trials are often ranked by mean cumulative reward.
@@ -275,7 +284,8 @@ From this model, the optimal harvest policy -- that is, the a function which ret
 In a RL approach, the model is instead replaced by a computer simulation, usually referred to as an "environment." The simplest simulation is merely an implementation of the estimated model itself.
 However, unlike an analytic or SDP solution that is derived directly from the estimated model, the RL approach makes no assumption about the precise functional form or parameter values underlying the dynamics -- it is in principle agnostic to the details of the simulation.
 
-To better illustrate the potential differences between different RL algorithms used to train the agents, we will examine two RL solutions, one based on A2C [@A2C] and the other based on [@TD3] <!-- Kari: are these different algorithms?-->.
+We will illustrate the potential differences between two RL algorithms used to train the agents, one based on the "Advantage Actor Critic" algorithm, usually referred to as A2C [@A2C], and one based on Twin Delayed Deep Deterministic Policy Gradient, commonly known as TD3 [@TD3] (a generalization of Deep Deterministic Policy Gradient, or DDPG, which extends the DQN algorithm @DQN to a continuous action space using the deterministic policy gradient).
+
 A step-by-step walk-through for training both agents on this environment is provided in the Appendix.
 We compare the resulting management, policy, and reward under either RL agent to that achieved by the optimal management solution [Fig 1].
 Despite having no knowledge of the underlying model and clear differences in the resulting strategies, both RL agents learn enough to achieve nearly optimal performance.
