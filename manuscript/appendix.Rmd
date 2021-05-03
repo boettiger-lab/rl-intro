@@ -52,6 +52,23 @@ txtcolor = "#586e75"
 [@openai_gym]
 
 
+# Deep Reinforcement Learning Frameworks
+
+At the time of writing, several major frameworks exist which provide convenient access to baseline algorithms commonly used in deep reinforcement learning.
+While we do not seek to provide a comprehensive review of available frameworks, some familiarity with current frameworks can be helpful.
+Like many machine learning libraries, these frameworks are themselves each built around one of two popular machine learning libraries, PyTorch [@torch] or Tensorflow [@tensorflow], and all are based in Python.
+Existing frameworks we evaluated include Keras-RL [@keras-rl], Tensorflow Agents [@tensorflow-agents],  OpenAI Spinning Up [@spinningup] OpenAI Baselines, Stable-Baselines2 [@sb2], and Stable-Baselines3 [@sb3]. 
+Keras-RL saw widespread early adoption, but is built on Tensorflow version 1.x. It is incompatible with Tensorflow 2.x and not actively maintained.
+Tensorflow Agents is developed by the Tensorflow team, a recent and actively developed framework with support for both Tensorflow 1.x and 2.x and good support for low-level customization of RL algorithms.
+However, higher-level interfaces and high-level documentation are still relatively limited.
+OpenAI's SpinningUp is an education-targeted framework useful for developers wanting to become more familiar with the internal methods of RL algorithms.  
+OpenAI's Baselines is primarily Tensorflow 1.x-based implementation of many recently published RL algorithms.
+Researchers at Ensta Paris Tech first created Stable Baselines as a fork of the OpenAI implementation, rigorously addressing numerous issues in documentation, testing, and coding style that have helped make their fork see even greater adoption. 
+Stable-Baselines3 is the most recent version (Feb 2021), a ground-up rewrite which switches to a PyTorch-based implementation and further strengthens internal checks such as static types.
+The examples here all use the Stable-Baselines3 framework, though researchers in this area should expect frameworks to continue to emerge and evolve. 
+Grand challenge problems will likely require significant development beyond the current algorithms and capabilities available in existing frameworks.
+
+
 # Deep Reinforcement Learning in R
 
 Although all the necessary tooling for RL is implemented in Python, the R language is more familiar to most ecologists.
@@ -97,10 +114,19 @@ Numerical reproducibility can be challenging in machine learning problems, parti
 np = import("numpy")
 seed = 24L # integer
 np$random$seed(seed)
+
 # Optionally set to "" to force CPU-evaluation if needing perfect reproducibility
 Sys.setenv("CUDA_VISIBLE_DEVICES"="")
 set.seed(seed)
 ```
+
+<!-- is this too verbose? --> 
+The above code also illustrates a few conventions which may be helpful to bear in mind when using the `reticulate` interface to interact with Python from R: 
+it is often necessary for integer values to be explicitly typed as integers by adding a trailing `L` (corresponding to the primitive C type `long` integer).
+Python is also more strongly object-oriented than many R packages, where "methods" of an "object" are accessed with the list-subset operator `$` in R (equivalent to the use of `.` in Python).
+Lastly, while R can use `<-` or `=` for assignment, Python uses only `=`. For simplicity we will stick with the latter.  
+With few exceptions, the R code shown here can be re-written as python code by dropping the `L` and replacing `$` with `.`, see stand-alone python code in the `python/` subdirectory of the repository.
+
 
 # Finding a known optimal solution using RL
 
@@ -108,8 +134,6 @@ set.seed(seed)
 ## Sustainable Harvest Quotas
 
 We begin by selecting an environment from `gym_fishing` by name, passing the optional parameter `sigma` to initialize the environment with multiplicative Gaussian environmental noise of sd of `0.1`.  
-
-<!-- Kari: a brief explaination of the gym$function syntax would probably be helpful - is that a reticulate thing? Just reading later it looks like you reference it as a "method"?-->
 
 ```{r }
 ## initialize the environment
