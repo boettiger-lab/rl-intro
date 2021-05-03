@@ -50,6 +50,67 @@ editor_options:
 
 -->
 
+
+<!-- Environmental problems, ML -->
+Advances in both available data and computing power have begun to open the door to a greater role for machine learning (ML) in addressing some of our planet’s most pressing environmental problems, such as the growing frequency and intensity of wildfire [@wildfire], over-exploited fisheries [@worm2006], declining biodiversity [@], and zoonotic pandemics [@covid].
+But will ML approaches really help us tackle a changing planet?
+Applications of ML in ecology have begun to illustrate the promise of two methods of ML: *supervised learning* (e.g. image recognition) and *unsupervised learning* (including clustering and prediction), but have so far largely overlooked the third and possibly most promising approach in the ML triad: Reinforcement Learning (RL).
+Three features distinguish RL from other ML methods in ways that are particularly well suited to addressing global ecological change issues:
+
+1) RL is explicitly focused on the task of selecting actions in an uncertain and changing environment to maximize some objective,
+2) RL does not require massive amounts of representative sampled historical data,
+3) RL approaches easily integrate with existing ecological models and simulations, which may be our best guide to understanding and predicting future possibilities.
+
+Despite relevance to uncertainty and decision making that could make RL uniquely well suited for ecological and conservation problems, it has so far seen little application in this area.
+To date, the uncertain and changing environments considered by RL research have largely been drawn from examples in robotic movement and video games.
+RL agents have recently achieved superhuman performance on classic Atari games [@DQN], while Deepmind’s RL-trained AlphaZero has defeated the world's grandmasters in Go, Chess, and Shogi [@alphazero].
+Complex environmental problems share many similarities to these games: the need to plan many moves ahead, accept short-term costs to achieve long-term benefit, to account for uncertainty and respond with contingency to the unexpected.
+Of course real ecosystems are also far more complex than a game of chess or MoonLander -- but can the same be said of our efforts at finding the best strategy?
+Rich, processes-based simulations such as the SORTIE model in forest management [@sortie], Ecopath with Ecosim in fisheries management [@ecopath], or global circulation models (GCMs) in climate [@gcm] are already used to explore scenarios and inform ecosystem management. 
+Even simpler models are frequently employed throughout ecology to guide understanding and response.
+Decision-theoretic approaches based on optimal control techniques can only find the best strategy in the simplest of models, the so called "curse of dimensionality" makes problems with too many possible states or actions intractable by conventional methods such as stochastic dynamic programming (SDP) and approximate dynamic programming (ADP) [@Polasky2011; @Marescot2013].
+Neural-network-based ML techniques have proven particularly effective in problems involving complex, high-dimensional spaces that have previously proven intractable to classical methods.
+We believe that the combination of such approaches from RL trained using sufficient simulations of suitable ecological processes will open the door to a new paradigm for tackling tough environmental change problems.
+We also believe that such a transformation could bring risks and pitfalls comparable and varied as its solutions.
+
+In this paper, we draw on examples from fisheries management, ecological tipping points, and wildfire spread to illustrate how deep Reinforcement Learning techniques can successfully discover optimal solutions to previously solved management scenarios and discover highly effective solutions to unsolved problems.
+
+
+
+
+
+
+
+The pitfalls of RL-based solutions to global environmental change problems are not only technical, but include issues of ethics and power, especially when the algorithms or data are proprietary.
+Some familiarity with the design and potential application of RL is important not only to researchers interested in developing these methods to solve new problems, but is also important to any ecologist or manager 
+We discuss of how an open, transparent and reproducible approach can help mitigate some concerns, while also offering a more effective interface between teams of researchers from both ecological and computer sciences.
+We include an extensive appendix with carefully annotated code which should allow readers to both reproduce and extend this analysis.
+We further include implementations of three fully featured simulation modules following current leading standards, which would allow engineers and computer scientists already working in RL to test their agents against both solved and unsolved problems in conservation management.
+We believe this piece would provide an effective introduction to the concepts and practices of RL which would allow ecologists to apply, extend, and critique such methods.
+
+
+
+
+
+Classic approaches require 
+
+
+Reinforcement learning works much like human learning -- the basic techniques of RL have been used to train animals to perform complex tasks long before they were used to train computational neural networks [@behavioral_psych].
+Ecological decision-making has its own rich and rapidly expanding suite of complex simulators:
+SORTIE in forest ecosystems [@sortie], EcoPath with EcoSim in marine systems [@ecopath], GCM models in climate [@gcm], 
+Detailed, process-based models allow a window into the future scenarios of ecological management.
+Even simple ecological models can provide important insight into future scenarios that no amount of historical data would reveal.
+Rather than displacing existing ecological models and knowledge, we illustrate how RL-based approaches can allow us to leverage such understanding to better explore and guide complex decision-making in changing environments.
+Whereas previous decision techniques have historically constrained the complexity and realism of practical modeling efforts, RL may open the door to the design of ever more realistic assumptions.
+Drawing on examples from fisheries management, ecosystem tipping points, and wildfire spread, we illustrate how ecological models and simulations can be used to successfully train RL agents that match or exceed the performance of available management strategies.
+Although our examples are primarily a proof-of-principle, they serve to illuminate both the promise as well as potential pitfalls.
+
+
+
+
+
+
+
 # RL overview
 
 <!-- Conceptual picture: (A) an "environment", and (B) an "agent"
@@ -72,6 +133,80 @@ What do we mean by an "agent"?
   conceptual explanation of 'model-free', what it means to have a "policy" without modeling/predicting transitions
 
 -->
+
+Development of any deep reinforcement learning application can be divided into two components: an *environment* and an *agent*.
+An *environment* is typically a computer simulation, though it is certainly possible to learn from real world environments, such as teaching physical robots to walk and navigate obstacles.
+An *agent* is typically a computational neural network based on an appropriate RL algorithm that may have been 'trained' on one or more environments.
+
+
+## Designing and building an environment
+
+An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an observation of it's current *state* and associated *reward* as output.
+In principle, there are virtually no restrictions on what comprises a state: it may be continuous or discrete, completely or only partially observed, one or many dimensions.
+For instance, we might represent a ecological community of 10 interacting species using an environment with 10 continuously valued states representing the possible population densities of each species.
+The action space may similarly complex, and the response of the environment to any possible action may be deterministic or stochastic in nature.
+The reward will in general depend on both the current state and choice of actions.
+An environment must also specify a stopping condition, such as when a particular state is reached or a pre-defined interval of time has elapsed.
+In some environments, a reward is only received after the agent successfully completes a potentially long sequence of complex actions, such as solving a maze.
+In other environments, an agent may have to learn to forgo immediate reward (or even accept an initial negative reward or cost) in order to maximize the net discounted reward over the simulation period, as we illustrate in examples here.
+
+@brockman2016 identified (1) the lack of standardization of environments used in publication and (2) the need for better benchmark environments as two core problems limiting more rapid advancement of RL research, and proposed the creation of the OpenAI `gym` framework to address both problems. 
+The `gym` framework defines a standard interface and methods by which a developer can describe an arbitrary environment in a computer program.
+This allows the design of software agents which can interact and learn in that environment without knowing anything about its internal details.
+The `gym` python module created by OpenAI also provides over 100 pre-built environments that serve as benchmark problems against which new RL algorithms can be tested.
+The `gym` framework is now recognized by all major software frameworks for writing RL algorithms (see below, 'Deep Reinforcement Learning Frameworks').
+While this library of environments span a range of difficulties from classic control problems that can be solved in closed form to complex three-dimensional robotics simulators, they include no examples of ecological or biological problems. 
+We use the `gym` framework to turn several existing ecological models into valid environmental simulators that can similarly be used in any Reinforcement Learning framework.
+
+
+
+
+## Designing and training an agent
+
+The training an agent on an environment involves allowing the agent to experience and respond to repeated simulations from the environment, thousands or even millions of times. 
+Over the course of training, weights on the neural network are updated in response to the reward given by the environment, much like reinforcement learning is believed to work in living creatures [@cite].
+A neural network can be thought of as a generic function approximator, and these weights as parameters of that function that are estimated from 'data' generated by training.
+A typical neural network in RL may have thousands or hundreds of thousands of parameters, giving it the flexibility to learn very complex behaviors.
+The overall architecture of the neural network, as well as other parameters such as those governing how an agent learns, how an agent proposes actions, and how the agent discounts future rewards, and so forth are controlled by *hyperparameters*.
+To initialize a new, untrained agent, we must specify a handful or so of these hyperparameters, which are held fixed over the course of training.
+The particular selection of hyperparameters required depends on which *RL algorithm* our agent will be based.
+The RL algorithm specifies precisely how the agent will learn from its environment:
+Is the algorithm model-based or model-free? 
+Stochastic or deterministic? 
+"Off-policy" or "on-policy"? 
+Does it use a random noise model to propose actions?
+Does it permit a continuous action space or require discrete actions?
+The design of RL algorithms has been and remains an area of intense research and rapid development [Table 1].
+
+The process of selecting hyperparameters for a given RL algorithm to maximize it's performance on a given environment is referred to as hyperparameter *tuning*.
+The process of tuning can be automated through standard multi-dimensional optimization approaches: proposing new combinations of hyperparameters, training an agent, and examining the resulting performance.
+Because training even on a fixed set of hyperparameters can be computationally intensive, tuning must be targeted appropriately.
+Considerations in environmental design, such as the normalization of state and/or action spaces, can significantly improve performance of many RL algorithms on a diverse range of problems without requiring extensive tuning.
+
+
+Somewhat confusingly, frameworks will often refer to a trained agent as a "model", while also referring to the approaches used to implement and train the agent as "model free" because the agent does not attempt to form an internal model of the environmental process.  We will attempt to mitigate this confusion by referring to the software component used to predict actions as an "agent", and reserving the use of "model" to refer to the ecological model(s) embedded in the environmental simulator.  
+
+
+
+
+A rapidly growing set of material for learning about deep reinforcement learning is now freely available.  
+
+
+# Deep Reinforcement Learning Frameworks
+
+At the time of writing, several major frameworks exist which provide convenient access to baseline algorithms commonly used in deep reinforcement learning.
+While we do not seek to provide a comprehensive review of available frameworks, some familiarity with current frameworks can be helpful.
+Like many machine learning libraries, these frameworks are themselves each built around one of two popular machine learning libraries, PyTorch [@torch] or Tensorflow [@tensorflow], and all are based in Python.
+Existing frameworks we evaluated include Keras-RL [@keras-rl], Tensorflow Agents [@tensorflow-agents],  OpenAI Spinning Up [@spinningup] OpenAI Baselines, Stable-Baselines2 [@sb2], and Stable-Baselines3 [@sb3]. 
+Keras-RL saw widespread early adoption, but is built on Tensorflow version 1.x. It is incompatible with Tensorflow 2.x and not actively maintained.
+Tensorflow Agents is developed by the Tensorflow team, a recent and actively developed framework with support for both Tensorflow 1.x and 2.x and good support for low-level customization of RL algorithms.
+However, higher-level interfaces and high-level documentation are still relatively limited.
+OpenAI's SpinningUp is an education-targeted framework useful for developers wanting to become more familiar with the internal methods of RL algorithms.  
+OpenAI's Baselines is primarily Tensorflow 1.x-based implementation of many recently published RL algorithms.
+Researchers at Ensta Paris Tech first created Stable Baselines as a fork of the OpenAI implementation, rigorously addressing numerous issues in documentation, testing, and coding style that have helped make their fork see even greater adoption. 
+Stable-Baselines3 is the most recent version (Feb 2021), a ground-up rewrite which switches to a PyTorch-based implementation and further strengthens internal checks such as static types.
+The examples here all use the Stable-Baselines3 framework, though researchers in this area should expect frameworks to continue to emerge and evolve. 
+Grand challenge problems will likely require significant development beyond the current algorithms and capabilities available in existing frameworks.
 
 
 <!-- Kari: We reference Markov Decision processes as an alternative approach in the tipping points example and just generally elsewhere so it might be helpful to talk about them in the introduction-->
