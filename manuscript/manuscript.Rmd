@@ -40,8 +40,8 @@ editor_options:
 
 # Introduction
 
-Deep Reinforcement Learning (RL), a machine learning technique in which a *software agent* is trained to select actions which best maximize some cumulative reward, could hold significant untapped promise for solving complex ecological and conservation decision-making problems from wildfire management to biodiversity preservation to zoonotic pandemics.
-Unlike more widely recognized machine learning techniques for either *supervised* learning (such as image classification, [@species_ex], [@satellite_ex]) or unsupervised learning, RL focuses on solving *dynamic* problems which require planning ahead, often in uncertain and changing environments.
+Reinforcement Learning (RL), a machine learning technique in which a *software agent* is trained to select actions to maximize some cumulative reward, could hold significant untapped promise for solving complex ecological and conservation decision-making problems from wildfire management to biodiversity preservation to zoonotic pandemics.
+Unlike the more widely recognized machine learning areas of *supervised* learning and *unsupervised* learning, RL focuses on solving *dynamic* problems which often require planning ahead in uncertain and changing environments.
 Of all machine learning techniques, RL most resembles a general artificial intelligence.
 Notable successes using RL include AlphaZero, in which a software agent learned to beat the world's best human players in games of chess, Go, and Shogi [@alphazero], and major advances in robotics, including decision-making in autonomous vehicles [@robotics_ex].
 These tasks all require the agent to not only anticipate future states of it's environment, but also respond to those changes to influence future outcomes.
@@ -53,23 +53,22 @@ The establishment of protected areas (cite MPAs, 30x30, etc) focuses on policies
 The endangered species act ... Ecosystem services ....
 Such simplicity is in no small part due to the challenge associated in determining a Some reference to [@TomDietrich] on potential for CS-based application.
 
-In contrast to other ML methods, RL does not require massive data sets for training, relying instead on model simulations based on the best available ecological data and knowledge of underlying processes.
+In contrast to other ML methods, RL does not require massive data sets for training and can instead rely on simulators.
 Despite the expansion in data collection from remote sensors, citizen science, and other efforts, ecological data remains sparse and unevenly sampled [CITE].
-Moreover, no amount of data can train supervised or unsupervised ML approaches can predict a future which has no analog in the historical record.
+Moreover, no amount of data can train supervised or unsupervised ML approaches to predict a future which has no analog in the historical record.<!-- ML: potential counterpoint here of using synthetic data to train SL/USL algorithms-->
 Mechanistic, process-based models remain our most powerful tool to explore scenarios of dynamic ecosystems in changing climates.
 Methods from *optimal control theory* have long been used in conservation and resource economics literature [@Clark1990] to determine optimal policies given such models [@Polasky2011].
 However, control theory approaches are also tightly constrained by the "curse of dimensionality" [@Mangel1980; @Marescot2013], limiting their application to only simple, stylized models.
-Deep reinforcement learning offers a way forward.
-Deep RL agents are trained not with mountains of data, but by interacting with simulators.
-Most recent advances in Deep RL have illustrated algorithms trained by playing arcade game simulators such as Atari BreakOut, or physics-based simulations of robotics movement [@TD3; @SAC; @PPO; @A2C].
-Simulating from complex models is far simpler than solving them.
-The richest ecosystem models, such as the global circulation models (GCMs) used to generate future climate scenarios [@something], or individual-based models used to predict forest growth [@something] or wildfire spread [@something], are massive simulations.
-Given sufficient computational power, RL can be trained and evaluated across a broad range of possible realistic scenarios well beyond the reach of classical methods.
+*Deep reinforcement learning*, which applies recent advancements from deep learning to reinforcement learning, has been able to solve previously intractable, high dimensional sequential decision making problems.
+A strength of deep RL methods is that, given sufficient computational power, they can be easily applied to any decision-making problem that can be formulated as a *Markov-decision process* (MDP).
+A Markov-decision process provides a standard ... (working on this)
+The richest ecosystem models, such as the global circulation models (GCMs) used to generate future climate scenarios [@something], or individual-based models used to predict forest growth [@something] or wildfire spread [@something], are massive simulations .
 In this manner, RL would compliment, rather than replace, existing empirical and theoretical research which would continue to form the basis for those simulations.
 
 If RL has great promise, the approach also imposes great risk.
-Lacking the tractability of classical methods, an RL agent can appear to solve a wide class of scenarios with ease, but may fail unexpectedly under seemingly similar conditions [@henderson2017].
-Despite recent progress, Deep RL is a young field and stability and robustness of its methods remain largely open problems
+Lacking the tractability of classical methods, an RL agent can appear to solve a wide class of scenarios with ease, but may fail unexpectedly under seemingly similar conditions [@henderson2019].
+Despite recent progress, Deep RL is a young field, and stability and robustness of its methods remain largely open problems [@henderson2019]. 
+
 . RL approaches are no panacea, and improper design or testing can easily lead to negative outcomes
 . Technical issues are not the only pitfall of AI applications to conservation problems
 . Giving algorithms direct influence over conservation policy may also raise ethical and political issues, particularly if those algorithms (or components thereof) are treated as proprietary intellectual property
@@ -157,16 +156,19 @@ $$
   V^\pi(s_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg]
 $$
 
-Meanwhile, the state-action-value or quality function, finds the expected return given a state and action, $$
+Meanwhile, the state-action-value or quality function, finds the expected return given a state and action, 
+$$
   Q^\pi(s_t, a_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t, a_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg]
 $$
 
 And lastly, the advantage function characterizes a relative state-action value in that it quantifies how valuable a state-action pair is over a baseline.
-The advantage function can then be succintly defined as $$
+The advantage function can then be succintly defined as 
+$$
   A^\pi(s_t, a_t) = Q^\pi(s_t, a_t) - V^\pi(s_t)
-$$ Learning $Q^\pi$, commonly called the Q-value function, is more powerful than learning the state-value function as Q-values easily prescribe what action to take when in a certain state, $a_t^* = \underset{a_t}{\text{argmax}} \, Q^\pi (s_t, a_t)$.
+$$ 
+Learning $Q^\pi$, commonly called the Q-value function, is more powerful than learning the state-value function as Q-values easily prescribe what action to take when in a certain state, $a_t^* = \underset{a_t}{\text{argmax}} \, Q^\pi (s_t, a_t)$.
 Conversely, if we know the state-value function, we would have to perform a maximization over an expected value to find the optimal action, $a_t^* = \underset{a_t}{\text{argmax}} \, \mathbb{E}_{s_{t+1} \sim \,T(s_{t+1} \mid s_t, a_t)}[V^\pi(s_{t+1})]$, which is less tractable.
-Yet, learning the advantage function is often preferred in practice as advantage estimators favorably have lower variance than state-value and Q-value estimators [cite schulman gae].
+Learning the advantage function is often preferred in practice as advantage estimators favorably have lower variance than state-value and Q-value estimators [cite schulman gae].
 
 **Survey of RL Algorithms**
 
@@ -186,22 +188,22 @@ Algorithm
 There is an ever increasing multitude of reinforcement learning algorithms, and while there are far too many algorithms to discuss in detail in this paper, we will herein classify and touch on some current methods.
 RL algorithms can generally be split into 2 groups, model-based and model-free RL.
 In model-based RL, the agent is attempting to learn the state transition operator, $T$.
-Once the transition model is known, the agent can then use the transition model to plan out what is the optimal action, often with Model Predictive Control [cite tassa 2012 MPC], or the agent can use the transition model to generate more samples to aid learning [cite Sutton dyna, alphago?]
+Once the transition model is known, the agent can then use the transition model to plan out what the optimal action is, often with Model Predictive Control [cite tassa 2012 MPC], or the agent can use the transition model to generate more samples to aid learning [cite Sutton dyna, alphago?]
 .
-In model-free RL, the agent does not attempt to learn a dynamics model and instead tries to either learn a parameterized policy, learn a value function, or try to learn both a parameterized policy and a value function.
+In model-free RL, the agent does not attempt to learn a dynamics model and instead tries to either learn a parameterized policy, learn a value function, or try to learn both.
 The general trade-off between model-free and model-based approaches is that in practice, model-based algorithms are often more sample efficient than model-free algorithms but often fail to surpass model-free algorithms in overall agent performance [cite?]
 .
 
 A further distinction to be made amongst RL algorithms is in what policy the agent uses to select actions.
 If an agent uses the same policy to take actions as the policy that the agent attempts to evaulate or improve, then this algorithm is on-policy.
 If an agent uses a different policy to select actions than the policy that the agent evaluates or improves, then this algorithm is off-policy.
-The benefit of off-policy learning is that the agent does not need to collect a sample every time the agent updates its behavior; instead, the agent can learn from past experience, which increases sample efficiency [cite SAC paper].
+The benefit of off-policy learning is that the agent does not need to collect a sample every time the agent updates its behavior; instead, the agent can learn from past experience, which increases sample efficiency [@SAC].
 Yet, on-policy algorithms tend to be more stable in practice [cite Q-prop].
 
 The field of reinforcement learning has proliferated over the past 10 years on account of contributions from deep learning.
 In every reinforcement learning algorithm, the agent is attempting to learn some function, whether it is a policy function and/or a value function.
-Neural networks, which have the property of being universal function approximators [cite], are thus a powerful tool in reinforcement learning since neural networks can be used to approximate policy and/or value functions which we do not know the form of.
-Additionally, the ability of neural networks to autonomously devise low-dimensional representatoins of data is very beneficial when state observations are high dimension, for instance in the case of image-based observations.
+Neural networks, which have the property of being universal function approximators [cite], are thus a powerful tool in RL since neural networks can be used to approximate policy and/or value functions which we do not know the form of.
+Additionally, the ability of neural networks to autonomously devise low-dimensional representations of data is very beneficial when state observations are high dimension, for instance in the case of image-based observations.
 The typical process for using neural networks in RL is that the agent is attempting to optimize a policy and/or value network using the backpropagation algorithm -- an exception is made here for evolutionary algorithms which did not employ gradient-based methods.
 Deep RL has excelled in solving sequential decision-making problems that have non-tabular state-action spaces, problems that are typically intractable with classical methods.
 
@@ -222,29 +224,29 @@ Since one round of training can be time intensive, hyperparameter tuning, which 
 \hline
 Algorithm & Description & Model & Policy & Action Space & State Space \\
 \hline
-MBPO & Model-based Policy Optimization & Model-based & On-policy& &\\
+MBPO [@MBPO] & Model-based Policy Optimization & Model-based & On-policy& &\\
 \hline
 MCTS & Monte Carlo Tree Search & Model-based & Either & & \\
 \hline
-A2C  & Advantage Actor Critic & Model-free & On-policy& &\\
+A2C  [@A2C] & Advantage Actor Critic & Model-free & On-policy& &\\
 \hline
-A3C  & Asynchronous A2C & Model-free & On-policy & &\\
+A3C [@A3C] & Asynchronous A2C & Model-free & On-policy & &\\
 \hline
-TRPO  & Trust Region Policy Optimization & Model-free & On-policy & &\\
+TRPO [@TRPO] & Trust Region Policy Optimization & Model-free & On-policy & &\\
 \hline
-PPO  & Proximal Policy Optimization & Model-free & On-policy & &\\
+PPO [@PPO] & Proximal Policy Optimization & Model-free & On-policy & &\\
 \hline
-DQN & Deep Q Networks & Model-free & Off-policy& &\\
+DQN [@DQN] & Deep Q Networks & Model-free & Off-policy& &\\
 \hline
-DDPG & Deep Deterministic Policy Gradient & Model-free & Off-policy & &\\
+DDPG [@DDPG] & Deep Deterministic Policy Gradient & Model-free & Off-policy & &\\
 \hline
-TD3 & Twin Delayed DDPG & Model-free & Off-policy & &\\
+TD3 [@TD3] & Twin Delayed DDPG & Model-free & Off-policy & &\\
 \hline
-SAC & Soft Actor Critic & Model-free & Off-policy & &\\
+SAC [@SAC] & Soft Actor Critic & Model-free & Off-policy & &\\
 \hline
-IMPALA & Importance Weighted Actor Learner & Model-free & Off-policy & &\\
+IMPALA [@IMPALA] & Importance Weighted Actor Learner & Model-free & Off-policy & &\\
 \hline
-APE-X & Distributed Prioritized Experience Replay & Model-free & Off-policy & & \\
+APE-X [@APE-X] & Distributed Prioritized Experience Replay & Model-free & Off-policy & & \\
 \hline
 \end{tabular}
 \end{center}
