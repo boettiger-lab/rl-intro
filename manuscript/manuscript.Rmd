@@ -64,7 +64,7 @@ Three features distinguish RL from other ML methods in ways that are particularl
 Despite relevance to uncertainty and decision making that could make RL uniquely well suited for ecological and conservation problems, it has so far seen little application in this area.
 To date, the problems considered by RL research have largely been drawn from examples in robotic movement and games like Go and Starcraft [@lillicrap; @alphazero; @alphastar]
 Complex environmental problems share many similarities to these tasks and games: the need to plan many moves ahead given a large number of possible outcomes, to account for uncertainty and to respond with contingency to the unexpected.
-RL agents develop their strategies by interacting with simulators, a practice that should not be unsettling to ecologists since learning from simulators is a common practice.
+RL agents typically develop their strategies by interacting with simulators, a practice that should not be unsettling to ecologists since learning from simulators is common across ecology.
 Rich, processes-based simulations such as the SORTIE model in forest management [@sortie], Ecopath with Ecosim in fisheries management [@ecopath], or global circulation models (GCMs) in climate [@gcm] are already used to explore scenarios and inform ecosystem management. 
 Even simpler simulators are frequently employed throughout ecology to guide understanding and response.
 <!-- Kari: ick, jargon heavy.  Need to say: some existing methods, but limited to simple problems or simple solutions -->
