@@ -68,6 +68,7 @@ Complex environmental problems share many similarities to these games: the need 
 Of course real ecosystems are also far more complex than a game of chess or MoonLander -- but can the same be said of our efforts at finding the best strategy?
 Rich, processes-based simulations such as the SORTIE model in forest management [@sortie], Ecopath with Ecosim in fisheries management [@ecopath], or global circulation models (GCMs) in climate [@gcm] are already used to explore scenarios and inform ecosystem management. 
 Even simpler models are frequently employed throughout ecology to guide understanding and response.
+<!-- Kari: ick, jargon heavy.  Need to say: some existing methods, but limited to simple problems or simple solutions -->
 Decision-theoretic approaches based on optimal control techniques can only find the best strategy in the simplest of models, the so called "curse of dimensionality" makes problems with too many possible states or actions intractable by conventional methods such as stochastic dynamic programming (SDP) and approximate dynamic programming (ADP) [@Polasky2011; @Marescot2013].
 Neural-network-based ML techniques have proven particularly effective in problems involving complex, high-dimensional spaces that have previously proven intractable to classical methods.
 We believe that the combination of such approaches from RL trained using sufficient simulations of suitable ecological processes will open the door to a new paradigm for tackling tough environmental change problems.
@@ -116,19 +117,31 @@ What do we mean by an "agent"?
 
 Any application of RL can be divided into two components: an *environment* and an *agent*.
 An *environment* is typically a computer simulation, though it is certainly possible to learn from real world environments, such as teaching physical robots to walk and navigate obstacles.
-An *agent* is typically a computational neural network based on an appropriate RL algorithm that may have been 'trained' on one or more environments.
+An *agent* is typically a computer algorithm which takes sequential observations from the environment and returns proposed actions. RL agents typically use one or more neural networks to represent the relationship between observed states and suitable actions, and 'train' these networks through repeated interactions with the environment to maximize the culumulative reward.
+<!-- Blah blah skip this?-->
+It is important to recognize that these definitions are significantly more general than requirements typically imposed by classical methods.  
+For instance, there is no a priori assumption that the environment is *fully observed*, or that the environment is *Markovian* (future states depend only on the current state), commonly assumed by classical methods [e.g. @Marescot2013]. 
+Just as important is the high degree of interoperability provided by the RL framework.
+As we shall see, an RL algorithm developed to play Atari games can instead be trained on an environment that simulates fish population dynamics without modification.
+(Note that this does not refer to the *trained* agent).
+This not guarantee that such an algorithm will be successful (even after extensive tuning and training in the fish population dynamics environment), but does open the door to more rapid exchange between fields.
+In particular, the adoption of standard interfaces for RL environments [@brockman2016] as well as the implementation of cutting edge algorithms in flexible open source frameworks [@sb3; @tf-agents] means that a researcher can test a range of RL algorithms against a single environment, or a given algorithm across a range of environments with equal ease.
+
 
 
 ## Designing and building an environment
 
 An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an observation of it's current *state* and associated *reward* as output.
-In principle, there are virtually no restrictions on what comprises a state: it may be continuous or discrete, completely or only partially observed, one or many dimensions.
+In contrast to classical approaches, there are few restrictions on what comprises a state or action, at least in principle.
+The state may be continuous or discrete, completely or only partially observed, one or many dimensions.
 For instance, we might represent a ecological community of 10 interacting species using an environment with 10 continuously valued states representing the possible population densities of each species.
 The action space may similarly complex, and the response of the environment to any possible action may be deterministic or stochastic in nature.
 The reward will in general depend on both the current state and choice of actions.
 An environment must also specify a stopping condition, such as when a particular state is reached or a pre-defined interval of time has elapsed.
 In some environments, a reward is only received after the agent successfully completes a potentially long sequence of complex actions, such as solving a maze.
 In other environments, an agent may have to learn to forgo immediate reward (or even accept an initial negative reward or cost) in order to maximize the net discounted reward over the simulation period, as we illustrate in examples here.
+
+
 
 @brockman2016 identified (1) the lack of standardization of environments used in publication and (2) the need for better benchmark environments as two core problems limiting more rapid advancement of RL research, and proposed the creation of the OpenAI `gym` framework to address both problems.
 The `gym` framework defines a standard interface and methods by which a developer can describe an arbitrary environment in a computer program.
@@ -154,12 +167,16 @@ Stochastic or deterministic?
 "Off-policy" or "on-policy"? 
 Does it use a random noise model to propose actions?
 Does it permit a continuous action space or require discrete actions?
-The design of RL algorithms has been and remains an area of intense research and rapid development [Table 1].
+The design of RL algorithms has been and remains an area of intense research and rapid development [Table 2].
+Open source implementations by professional software development teams often follow swiftly after new algorithms are published [@Ssb3; @tf-agents].
+In the following section, we summarize some of the key concepts that make up an RL algorithm, and highlight relevant distinctions between important algorithms today.
 
+
+<!-- Something about given RL algorithm being able to solve lots of different environments with no pre-specified knowledge. cite examples @AlphaZero and @DQN; but still depends on hyperparameters -->
 The process of selecting hyperparameters for a given RL algorithm to maximize it's performance on a given environment is referred to as hyperparameter *tuning*.
 The process of tuning can be automated through standard multi-dimensional optimization approaches: proposing new combinations of hyperparameters, training an agent, and examining the resulting performance.
 Because training even on a fixed set of hyperparameters can be computationally intensive, tuning must be targeted appropriately.
-Considerations in environmental design, such as the normalization of state and/or action spaces, can significantly improve performance of many RL algorithms on a diverse range of problems without requiring extensive tuning.
+Considerations in how the environment simulation is implemented, such as the normalization of state and/or action spaces, can significantly improve performance of many RL algorithms on a diverse range of problems without requiring extensive tuning.
 
 
 <!--
@@ -177,7 +194,7 @@ Make a nice table box in latex instead if we're keeping this
 \end{figure}
 
 
-# RL essentials
+# RL Algorithms
 
 The basic problem set-up of RL is as follows: at a time step, $t$, the agent observes a representation of the environment's state, $s_t$, and must accordingly select an action, $a_t$; at the next time step, the agent will observe a new state, $s_{t+1}$, and will receive a numerical reward, $r_{t+1}$.
 This new state, $s_{t+1}$, and reward, $r_{t+1}$, are determined by the environment.
@@ -277,7 +294,13 @@ Since one round of training can be time intensive, hyperparameter tuning, which 
 <!-- Kari: I think we need more background on what a neural network is, how it fits in, and what other options are - maybe use examples of hyperparameters that would be in all RL approaches not just those that use neural nets -->
 
 <!-- Can we add citations to each please -->
+<!-- 
 
+Should we mention SARSA, Double DQN?  
+Can we add HER (since delayed reward case may be particularly interesting)
+Should we do anything to better reflect the 'family tree' here? (e.g. DQN -> DDPG -> TD3)
+
+-->
 ```{=latex}
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|c|}
