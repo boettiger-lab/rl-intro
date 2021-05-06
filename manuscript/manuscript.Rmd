@@ -143,8 +143,8 @@ In other environments, an agent may have to learn to forgo immediate reward (or 
 
 \begin{figure}
 \centering
-\includegraphics[width=0.8\linewidth]{fig1.pdf}
-\caption{Reinforcement Learning focuses on the repeated feedback of *agent* interacting with an *environment*. The agent performs an action which influences the environment's future *state*.  The agent recieves an observation of the new state and reward from the environment.}
+\includegraphics[width=0.5\linewidth]{fig1.pdf}
+\caption{Reinforcement Learning focuses on the repeated feedback of agent interacting with an \emph{environment}. The agent performs an action which influences the environment's future \emph{state}.  The agent receives an observation of the new state and reward from the environment.}
 \end{figure}
 
 @brockman2016 identified (1) the lack of standardization of environments used in publication and (2) the need for better benchmark environments as two core problems limiting more rapid advancement of RL research, and proposed the creation of the OpenAI `gym` framework to address both problems.
