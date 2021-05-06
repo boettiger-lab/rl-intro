@@ -115,16 +115,38 @@ What do we mean by an "agent"?
 -->
 
 Any application of RL can be divided into two components: an *environment* and an *agent*.
-An *environment* is typically a computer simulation, though it is certainly possible to learn from real world environments, such as teaching physical robots to walk and navigate obstacles.
-An *agent* is typically a computer algorithm which takes sequential observations from the environment and returns proposed actions. RL agents typically use one or more neural networks to represent the relationship between observed states and suitable actions, and 'train' these networks through repeated interactions with the environment to maximize the culumulative reward.
-<!-- Blah blah skip this?-->
-It is important to recognize that these definitions are significantly more general than requirements typically imposed by classical methods.  
-For instance, there is no a priori assumption that the environment is *fully observed*, or that the environment is *Markovian* (future states depend only on the current state), commonly assumed by classical methods [e.g. @Marescot2013]. 
-Just as important is the high degree of interoperability provided by the RL framework.
-As we shall see, an RL algorithm developed to play Atari games can instead be trained on an environment that simulates fish population dynamics without modification.
-(Note that this does not refer to the *trained* agent).
-This not guarantee that such an algorithm will be successful (even after extensive tuning and training in the fish population dynamics environment), but does open the door to more rapid exchange between fields.
-In particular, the adoption of standard interfaces for RL environments [@brockman2016] as well as the implementation of cutting edge algorithms in flexible open source frameworks [@sb3; @tf-agents] means that a researcher can test a range of RL algorithms against a single environment, or a given algorithm across a range of environments with equal ease.
+An *environment* is typically a computer simulation, though it is possible to use the real world as the RL environment [@robotics; @offlinesurvey].
+Over the course of an *episode*, an *agent*, which is often a computer program, continuously interacts with the environment. 
+At each time step, the agent performs an *action*, and as a result of this action, the environment will determine the next *state* and numerical *reward* that the agent will observe.
+The goal of the agent is to learn how to maximize its expected cumulative reward.
+The agent learns how to achieve this objective during a period called *training*.
+In training, the agent *explores* the available states and actions. 
+Once the agent comes across a highly rewarding sequence of states and actions, the agent will reinforce this behavior so that it is more likely for the agent to *exploit* the same high reward trajectory in future episodes.
+Throughout this process, the agent's behavior is codified into what is called a *policy*, which is a mapping of states to actions.
+
+To solve the RL problem, algorithms either take a *model-free* or *model-based* approach. 
+The distinction is that *model-free* algorithms do not have access to a model of the environment; yet, *model-based* algorithms use a model of the environment to achieve the RL objective.
+The trade-off between these approaches is that when it is possible to quickly learn a good model or the model is already known, model-based algorithms tend to require much less interaction with the environment to learn good-performing policies. 
+Yet, oftentimes learning a model of the environment is very difficult, and in these cases, model-free algorithms tend to outperform.
+Since most of the recent focus in RL has gone towards model-free algorithms, we will focus on model-free agents for the rest of the paper.
+
+Amongst model-free algorithms, 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
