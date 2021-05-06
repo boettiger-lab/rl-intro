@@ -141,7 +141,11 @@ An environment must also specify a stopping condition, such as when a particular
 In some environments, a reward is only received after the agent successfully completes a potentially long sequence of complex actions, such as solving a maze.
 In other environments, an agent may have to learn to forgo immediate reward (or even accept an initial negative reward or cost) in order to maximize the net discounted reward over the simulation period, as we illustrate in examples here.
 
-
+\begin{figure}
+\centering
+\includegraphics[width=0.8\linewidth]{fig1.pdf}
+\caption{Reinforcement Learning focuses on the repeated feedback of *agent* interacting with an *environment*. The agent performs an action which influences the environment's future *state*.  The agent recieves an observation of the new state and reward from the environment.}
+\end{figure}
 
 @brockman2016 identified (1) the lack of standardization of environments used in publication and (2) the need for better benchmark environments as two core problems limiting more rapid advancement of RL research, and proposed the creation of the OpenAI `gym` framework to address both problems.
 The `gym` framework defines a standard interface and methods by which a developer can describe an arbitrary environment in a computer program.
