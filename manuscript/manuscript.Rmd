@@ -52,7 +52,7 @@ editor_options:
 
 
 <!-- Environmental problems, ML -->
-Advances in both available data and computing power have begun to open the door to a greater role for machine learning (ML) in addressing some of our planet’s most pressing environmental problems, such as the growing frequency and intensity of wildfire [@wildfire], over-exploited fisheries [@worm2006], declining biodiversity [@], and zoonotic pandemics [@covid].
+Advances in both available data and computing power have begun to open the door to a greater role for machine learning (ML) in addressing some of our planet’s most pressing environmental problems, such as the growing frequency and intensity of wildfire [@wildfire], over-exploited fisheries [@worm2006], declining biodiversity [@biodiversity], and zoonotic pandemics [@covid].
 But will ML approaches really help us tackle a changing planet?
 Applications of ML in ecology have begun to illustrate the promise of two methods of ML: *supervised learning* (e.g. image recognition) and *unsupervised learning* (including clustering and prediction), but have so far largely overlooked the third and possibly most promising approach in the ML triad: Reinforcement Learning (RL).
 Three features distinguish RL from other ML methods in ways that are particularly well suited to addressing global ecological change issues:
@@ -65,10 +65,9 @@ Despite relevance to uncertainty and decision making that could make RL uniquely
 To date, the uncertain and changing environments considered by RL research have largely been drawn from examples in robotic movement and video games.
 RL agents have recently achieved superhuman performance on classic Atari games [@DQN], while Deepmind’s RL-trained AlphaZero has defeated the world's grandmasters in Go, Chess, and Shogi [@alphazero].
 Complex environmental problems share many similarities to these games: the need to plan many moves ahead, accept short-term costs to achieve long-term benefit, to account for uncertainty and respond with contingency to the unexpected.
-Of course real ecosystems are also far more complex than a game of chess or MoonLander -- but can the same be said of our efforts at finding the best strategy?
+Of course real ecosystems are also far more complex than a game of chess or MoonLander(TM) -- but can the same be said of our efforts at finding the best strategy?
 Rich, processes-based simulations such as the SORTIE model in forest management [@sortie], Ecopath with Ecosim in fisheries management [@ecopath], or global circulation models (GCMs) in climate [@gcm] are already used to explore scenarios and inform ecosystem management. 
 Even simpler models are frequently employed throughout ecology to guide understanding and response.
-<!-- Kari: ick, jargon heavy.  Need to say: some existing methods, but limited to simple problems or simple solutions -->
 Decision-theoretic approaches based on optimal control techniques can only find the best strategy in the simplest of models, the so called "curse of dimensionality" makes problems with too many possible states or actions intractable by conventional methods such as stochastic dynamic programming (SDP) and approximate dynamic programming (ADP) [@Polasky2011; @Marescot2013].
 Neural-network-based ML techniques have proven particularly effective in problems involving complex, high-dimensional spaces that have previously proven intractable to classical methods.
 We believe that the combination of such approaches from RL trained using sufficient simulations of suitable ecological processes will open the door to a new paradigm for tackling tough environmental change problems.
@@ -86,11 +85,6 @@ We further include implementations of three fully featured simulation modules fo
 Each module includes several more challenging variations to the examples described here.
 We intend to continue to expand this library of ecological management benchmarks with the hope both of challenging researchers already working in RL to tackle some of these pressing issues and for ecologists and environmental scientists to continue to refine these benchmarks into more realistic ecological simulations.
 
-The pitfalls of RL-based solutions to global environmental change problems are not only technical, but include issues of ethics and power, especially when the algorithms or data are proprietary.
-We discuss not only technical issues that can cause RL solutions to fail in surprising ways, but also potential issues raised by the adoption of more algorithmic approaches to conservation generally.
-We emphasize how an open, transparent and reproducible approach can help mitigate some (but not all) of these concerns, and facilitate a more effective interface between teams of researchers from both ecological and computer sciences.
-If algorithms are to play a meaningful role in the allocation and exploitation of natural resources from fish to forests, good intentions [@Joppa] may not be sufficient to ensure equitable outcomes.
-Ecologists and computer scientists will also need input from experts in governance and ethics to ensure that applications of AI to ecological challenges are fair and just.
 
 # RL overview
 
@@ -513,7 +507,7 @@ fig_sims / ( fig_policy + fig_reward)
 The TD3-trained neural network agent proves far more successful in preventing chance transitions across the tipping point, consistently achieving a higher cumulative ecosystem service value across replicates than the steady-state strategy.
 
 Examining the replicate management trajectories and corresponding rewards [Fig 3] reveal that the RL agent incurs significantly higher costs in the initial phases of the simulation, dipping the cumulative reward into negative territory on average and well below the reward realized by the simple steady-state strategy.
-This initial investment then begins to pay off -- by about 200th time step the RL agent has surpassed the performance of the steady state strategy.\
+This initial investment then begins to pay off -- by about 200th time step the RL agent has surpassed the performance of the steady state strategy.
 The policy plot provides more intuition for the RL agent's strategy: at very high state values, the RL agent opts for no conservation action -- so far from the tipping point, no response is required.
 Near the tipping point, the RL agent steeply ramps up the conservation effort, and retains this effort even as the system falls below the critical threshold, where a sufficiently aggressive response can tip the system back into recovery.
 For a system at or very close to the zero-state, the RL agent gives up, opting for no action.
@@ -528,23 +522,31 @@ In the few replicates that experience a critical transition anyway, the RL agent
 Only 3 out of 100 replicates degrade far enough for the RL agent to give up the high cost of trying to rescue them.
 
 Such examination makes it clear how the RL agent's use of a more dynamic strategy out-preforms the steady-state strategy.
-The various kinks in the RL policy function also suggest that this solution is nevertheless surely not the optimal solution -- such features are typical of RL-based policies, where such spandral features from early experimentation may become baked into the long-term strategy if adjusting them has little improvement on the final reward.
+The various kinks in the RL policy function also suggest that this solution is nevertheless surely not the optimal solution -- such features are typical of RL-based policies, where such spandral-like features from early experimentation may become baked into the long-term strategy if adjusting them has little improvement on the final reward.
 Further tuning of hyper-parameters, increased training, alterations to the training algorithm or an entirely different training algorithm would likely be able to further improve upon this performance.
-The use of a recurrent neural network architecture instead of the multi-layer perceptron used here would open the door for the policy to reflect the non-autonomous dynamics more directly.
-A recurrent neural network, such as long-short-term-memory (LSTM), could learn a strategy which reflects not only the current system state, but also latent information such as the time elapsed.
-<!-- Kari: lots of jargon in this paragraph that needs to be defined-->
+The use of a recurrent neural network (RNN) architecture instead of the multi-layer perceptron (MLP) used here would open the door for the policy to reflect the non-autonomous dynamics more directly.
 
 # Discussion
 
-```{=html}
+
 <!-- 
-
-1. Return to theme of RL vs supervised/unsupervised learning.
-
+- RL:
+  - Focused on decisions
+  - more ambitious than other approaches in structured decision-making or other ML
+- Limited application, mostly from CS side without sufficient ecological grounding (citation to forest fire work, some )
 
 -->
-```
+
 <!-- Something about relevance to both the _theory_ and practice of ecological conservation. (e.g. "strategic" 1-D models have probably had a greater influence, (for better or worse!) on real world policies than complex, detail-specific, precise "tactical" models) -->
+
+<!-- move to discussion -->
+The pitfalls of RL-based solutions to global environmental change problems are not only technical, but include issues of ethics and power, especially when the algorithms or data are proprietary.
+We discuss not only technical issues that can cause RL solutions to fail in surprising ways, but also potential issues raised by the adoption of more algorithmic approaches to conservation generally.
+We emphasize how an open, transparent and reproducible approach can help mitigate some (but not all) of these concerns, and facilitate a more effective interface between teams of researchers from both ecological and computer sciences.
+If algorithms are to play a meaningful role in the allocation and exploitation of natural resources from fish to forests, good intentions [@Joppa] may not be sufficient to ensure equitable outcomes.
+Ecologists and computer scientists will also need input from experts in governance and ethics to ensure that applications of AI to ecological challenges are fair and just.
+
+
 
 ## Open Problems
 
