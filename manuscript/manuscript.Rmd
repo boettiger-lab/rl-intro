@@ -68,7 +68,7 @@ Complex environmental problems share many similarities to these games: the need 
 Of course real ecosystems are also far more complex than a game of chess or MoonLander(TM) -- but can the same be said of our efforts at finding the best strategy?
 Rich, processes-based simulations such as the SORTIE model in forest management [@sortie], Ecopath with Ecosim in fisheries management [@ecopath], or global circulation models (GCMs) in climate [@gcm] are already used to explore scenarios and inform ecosystem management. 
 Even simpler models are frequently employed throughout ecology to guide understanding and response.
-Decision-theoretic approaches based on optimal control techniques can only find the best strategy in the simplest of models, the so called "curse of dimensionality" makes problems with too many possible states or actions intractable by conventional methods such as stochastic dynamic programming (SDP) and approximate dynamic programming (ADP) [@Polasky2011; @Marescot2013].
+Decision-theoretic approaches based on optimal control techniques can only find the best strategy in the simplest of models, the so called "curse of dimensionality" makes problems with too many possible states or actions intractable by conventional methods [@Possingham2006; @Marescot2013].
 Neural-network-based ML techniques have proven particularly effective in problems involving complex, high-dimensional spaces that have previously proven intractable to classical methods.
 We believe that the combination of such approaches from RL trained using sufficient simulations of suitable ecological processes will open the door to a new paradigm for tackling tough environmental change problems.
 We also believe that such a transformation could bring risks and pitfalls comparable and varied as its solutions.
@@ -538,6 +538,15 @@ To better illustrate the generality of RL approach and more typical complexity o
 
 
 # Discussion
+
+<!-- decision theory is a fundamental scientific research topic -->
+Ecological challenges facing the planet today are complex and outcomes are as uncertain and highly consequential.
+Even our best models and best research will never provide a crystal ball to the future, only better elucidate possible scenarios.
+Consequently, that research must also confront the challenge of making robust, resilient decisions in a changing world.
+The science of ecological management and quantitative decision-making has a long history [e.g. @Schaefer1954; @Walters1974] and remains an active area of research [@Possignham2006; @Fischer2009; @Polasky2011].
+<!-- Something about influence of natural resource economics and preference for analytically tractable optimization -->
+However, the limitations of classical methods such as optimal control frequently constrain these 
+
 
 In this paper, we have highlighted the great potential that Reinforcement Learning, and in particular, of model-free *deep* RL has for helping confront challenging ecological and environmental management issues in a changing world.
 
