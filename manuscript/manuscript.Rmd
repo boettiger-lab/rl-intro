@@ -526,7 +526,21 @@ The various kinks in the RL policy function also suggest that this solution is n
 Further tuning of hyper-parameters, increased training, alterations to the training algorithm or an entirely different training algorithm would likely be able to further improve upon this performance.
 The use of a recurrent neural network (RNN) architecture instead of the multi-layer perceptron (MLP) used here would open the door for the policy to reflect the non-autonomous dynamics more directly.
 
+## Unsolved environments: Wildfires and other examples
+
+One feature that most distinguishes RL from other approaches to decision theory (such as optimal control) is it's flexibility or ambition.
+While optimal control approaches typically require extensive simplifying assumptions such as discrete states or actions, deterministic dynamics or short time horizons, RL is scoped more ambitiously.
+Large, complex problems are still immensely challenging to RL, and existing RL approaches will frequently struggle to solve problems that can already be solved much more efficiently by other means.
+Nevertheless, deep RL approaches using neural network architectures have proven successful on problems that no amount of computational power would put into reach of purely conventional methods.
+Our previous examples have focused on relatively simple examples that can also be addressed at least approximately by conventional methods, and also permit RL-based solutions to be found relatively efficiently on commodity hardware.
+To better illustrate the generality of RL approach and more typical complexity of conservation problems, we now introduce a third example for which we have not yet found an effective policy using RL or classical methods.
+
+
+
 # Discussion
+
+In this paper, we have highlighted the great potential that Reinforcement Learning, and in particular, of model-free *deep* RL has for helping confront challenging ecological and environmental management issues in a changing world.
+
 
 
 <!-- 
@@ -534,6 +548,18 @@ The use of a recurrent neural network (RNN) architecture instead of the multi-la
   - Focused on decisions
   - more ambitious than other approaches in structured decision-making or other ML
 - Limited application, mostly from CS side without sufficient ecological grounding (citation to forest fire work, some )
+
+- Model Free
+
+- Results
+
+- Technical Caveats
+
+- Social Caveats
+
+- Way Forward
+  Open Competition & Collaboration
+  Leaderboards
 
 -->
 
