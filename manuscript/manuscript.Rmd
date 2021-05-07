@@ -122,7 +122,7 @@ The goal of the agent is to learn how to maximize its expected cumulative reward
 The agent learns how to achieve this objective during a period called *training*.
 In training, the agent *explores* the available states and actions. 
 Once the agent comes across a highly rewarding sequence of states and actions, the agent will reinforce this behavior so that it is more likely for the agent to *exploit* the same high reward trajectory in future episodes.
-Throughout this process, the agent's behavior is codified into what is called a *policy*, which is a mapping of states to actions.
+Throughout this process, the agent's behavior is codified into what is called a *policy*, which describes what action an agent should take for a given state.
 
 To solve the RL problem, algorithms either take a *model-free* or *model-based* approach. 
 The distinction is that *model-free* algorithms do not have access to a model of the environment; yet, *model-based* algorithms use a model of the environment to achieve the RL objective.
@@ -140,8 +140,13 @@ The class of algorithms that exclusively try to learn a value function are calle
 There is a handful of advantages and disadvantages for each of these approaches that we will not go in depth -- for more, see [@CITE]; yet, the main point of distinction comes from the bias-variance trade-off.
 Policy gradients tend to struggle with high variance, value-learning tends to be biased while actor-critic methods balance these two concerns.
 
-
-
+Neural networks become useful in RL when the environment has a large state-action space, which happens frequently with realistic decision-making problems. 
+Classic RL algorithms, like policy iteration, value iteration and Actor-Critic [@suttonbarto], fail when the state-action space is large, e.g. when the possible states and actions can not be represented in a tractable table [@CITE].
+Yet, over the last 10 years, researchers have shown that neural network-based RL algorithms can perform well on previously unsolvable environments.
+Neural networks have been widely useful in reinforcement learning because neural nets have the property of being universal function approximators [@CITE].
+Whenever there is a need for an agent to approximate some function, say a policy function, value function or a transition function, neural networks can be used in this capacity.
+While there are other function approximators that can be used in RL, e.g. Gaussian processes, neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@CITE].
+We will not discuss in detail how neural networks work -- see [@CITE] for further background --, but the basic premise is that at each learning step, the agent, say a policy gradient-based agent, will adjust the parameters in its policy neural network so that according to past experiences, the agent will be more likely to engage in highly rewarding behavior in the future. 
 
 
 ## Designing and building an environment
