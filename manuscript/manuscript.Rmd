@@ -53,7 +53,24 @@ editor_options:
 
 <!-- Environmental problems, ML -->
 Advances in both available data and computing power have begun to open the door to a greater role for machine learning (ML) in addressing some of our planet’s most pressing environmental problems, such as the growing frequency and intensity of wildfire [@wildfire], over-exploited fisheries [@worm2006], declining biodiversity [@], and zoonotic pandemics [@covid].
+
+<!-- citation suggestion for declining biodiversity  -->
+
+<!-- @article{dirzo2014defaunation, -->
+<!--   title={Defaunation in the Anthropocene}, -->
+<!--   author={Dirzo, Rodolfo and Young, Hillary S and Galetti, Mauro and Ceballos, Gerardo and Isaac, Nick JB and Collen, Ben}, -->
+<!--   journal={science}, -->
+<!--   volume={345}, -->
+<!--   number={6195}, -->
+<!--   pages={401--406}, -->
+<!--   year={2014}, -->
+<!--   publisher={American Association for the Advancement of Science} -->
+<!-- } -->
+
 But will ML approaches really help us tackle a changing planet?
+
+<!-- suggestion: "...tackle our most pressing environmental challenges" -->
+
 Applications of ML in ecology have begun to illustrate the promise of two methods of ML: *supervised learning* [@joseph2020] and *unsupervised learning* [@unsupervised], but have so far largely overlooked the third and possibly most promising approach in the ML triad: *reinforcement learning* (RL).
 Three features distinguish RL from other ML methods in ways that are particularly well suited to addressing global ecological change issues:
 
@@ -61,14 +78,22 @@ Three features distinguish RL from other ML methods in ways that are particularl
 2) RL does not require massive amounts of representative sampled historical data,
 3) RL approaches easily integrate with existing ecological models and simulations, which may be our best guide to understanding and predicting future possibilities.
 
+<!-- really like this- super clear and helpful! -->
+
 Despite relevance to uncertainty and decision making that could make RL uniquely well suited for ecological and conservation problems, it has so far seen little application in this area.
 To date, the problems considered by RL research have largely been drawn from examples in robotic movement and games like Go and Starcraft [@lillicrap; @alphazero; @alphastar]
 Complex environmental problems share many similarities to these tasks and games: the need to plan many moves ahead given a large number of possible outcomes, to account for uncertainty and to respond with contingency to the unexpected.
 RL agents typically develop their strategies by interacting with simulators, a practice that should not be unsettling to ecologists since learning from simulators is common across ecology.
-Rich, processes-based simulations such as the SORTIE model in forest management [@sortie], Ecopath with Ecosim in fisheries management [@ecopath], or global circulation models (GCMs) in climate [@gcm] are already used to explore scenarios and inform ecosystem management. 
+Rich, processes-based simulations such as the SORTIE model in forest management [@sortie], Ecopath with Ecosim in fisheries management [@ecopath], or global circulation models (GCMs) in climate [@gcm] are already used to explore scenarios and inform ecosystem management.
+
+<!-- another widely used model is ED2 (ecosystem demography model) - I think more common than SORITE? https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2008JG000812 -->
+
 Even simpler simulators are frequently employed throughout ecology to guide understanding and response.
 <!-- Kari: ick, jargon heavy.  Need to say: some existing methods, but limited to simple problems or simple solutions -->
 Decision-theoretic approaches based on optimal control techniques can only find the best strategy in the simplest of ecological models; the so called "curse of dimensionality" makes problems with a large number of states or actions intractable by conventional methods such as stochastic dynamic programming (SDP) and approximate dynamic programming (ADP) [@Polasky2011; @Marescot2013].
+
+<!-- I think there is a missing the connection between the examples and needing more sophisticated methods for decision making below. i.e. "As we develop more complex process based models (such as Ecosim and ED2), methods that allow us to effectively integrate these high dimensional models into decision making processes will be critical to ensuring their policy relevance." (or something like that, then go on to NN ML)-->
+
 Neural-network-based RL techniques, referred to as *deep RL*, have proven particularly effective in problems involving complex, high-dimensional spaces that have previously proven intractable to classical methods.
 We believe that the application of RL methods to simulations of ecological processes will open the door to a new paradigm for tackling tough environmental change problems.
 We also believe that such a transformation could bring risks and pitfalls comparable and varied as its solutions.
@@ -85,11 +110,18 @@ We further include implementations of three fully featured simulation modules fo
 Each module includes several more challenging variations to the examples described here.
 We intend to continue to expand this library of ecological management benchmarks with the hope both of challenging researchers already working in RL to tackle some of these pressing issues and for ecologists and environmental scientists to continue to refine these benchmarks into more realistic ecological simulations.
 
+ <!-- I like the summary but could maybe be less specific> "We start with a simple example from fisheries management that has a known optimal solution, proving that with no prior knowledge of underlying model dynamics RL agents can find a close to optimal solution. We go on to show that RL can outperform rule-of-thumb solutions to management scenarios not amenable to classic optimization methods such as dynamic programming. Our examples demonstrate that..."  -->
+ 
 The pitfalls of RL-based solutions to global environmental change problems are not only technical, but include issues of ethics and power, especially when the algorithms or data are proprietary.
 We discuss not only technical issues that can cause RL solutions to fail in surprising ways, but also potential issues raised by the adoption of more algorithmic approaches to conservation generally.
 We emphasize how an open, transparent and reproducible approach can help mitigate some (but not all) of these concerns, and facilitate a more effective interface between teams of researchers from both ecological and computer sciences.
 If algorithms are to play a meaningful role in the allocation and exploitation of natural resources from fish to forests, good intentions [@Joppa] may not be sufficient to ensure equitable outcomes.
 Ecologists and computer scientists will also need input from experts in governance and ethics to ensure that applications of AI to ecological challenges are fair and just.
+
+<!-- maybe cite Caleb's paper here? -->
+
+<!-- these last few sentences almost feel like discussion points. I'm torn though, because it it nice to have them in the intro. Maybe condense into 1 sentence at the end of you "summary" paragraph of the bulk of the paper above. for example: "We also explore the potential pitfalls of RL-based solutions to global environmental change problems. We show how, and why, these challenges are not only technical, but include issues of ethics and power, especially when the algorithms or data are proprietary." then add a longer discussion towards the end of the paper-->
+
 
 # RL overview
 
@@ -114,6 +146,8 @@ What do we mean by an "agent"?
 
 -->
 
+<!-- something to introduce this section/transition from the intro might be helpful: "We start with a brief overview of RL problems and terminology:" -->
+
 Any application of RL can be divided into two components: an *environment* and an *agent*.
 An *environment* is typically a computer simulation, though it is possible to use the real world as the RL environment [@robotics].
 Over the course of an episode, an *agent*, which is often a computer program, continuously interacts with the environment. 
@@ -123,6 +157,8 @@ The agent learns how to achieve this objective during a period called *training*
 In training, the agent *explores* the available states and actions. 
 Once the agent comes across a highly rewarding sequence of states and actions, the agent will reinforce this behavior so that it is more likely for the agent to *exploit* the same high reward trajectory in future episodes.
 Throughout this process, the agent's behavior is codified into what is called a *policy*, which is a mapping of states to actions.
+
+<!-- ^ this is great! I do think keeping a table of these terms would be helpful (and refering to that table in the text here) -->
 
 To solve the RL problem, algorithms either take a *model-free* or *model-based* approach. 
 The distinction is that *model-free* algorithms do not have access to a model of the environment; yet, *model-based* algorithms use a model of the environment to achieve the RL objective.
@@ -135,7 +171,7 @@ Generally, model-free agents are either learning a policy function, a value func
 For context, *value functions* are proxies for how high of a cumulative reward an agent can expect to receive from a given state or state-action pair.
 If an agent knows the value function, then the agent can find the optimal action at any state by selecting the action that will maximize the value function in expectation.
 The class of algorithms that exclusively try to learn a value function are called *value learning* methods.
-*Policy gradient* algorithms exclusively learn the policy.
+By contrast, *Policy gradient* algorithms exclusively learn the policy.
 *Actor-critic* algorithms attempt to learn both a policy function and a value function, whereby the value function, which is learned separately from the policy, is used to inform the agent on the goodness of a selected action.
 There is a handful of advantages and disadvantages for each of these approaches that we will not go in depth -- for more, see [@CITE]; yet, the main point of distinction comes from the bias-variance trade-off.
 Policy gradients tend to struggle with high variance, value-learning tends to be biased while actor-critic methods balance these two concerns.
@@ -147,7 +183,7 @@ Policy gradients tend to struggle with high variance, value-learning tends to be
 ## Designing and building an environment
 
 An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an observation of it's current *state* and associated *reward* as output.
-In contrast to classical approaches, there are few restrictions on what comprises a state or action, at least in principle.
+In contrast to classical approaches, such as dynamic programming, there are few restrictions on what comprises a state or action, at least in principle.
 The state may be continuous or discrete, completely or only partially observed, one or many dimensions.
 For instance, we might represent a ecological community of 10 interacting species using an environment with 10 continuously valued states representing the possible population densities of each species.
 The action space may similarly complex, and the response of the environment to any possible action may be deterministic or stochastic in nature.
