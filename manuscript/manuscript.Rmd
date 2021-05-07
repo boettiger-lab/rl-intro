@@ -115,8 +115,8 @@ What do we mean by an "agent"?
 -->
 
 Any application of RL can be divided into two components: an *environment* and an *agent*.
-An *environment* is typically a computer simulation, though it is possible to use the real world as the RL environment [@robotics; @offlinesurvey].
-Over the course of an *episode*, an *agent*, which is often a computer program, continuously interacts with the environment. 
+An *environment* is typically a computer simulation, though it is possible to use the real world as the RL environment [@robotics].
+Over the course of an episode, an *agent*, which is often a computer program, continuously interacts with the environment. 
 At each time step, the agent performs an *action*, and as a result of this action, the environment will determine the next *state* and numerical *reward* that the agent will observe.
 The goal of the agent is to learn how to maximize its expected cumulative reward.
 The agent learns how to achieve this objective during a period called *training*.
@@ -126,25 +126,19 @@ Throughout this process, the agent's behavior is codified into what is called a 
 
 To solve the RL problem, algorithms either take a *model-free* or *model-based* approach. 
 The distinction is that *model-free* algorithms do not have access to a model of the environment; yet, *model-based* algorithms use a model of the environment to achieve the RL objective.
-The trade-off between these approaches is that when it is possible to quickly learn a good model or the model is already known, model-based algorithms tend to require much less interaction with the environment to learn good-performing policies. 
-Yet, oftentimes learning a model of the environment is very difficult, and in these cases, model-free algorithms tend to outperform.
+A trade-off between these approaches is that when it is possible to quickly learn a model of the environment or the model is already known, model-based algorithms tend to require much less interaction with the environment to learn good-performing policies [@mbpo].
+Yet, frequently, learning a model of the environment is very difficult, and in these cases, model-free algorithms tend to outperform [@CITE].
 Since most of the recent focus in RL has gone towards model-free algorithms, we will focus on model-free agents for the rest of the paper.
 
-Amongst model-free algorithms, 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Amongst model-free algorithms, there is divergence around what functions the agent is attempting to learn.
+Generally, model-free agents are either learning a policy function, a value function or both.
+For context, *value functions* are proxies for how high of a cumulative reward an agent can expect to receive from a given state or state-action pair.
+If an agent knows the value function, then the agent can find the optimal action at any state by selecting the action that will maximize the value function in expectation.
+The class of algorithms that exclusively try to learn a value function are called *value learning* methods.
+*Policy gradient* algorithms exclusively learn the policy.
+*Actor-critic* algorithms attempt to learn both a policy function and a value function, whereby the value function, which is learned separately from the policy, is used to inform the agent on the goodness of a selected action.
+There is a handful of advantages and disadvantages for each of these approaches that we will not go in depth -- for more, see [@CITE]; yet, the main point of distinction comes from the bias-variance trade-off.
+Policy gradients tend to struggle with high variance, value-learning tends to be biased while actor-critic methods balance these two concerns.
 
 
 
