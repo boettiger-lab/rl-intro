@@ -125,7 +125,7 @@ Once the agent comes across a highly rewarding sequence of states and actions, t
 Throughout this process, the agent's behavior is codified into what is called a *policy*, which describes what action an agent should take for a given state.
 
 To solve the RL problem, algorithms either take a *model-free* or *model-based* approach. 
-The distinction is that *model-free* algorithms do not use or attempt to learn a model of the environment.
+The distinction is that *model-free* algorithms do not attempt to learn or use a model of the environment.
 Conversely, *Model-based* algorithms either learn or use a model of the environment to achieve the RL objective.
 A trade-off between these approaches is that when it is possible to quickly learn a model of the environment or the model is already known, model-based algorithms tend to require much less interaction with the environment to learn good-performing policies [@mbpo].
 Yet, frequently, learning a model of the environment is very difficult, and in these cases, model-free algorithms tend to outperform [@CITE].
@@ -137,7 +137,7 @@ For context, *value functions* are proxies for how high of a cumulative reward a
 If an agent knows the value function, then the agent can find the optimal action at any state by selecting the action that will maximize the value function in expectation.
 The class of algorithms that exclusively try to learn a value function are called *value learning* methods.
 *Policy gradient* algorithms exclusively learn the policy.
-And, lastly, *Actor-critic* algorithms attempt to learn both a policy function and a value function, whereby the value function, which is learned separately from the policy, is used to inform the agent on the goodness of a selected action.
+And, lastly, *actor-critic* algorithms attempt to learn both a policy function and a value function, whereby the value function, which is learned separately from the policy, is used to inform the agent on the goodness of a selected action.
 There is a handful of advantages and disadvantages for each of these approaches that we will not go in depth on -- for more, see [@CITE]; yet, the main point of distinction comes from the bias-variance trade-off.
 Policy gradients tend to struggle with high variance, value-learning tends to be biased while actor-critic methods balance these two concerns.
 
@@ -147,8 +147,8 @@ Yet, over the last 10 years, researchers have shown that neural network-based RL
 Neural networks have been widely useful in reinforcement learning because neural nets have the property of being universal function approximators [@CITE].
 Whenever there is a need for an agent to approximate some function, say a policy function, value function or a transition function, neural networks can be used in this capacity.
 While there are other function approximators that can be used in RL, e.g. Gaussian processes, neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@CITE].
-We will not discuss in detail how neural networks work -- see [@CITE] for further background --, but the basic premise is that at each learning step, the agent, say a policy gradient-based agent, will adjust the parameters in its policy neural network so that according to past experiences, the agent will be more likely to engage in highly rewarding behavior in the future. 
-
+We will not discuss in detail how neural networks work -- see [@CITE] for further background --, but the general process for how neural networks are used in RL is that at each learning step, the agent, say a policy gradient-based agent, will adjust the parameters in its policy neural network so that according to past experiences, the agent will be more likely to engage in highly rewarding behavior in the future. 
+This same process occurs in value learning and actor-critic algorithms, except these agents are adjusting either a value network or both a value and policy network respectively.
 
 ## Designing and building an environment
 
