@@ -223,16 +223,12 @@ I think we can lean more heavily both in references to and paralleling the prese
 
 -->
 
-The basic problem set-up of RL is as follows: at a time step, $t$, the agent observes a representation of the environment's state, $s_t$, and must accordingly select an action, $a_t$; at the next time step, the agent will observe a new state, $s_{t+1}$, and will receive a numerical reward, $r_{t+1}$.
-This new state, $s_{t+1}$, and reward, $r_{t+1}$, are determined by the environment.
-The task for the agent is to learn a *policy*, $\pi$, that prescribes what action the agent should perform after observing a certain state.
-The agent interacts with the environment via trial and error in what is called the *training* period, during which the agent continually updates its policy in order to maximize its expected cumulative sum of rewards.
-
-
 <!-- Still can't decide if this statement is too strong; i.e. that at least theoretically / LSTM, RL permits learning processes which are not Markovian in the observed variables -->
-When the environment is fully observable, i.e. when the state that the agent observes fully characterizes the system, the reinforcement learning problem can be formalized as a Markov Decision Process (MDP).
-An MDP consists of the following: a set of states, $\mathcal{S}$, called the state space; a set of actions, $\mathcal{A}$, called the action space; a state transition operator, $T(s_{t+1}|s_t, a_t)$, which describes the dynamics of the system; a reward function, $r(s_t, a_t)$; an initial state distribution, $d_0(s_0)$; and a discount factor, $\gamma \in (0,1]$. As the agent interacts with the environment, the agent will create a trajectory in state-action space given as $\tau = (s_0, a_0, \dots, s_H, a_H)$ where H denotes the horizon or length of the state-action sequence.
-From this definition, we can provide an agent's trajectory distribution for a given policy as,
+When the environment is fully observable, i.e. when the state that the agent observes fully characterizes the system, the reinforcement learning problem is conventionally formalized as a Markov Decision Process (MDP).
+A MDP consists of the following: a set of states, $\mathcal{S}$, called the state space; a set of actions, $\mathcal{A}$, called the action space; a state transition operator, $T(s_{t+1}|s_t, a_t)$, which describes the dynamics of the system; a reward function, $r(s_t, a_t)$; an initial state distribution, $d_0(s_0)$; and a discount factor, $\gamma \in (0,1]$.
+After the agent observes a state at time t, $s_t$, the agent selects an action, $a_t$, according to its policy, $\pi$, which maps states to a probability distribution over actions, $\pi: \mathcal{S} \rightarrow p(\mathcal{A} \mid \mathcal{S})$.
+As the agent interacts with the environment, the agent will create a trajectory in state-action space given as $\tau = (s_0, a_0, \dots, s_H, a_H)$ where H denotes the horizon or length of the state-action sequence.
+From these definitions, we can provide an agent's trajectory distribution for a given policy as,
 
 $$
   p_\pi(\tau) = d_0(s_0) \prod_{t=0}^H \pi(a_t \mid s_t) T(s_{t+1} \mid s_t, a_t)
