@@ -561,17 +561,40 @@ To better illustrate the generality of RL approach and more typical complexity o
 Ecological challenges facing the planet today are complex and outcomes are both uncertain and consequential.
 Even our best models and best research will never provide a crystal ball to the future, only better elucidate possible scenarios.
 Consequently, that research must also confront the challenge of making robust, resilient decisions in a changing world.
-The science of ecological management and quantitative decision-making has a long history [e.g. @Schaefer1954; @Walters1974] and remains an active area of research [@Possignham2006; @Fischer2009; @Polasky2011].
-However, the limitations of classical methods such as optimal control frequently constrain applications to relatively simplified models, ignoring elements such as spatial or temporal heterogeneity and autocorrelation, stochasticity, imperfect observations, age or state structure or other sources of complexity that are both pervasive and influential on ecological dynamics [@HastingsEncylopedia].
+The science of ecological management and quantitative decision-making has a long history [e.g. @Schaefer1954; @Walters1974] and remains an active area of research [@Possingham2006; @Fischer2009; @Polasky2011].
+However, the limitations of classical methods such as optimal control frequently constrain applications to relatively simplified models [@Possingham2006], ignoring elements such as spatial or temporal heterogeneity and autocorrelation, stochasticity, imperfect observations, age or state structure or other sources of complexity that are both pervasive and influential on ecological dynamics [@HastingsEncylopedia].
 It is much simpler to accommodate these elements and uncertainties in a suite of simulations than it is to solve for the optimal policy.
 Neural networks used in deep RL have proven remarkably effective in handling such complexity, particularly when leveraging immense computing resources increasingly available through advances in hardware and software [@gpu_computing]. 
 
+Model-free RL is particularly appealing given the ubiquitous presence of model uncertainty in ecological dynamics.
+Rarely do we know the underlying functional forms for ecological processes -- is population recruitment more Beverton-Holt or Ricker?
+Methods which must first assume something about the structure or functional form of a process before estimating the corresponding parameter can only ever be as good as those structural assumptions.
+Frequently available ecological data is insufficient to distinguish between possible alternative models [@devalpine], or the correct model may be non-identifiable with any amount of data.
+Model-free RL approaches offer a powerful way to factor this thorny issue.
+The model-free RL agent needs to make no such a priori hypothesis about a particular functional form.
+Alternative models can easily be implemented in simulations, allowing an agent to train against both contingencies.
+A successful agent will learn a policy that works well in both scenarios.
+This is analogous to classical approaches for integrating over parameter or model uncertainty [e.g. @Walters1981; @Ludwig1982],
+
+
 However, successfully applying RL to complex ecological problems is no easy task.
+The flexibility of the approach makes it relatively straightforward to include realistic biology and environmental science in framing an RL problem, but training an RL agent to reach an acceptable level of performance is another task.
+As the examples we have presented illustrate, it is important to begin with simple problems, including those for which an optimal strategy is already known.
+Such examples provide important benchmarks against which to calibrate the performance, tuning and training requirements of RL,
+and can easily be extended into more complex problems once RL agents can master the basics.
+Finding acceptable policies even in relatively simple problems may prove beyond the reach of existing algorithms and available computing power.
+<!-- More precise caveats about reproducibility, convergence, tuning, computational limitations-->
+
+
+
 Deep RL is still a very young field, where despite several landmark successes, potential far outstrips practice.
+Recent advances in the field have proven the potential of the approach to solve complex problems [@alphaGo2016; @alphaGoZero; @alphazero; @DQN], but typically leveraging large teams with decades of experience in ML and millions of dollars worth of computing power [@alphaGoZero].
+Successes have so far been concentrated in applications to games and robotics, not scientific and policy domains, though this is beginning to change [@protein_folding].
+Leading developers of new algorithms for deep RL benchmark the performance of their algorithms against such problems in part because simulations of games and robotic movement are readily available through open source frameworks designed to interface with RL algorithms [@gym], and performance can easily be compared against alternatives on public leaderboards [@gym].
+Iterative improvements to well-posed public challenges have proven immensely effective in the computer science community in tackling difficult problems [@netflix_prize; @imagenet].
+Advances in both computational power and algorithmic efficiency continue to reduce costs at a dramatic pace, significantly faster than Moore's law [@openai_costs].
 
-<!-- Something about influence of natural resource economics and preference for analytically tractable optimization -->
-
-
+<!-- Discuss training across mutiple envs, sequentially vs simultaneously -->
 
 
 <!-- 
