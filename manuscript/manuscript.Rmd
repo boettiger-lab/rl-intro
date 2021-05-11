@@ -553,20 +553,24 @@ Nevertheless, deep RL approaches using neural network architectures have proven 
 Our previous examples have focused on relatively simple examples that can also be addressed at least approximately by conventional methods, and also permit RL-based solutions to be found relatively efficiently on commodity hardware.
 To better illustrate the generality of RL approach and more typical complexity of conservation problems, we now introduce a third example for which we have not yet found an effective policy using RL or classical methods.
 
-
+<!-- Marcus add ~ paragraph discussion of the fire gym, citing motivating examples, basic overview of the state space, action space and reward and a screenshot of the simulation as a figure? -->
 
 # Discussion
 
 <!-- decision theory is a fundamental scientific research topic -->
-Ecological challenges facing the planet today are complex and outcomes are as uncertain and highly consequential.
+Ecological challenges facing the planet today are complex and outcomes are both uncertain and consequential.
 Even our best models and best research will never provide a crystal ball to the future, only better elucidate possible scenarios.
 Consequently, that research must also confront the challenge of making robust, resilient decisions in a changing world.
 The science of ecological management and quantitative decision-making has a long history [e.g. @Schaefer1954; @Walters1974] and remains an active area of research [@Possignham2006; @Fischer2009; @Polasky2011].
+However, the limitations of classical methods such as optimal control frequently constrain applications to relatively simplified models, ignoring elements such as spatial or temporal heterogeneity and autocorrelation, stochasticity, imperfect observations, age or state structure or other sources of complexity that are both pervasive and influential on ecological dynamics [@HastingsEncylopedia].
+It is much simpler to accommodate these elements and uncertainties in a suite of simulations than it is to solve for the optimal policy.
+Neural networks used in deep RL have proven remarkably effective in handling such complexity, particularly when leveraging immense computing resources increasingly available through advances in hardware and software [@gpu_computing]. 
+
+However, successfully applying RL to complex ecological problems is no easy task.
+Deep RL is still a very young field, where despite several landmark successes, potential far outstrips practice.
+
 <!-- Something about influence of natural resource economics and preference for analytically tractable optimization -->
-However, the limitations of classical methods such as optimal control frequently constrain these 
 
-
-In this paper, we have highlighted the great potential that Reinforcement Learning, and in particular, of model-free *deep* RL has for helping confront challenging ecological and environmental management issues in a changing world.
 
 
 
