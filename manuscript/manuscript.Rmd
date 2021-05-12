@@ -238,17 +238,61 @@ When the agent cannot fully observe the state of the system, reinforcement learn
 An important property of POMDPs and MDPs is that they are memoryless; the future, $s_{t+1}$, does not depend on the past but only on the state and action at the present time.
 This Markov property, which is often an unrealistic assumption, is held in most of the RL algorithms that we will discuss.
 
-In formal terms, the goal of reinforcement learning is to find an optimal policy distribution, $\pi^*(a_t | s_t)$ or $\pi^*(a_t|o_t)$ for MDP and POMDP cases respectively, that maximizes the expected cumulative, discounted reward:
+In formal terms, the goal of reinforcement learning is to find an optimal policy distribution, $\pi^*(a_t | s_t)$ or $\pi^*(a_t|o_t)$ for MDP and POMDP cases respectively, that maximizes the expected return, $J(\pi)$:
 
 $$
-  \pi^* = \underset{\pi}{\text{argmax}} \,\, \mathbb{E}_{\tau \sim p_\pi(\tau)}\Big[\sum_{t=0}^{H} \gamma^t r(s_t, a_t) \Big]
+  \pi^* = \underset{\pi}{\text{argmax}} \,\, \mathbb{E}_{\tau \sim p_\pi(\tau)}\Big[\sum_{t=0}^{H} \gamma^t r(s_t, a_t) \Big] =  \underset{\pi}{\text{argmax}} \,\, J (\pi)
 $$
 
 Note that this formalism extends to an infinite horizon case when $T= \infty$.
 While there are RL methods to deal with infinite horizon cases, we will only consider episodic MDP and POMDPs.
 
-Many reinforcement learning algorithms center around estimating value functions, which attempt to quantify the goodness of being in a state or taking an action from a state.
+<!-- Explain policy gradients as this is the natural progression
+So sketch out reinforce, ending that its susceptibility to high variance
+
+talk about value-based learning so q values and bellman recursion
+-->
+## Policy Gradients
+The most straightforward way to optimize the RL objective is through a policy search, whereby the agent continually updates a policy parameterized by $\theta$, $\pi_\theta$ -- in deep RL, this parameterized policy will be a neural network.
+There are both gradient-free and gradient-based policy search methods that have been successful in practice [@CITE; @CITE]; but for the sake of brevity, we will focus on gradient-based methods, which are more commonly encountered. 
+In policy gradient methods, algorithms are performing gradient ascent on the expected return, $J(\pi_\theta)$, to find the optimal policy parameters. 
+At each gradient step, the following update is performed,
+
+$$
+  \theta_{t+1} = \theta_t + \alpha \nabla_\theta J(\pi_\theta).
+$$
+
+Supposing that the agent has interacted with the environment and has collected some trajectories denoted by, $\tau_i$, then $\nabla J(\pi_\theta)$ can be estimated as:
+
+$$
+  \nabla_\theta J(\pi_\theta) \approx \sum_{i,t} \nabla_\theta \log{\pi_\theta (a_{i,t} \mid s_{i,t})} \Big( \sum_{t'=t}^H \gamma^{t'-t} r(s_{i, t'}, a_{i, t'}) \Big).
+$$
+
+See the appendix for how this is derived. 
+The intuition behind this approximation is exactly what we want: the agent will increase the probability of repeating the actions for the inputted states proportional to the size of the return. 
+In practice, however, the empirical return tends to have high variance, resulting in a very noisy gradient ascent that impedes learning [@CITE].
+To avoid this issue, most policy gradient algorithms replace the empirical return with a different return estimator that has lower variance [@CITE GAE].
+A sketch of a simple policy gradient algorithm is shown in FIGURE. 
+
+## Value Learning
+Another way to approach the RL problem is by estimating a value function, and using the value function to retrieve a policy. 
+Value functions attempt to quantify the goodness of being in a state or taking an action from a state.
 Given that the objective of RL is to maximize the cumulative expected reward, "goodness" refers to the likelihood that a state or state-action pair will result in a high cumulative reward trajectory.
+The state-action-value or Q function finds the expected return provided a state and action, 
+
+$$
+  Q^\pi(s_t, a_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t, a_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg].
+$$
+
+The general motivation is that if we know the Q function, then we can easily find the optimal action at any state by selecting the action with the highest Q-value: $a_t^* = \underset{a_t}{\text{argmax}} \, Q^\pi (s_t, a_t)$.
+In the case that the state-action space can be tractably represented in a table, one could employ an algorithm, like temporal-difference control -- see Sutton Ch. 6 for details -- which approximates the Q value for every state-action pair [@suttonbarto]. 
+Yet, for many decision-making problems, the state-action space cannot be tractably represented in a table; one effective alternative for this case is to use a neural network to approximate the Q-function. 
+
+
+
+
+
+
 There are 3 value functions that are commonly used across RL algorithms: the state-value function, $V^\pi(s_t)$, the state-action value function, $Q^\pi(s_t, a_t)$, and the advantage function, $A^\pi(s_t, a_t)$.
 The state-value function is defined as the expected return from a given state,
 
