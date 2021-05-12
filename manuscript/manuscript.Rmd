@@ -557,16 +557,19 @@ To better illustrate the generality of RL approach and more typical complexity o
 
 # Discussion
 
-<!-- decision theory is a fundamental scientific research topic -->
+<!-- Ecology has complex decisions and we lack necessary tools; RL could be it -->
 Ecological challenges facing the planet today are complex and outcomes are both uncertain and consequential.
 Even our best models and best research will never provide a crystal ball to the future, only better elucidate possible scenarios.
 Consequently, that research must also confront the challenge of making robust, resilient decisions in a changing world.
 The science of ecological management and quantitative decision-making has a long history [e.g. @Schaefer1954; @Walters1974] and remains an active area of research [@Possingham2006; @Fischer2009; @Polasky2011].
 However, the limitations of classical methods such as optimal control frequently constrain applications to relatively simplified models [@Possingham2006], ignoring elements such as spatial or temporal heterogeneity and autocorrelation, stochasticity, imperfect observations, age or state structure or other sources of complexity that are both pervasive and influential on ecological dynamics [@HastingsEncylopedia].
-It is much simpler to accommodate these elements and uncertainties in a suite of simulations than it is to solve for the optimal policy.
+Complexity comes not only from the ecological processes but also the available actions.
+While conservation objectives are often framed in broad, simple terms, the potential action space is often huge: conservation efforts can be implemented in a wide variety of ways, and the most effective policies may vary in both space and time. <!-- Millie: can we say something more precise about 'simple terms' or add some citation here?-->
+While such complex dynamics and large state and action spaces are intractable to classical methods, they are straight forward to implement in simulation environments such as those used to train an RL algorithm.
 Neural networks used in deep RL have proven remarkably effective in handling such complexity, particularly when leveraging immense computing resources increasingly available through advances in hardware and software [@gpu_computing]. 
 
-Model-free RL is particularly appealing given the ubiquitous presence of model uncertainty in ecological dynamics.
+<!-- Model free is great bc we don't know the true models -->
+The rapidly expanding class of Model-free RL algorithms is particularly appealing given the ubiquitous presence of model uncertainty in ecological dynamics.
 Rarely do we know the underlying functional forms for ecological processes -- is population recruitment more Beverton-Holt or Ricker?
 Methods which must first assume something about the structure or functional form of a process before estimating the corresponding parameter can only ever be as good as those structural assumptions.
 Frequently available ecological data is insufficient to distinguish between possible alternative models [@devalpine], or the correct model may be non-identifiable with any amount of data.
@@ -576,89 +579,45 @@ Alternative models can easily be implemented in simulations, allowing an agent t
 A successful agent will learn a policy that works well in both scenarios.
 This is analogous to classical approaches for integrating over parameter or model uncertainty [e.g. @Walters1981; @Ludwig1982],
 
-
-However, successfully applying RL to complex ecological problems is no easy task.
-The flexibility of the approach makes it relatively straightforward to include realistic biology and environmental science in framing an RL problem, but training an RL agent to reach an acceptable level of performance is another task.
-As the examples we have presented illustrate, it is important to begin with simple problems, including those for which an optimal strategy is already known.
-Such examples provide important benchmarks against which to calibrate the performance, tuning and training requirements of RL,
-and can easily be extended into more complex problems once RL agents can master the basics.
-Finding acceptable policies even in relatively simple problems may prove beyond the reach of existing algorithms and available computing power.
-<!-- More precise caveats about reproducibility, convergence, tuning, computational limitations-->
-
-
-
-Deep RL is still a very young field, where despite several landmark successes, potential far outstrips practice.
-Recent advances in the field have proven the potential of the approach to solve complex problems [@alphaGo2016; @alphaGoZero; @alphazero; @DQN], but typically leveraging large teams with decades of experience in ML and millions of dollars worth of computing power [@alphaGoZero].
-Successes have so far been concentrated in applications to games and robotics, not scientific and policy domains, though this is beginning to change [@protein_folding].
-Leading developers of new algorithms for deep RL benchmark the performance of their algorithms against such problems in part because simulations of games and robotic movement are readily available through open source frameworks designed to interface with RL algorithms [@gym], and performance can easily be compared against alternatives on public leaderboards [@gym].
-Iterative improvements to well-posed public challenges have proven immensely effective in the computer science community in tackling difficult problems [@netflix_prize; @imagenet].
-Advances in both computational power and algorithmic efficiency continue to reduce costs at a dramatic pace, significantly faster than Moore's law [@openai_costs].
-
-<!-- Discuss training across mutiple envs, sequentially vs simultaneously -->
-
-
-<!-- 
-- RL:
-  - Focused on decisions
-  - more ambitious than other approaches in structured decision-making or other ML
-- Limited application, mostly from CS side without sufficient ecological grounding (citation to forest fire work, some )
-
-- Model Free
-
-- Results
-
-- Technical Caveats
-
-- Social Caveats
-
-- Way Forward
-  Open Competition & Collaboration
-  Leaderboards
-
--->
-
-<!-- Something about relevance to both the _theory_ and practice of ecological conservation. (e.g. "strategic" 1-D models have probably had a greater influence, (for better or worse!) on real world policies than complex, detail-specific, precise "tactical" models) -->
-
-<!-- move to discussion -->
-The pitfalls of RL-based solutions to global environmental change problems are not only technical, but include issues of ethics and power, especially when the algorithms or data are proprietary.
-We discuss not only technical issues that can cause RL solutions to fail in surprising ways, but also potential issues raised by the adoption of more algorithmic approaches to conservation generally.
-We emphasize how an open, transparent and reproducible approach can help mitigate some (but not all) of these concerns, and facilitate a more effective interface between teams of researchers from both ecological and computer sciences.
-If algorithms are to play a meaningful role in the allocation and exploitation of natural resources from fish to forests, good intentions [@Joppa] may not be sufficient to ensure equitable outcomes.
-Ecologists and computer scientists will also need input from experts in governance and ethics to ensure that applications of AI to ecological challenges are fair and just.
-
-
-
-## Open Problems
-
+<!-- Real problems are harder than these examples -->
 The examples presented here only scrape the surface of possible RL applications to conservation problems.
 The examples we have focused on are intentionally quite simple, though it is worth remembering that these very same simple models have a long history of relevance and application in both research and policy contexts.
 Despite their simplicity, the optimal strategy is not always obvious before hand, however intuitive it may appear in retrospect.
 In the case of the ecosystem tipping point scenario, the optimal strategy is unknown, and the approximate solution found by our RL implementation could almost certainly be improved upon.
-
 Even at it's best, an RL-trained agent can only be as good as the scenarios on which it has been trained.
 In these simple examples in which the simulation implements a single model, training is analgous to classical methods which take the model as given [@Marescot2013].
 But classical approaches can be difficult to generalize when the underlying model is unknown: alternative models may require a completely different approach.
 In contrast, the process of training an RL algorithm on a more complex problem is no different than the simple one: we only need access to a simulation which can generate plausible future states in response to possible actions.
 Many of our most realistic ecological models exist only as numerical simulations of lower-level dynamics, such as the individual-based models used in the management of forests and wildfire [@sortie; @firemodel], disease [@disease], marine ecosystems [@ecopath], or global climate change [@gcm].
 
-# Discussion
 
-# Open issues
+<!-- Solving 'real' problems will be hard -->
+However, successfully applying RL to complex ecological problems is no easy task.
+The flexibility of the approach makes it relatively straightforward to include realistic biology and environmental science in framing an RL problem, but training an RL agent to reach an acceptable level of performance is another task.
+As the examples we have presented illustrate, it is important to begin with simple problems, including those for which an optimal strategy is already known.
+Such examples provide important benchmarks against which to calibrate the performance, tuning and training requirements of RL,
+and can easily be extended into more complex problems once RL agents can master the basics.
+Finding acceptable policies even in relatively simple problems may prove beyond the reach of existing algorithms and available computing power.
+<!-- something about several technical caveats: instability, interpretability reward design-->
 
-Deep reinforcement learning has only become an established subfield of AI over the past decade; and, as with most young fields, there are a range of unsolved problems.
-In practice, the foremost problem with DRL is instability.
-For a range of reasons, including high variance and the exploration vs. exploitation trade-off, model-free and model-based algorithms tend to have unstable performance on environments with non-tabular state-action spaces [cite RL that matters].
+<!-- reason 1: instability-->
+One leading problem with deep RL is instability.
+For a range of reasons, including high variance [@cite] and the exploration vs. exploitation trade-off [@cite], model-free and model-based algorithms tend to have unstable performance on environments with non-tabular state-action spaces [cite RL that matters].
 For instance, it is not uncommon to observe vastly different behavior when two agents are initialized with different random seeds [cite ibid].
 Since model-based and model-free algorithms typically have a large number of hyperparameters, each of which can contribute to training instability, it is practically impossible to identify the source of instability.
 The hope of the RL practitioner is that after doing an exhaustive hyperparameter search, the practitioner will find a set of hyperparameters that results in a robust, well-performing agent, but there are no guarantees that hyperparameter tuning will lead to this outcome.
-<!-- Kari: what does it mean for two algorithms with similar hyperparameters to perform differently? (As happens in our examples) -->
+<!--CB: I think we can say more about how to diagnose this problem if not fix it.
+    Likewise should address the importance of assessing robustness across multiple models/environments, probably at least as important an issue as robustness to nuciance hyperparameters like random seed.
+    -->
 
-In the context of conservation, we anticipate that there will be a host of specific challenges to using DRL methods.
-Interpretability is likely to be the biggest barrier to adoption.
+<!-- reason 2: interpretability --> 
+In the context of conservation, we anticipate that there will be a host of specific challenges to using deep RL methods.
+Interpretability is likely to be the biggest barrier to adoption. <!-- don't need to rank them -->
 Although there have been some attempts to increase the transparency of RL agents that use neural network as function approximators [cite], it is still very difficult to explain the behavior of RL-trained agents.
 Another challenge is that DRL algorithms are very sample inefficient, and to overcome sample inefficiency for conservation decision-making problems that are often data poor, relying on simulations to train agents will be necessary.
 While there are positives to using simulated data, any assumptions or biases that are included in the model will determine agent behavior.
 
+<!-- reason 3: reward design -->
 An issue that is central to any applied optimization problem is using the right objective.
 There have been many examples in which explicit reward design goes horribly wrong [cite].
 And for ecological systems, which are often very complex and impossible to fully observe, it seems that bad reward design is quite likely.
@@ -667,19 +626,37 @@ One recently proposed framework to overcome challenges with explicit reward desi
 Yet, in the context of training an agent to say conserve a species, there are questions that could easily arise, foremost will the agent infer that humans don't care about a certain species so acts in a way that leads to that species' extinction?
 There is a definite need for exploration of the ethics of using DRL for conservation.
 
-Ultimately, we anticipate that getting DRL to work well on fully detailed conservation decision-making problems will be challenging.
+<!-- reason 4/additional reasons, like sparse rewards -->
+Ultimately, we anticipate that getting deep RL to work well on fully detailed conservation decision-making problems will be challenging.
 Beyond typically having large state-action spaces for agents to explore, conservation problems tend to have sparse reward structures.
 E.g. rarely does an action in conservation lead to immediate rewards; instead, benefits are typically observed after actions have been performed.
 Sparse reward structures are challenging for DRL agents, because of the credit assignment problem [cite].
 To solve sparse reward environments, many researchers have employed customized algorithms to achieve better performance than standard DRL methods [cite Montezuma].
 For conservation, we anticipate that there will likely be a similar pattern, wherein bespoke RL methods will attain better performance than general methods.
 
--   wild west of AI?
-    -can separate RL from having gyms implemented -\> how do you compare different models, -mention that customization is probably the way to go, baselines only go so far
+<!-- But never fear, hard problems have been solved before!-->
+Deep RL is still a very young field, where despite several landmark successes, potential far outstrips practice.
+Recent advances in the field have proven the potential of the approach to solve complex problems [@alphaGo2016; @alphaGoZero; @alphazero; @DQN], but typically leveraging large teams with decades of experience in ML and millions of dollars worth of computing power [@alphaGoZero].
+Successes have so far been concentrated in applications to games and robotics, not scientific and policy domains, though this is beginning to change [@protein_folding].
+Leading developers of new algorithms for deep RL benchmark the performance of their algorithms against such problems in part because simulations of games and robotic movement are readily available through open source frameworks designed to interface with RL algorithms [@gym], and performance can easily be compared against alternatives on public leaderboards [@gym].
+Iterative improvements to well-posed public challenges have proven immensely effective in the computer science community in tackling difficult problems, which allow many teams with diverse expertise not only to compete but to learn from each other [@netflix_prize; @imagenet].
+Advances in both computational power and algorithmic efficiency continue to reduce costs at a dramatic pace, significantly faster than Moore's law [@openai_costs].
+By working to develop similarly well-posed challenges as clear benchmarks, ecology and environmental science researchers may both be better able to replicate that collaborative, iterative success in cracking hard problems.
+Such benchmarks may further improve collaboration across disciplines as well, attracting the attention of AI expertise to these key issues facing our planet.
+If RL opens the door to greater role for artificial intelligence and engagement of technology firms in the machinery that determines environmental policy, this raises new concerns as well as new opportunities.  
 
--   AI ethics, transparency
 
-# a vision going forward
+<!-- transition from big promise to perils -- Millie's section on risks here -->
 
--   our public/open source environments and agents, leaderboard
--   the need for collaborative/competitive development both to make better benchmark environments and better agents
+
+
+
+
+<!-- 
+The pitfalls of RL-based solutions to global environmental change problems are not only technical, but include issues of ethics and power, especially when the algorithms or data are proprietary.
+We discuss not only technical issues that can cause RL solutions to fail in surprising ways, but also potential issues raised by the adoption of more algorithmic approaches to conservation generally.
+We emphasize how an open, transparent and reproducible approach can help mitigate some (but not all) of these concerns, and facilitate a more effective interface between teams of researchers from both ecological and computer sciences.
+If algorithms are to play a meaningful role in the allocation and exploitation of natural resources from fish to forests, good intentions [@Joppa] may not be sufficient to ensure equitable outcomes.
+Ecologists and computer scientists will also need input from experts in governance and ethics to ensure that applications of AI to ecological challenges are fair and just.
+
+-->
