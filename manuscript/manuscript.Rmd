@@ -284,52 +284,43 @@ $$
   Q^\pi(s_t, a_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t, a_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg].
 $$
 
-The general motivation is that if we know the Q function under certain conditions -- e.g. that the state-action space is discrete and that the given policy visits all state-action pairs repeatedly [@suttonbarto 131; @Qproof] --, then we can easily find the optimal action at any state by selecting the action with the highest Q-value: $a_t^* = \underset{a_t}{\text{argmax}} \, Q^\pi (s_t, a_t)$.
+The general Q-learning motivation is that if we know the Q function under certain conditions -- e.g. that the state-action space is discrete and that the given policy visits all state-action pairs repeatedly [@suttonbarto 131; @Qproof] --, then we can easily find the optimal action at any state by selecting the action with the highest Q-value: $a_t^* = \underset{a_t}{\text{argmax}} \, Q^\pi (s_t, a_t)$.
 In the case that the state-action space can be tractably represented in a table, one could employ a  algorithm, like temporal-difference control -- see Sutton Ch. 6 for details -- which approximates the Q value for every state-action pair [@suttonbarto]. 
-Yet, for many decision-making problems, the state-action space cannot be tractably represented in a table; one effective alternative for this case is to use a neural network to approximate the Q-function, a method called deep Q-learning. 
+Yet, for many decision-making problems, the state-action space cannot be tractably represented in a table; for this case, one effective alternative is to use a neural network to approximate the Q-function, a method called deep Q-learning. 
 The general process for deep Q-learning differs from policy gradient methods, since instead of trying to maximize the return directly, the objective is to minimize the Bellman error.
 The Bellman error is a measure of how distant a given value function is from that value function which has been re-evaluated with recent environment interaction.
-In the case where the Q-function is approximated by some neural network and thus represented as $Q_\theta$, the Bellman error for one state-action pair would be
+Suppose we attempt to approximate the Q-function with a neural network and thus represent this approximate Q-function as as $Q_\phi$, the Bellman error for one state-action pair would be
 
 $$
-  \mathcal{E} = r(s_t, a_t) + \gamma \, \underset{a}{\text{max}} \, Q_\theta(s_{t+1}, a) - Q_\theta(s_t, a_t).
+  \mathcal{E} = r(s_t, a_t) + \gamma \, \underset{a}{\text{max}} \, Q_\phi(s_{t+1}, a) - Q_\phi(s_t, a_t).
 $$
 
 See the appendix/reference for details on how the Bellman Error is derived from eq. [@CITE]. 
-The general scheme for approximate value-learning with deep neural networks is to sample trajectories from the environment, evaluate the Bellman Error across a range of these samples then perform the following gradient descent,
+The general scheme for approximate value-learning with deep neural networks is to sample trajectories from the environment, evaluate the Bellman Error across these samples -- with the samples indexed by $i$ --, and then perform the following gradient descent:
 
 $$
-  \theta_{t+1} = \theta_t - \alpha \nabla_\theta \, \sum_i \mathcal{E}_i^2,
+  \phi_{t+1} = \phi_t - \alpha \nabla_\phi \, \sum_i \mathcal{E}_i^2 
 $$
 
-where $i$ indexes the sample.
-After convergence to the Q function, the optimal policy could 
+When being evaluated, a deep Q-learning agent will select actions by inputting the current state to the Q network and then identifying the state-action pair with the highest estimated Q value.
+The benefit of using neural networks to approximate Q-functions is that neural networks are able to generalize Q functions over unseen state-action pairs, whereas classic methods like TD-learning are not able to generalize [@CITE].
+But there a host of problems with getting neural-network-based value-learning agents to work in practice; see @CITE for more insight on these issues.   
+The primary concern with these methods is that they tend to suffer from bias which is introduced by fitting a value network to a target that incorporates an estimated value function [@CITE].  
 
-
-
-
-There are 3 value functions that are commonly used across RL algorithms: the state-value function, $V^\pi(s_t)$, the state-action value function, $Q^\pi(s_t, a_t)$, and the advantage function, $A^\pi(s_t, a_t)$.
-The state-value function is defined as the expected return from a given state,
-
-$$
-  V^\pi(s_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg]
-$$
-
-Meanwhile, the state-action-value or quality function, finds the expected return given a state and action, 
+## Actor-Critic
+Actor-critic algorithms integrate the main components from both value-learning and policy gradient based methods.
+The "actor" attempts to learn the policy, and the "critic" attempts to learn a value function.
+While the general algorithm for the critic is exactly the same as mentioned in the value-learning section, the actor differs from vanilla policy gradient algorithms by incorporating the critic in its gradient ascent step.
+Instead of estimating the gradient of the return as in eq ..., the gradient of the return is estimated as 
 
 $$
-  Q^\pi(s_t, a_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t, a_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg]
+  \nabla_\theta J(\pi_\theta) \approx \sum_{i,t} \nabla_\theta \log{\pi_\theta (a_{i,t} \mid s_{i,t})} \, \hat{Q}(s_{i,t}, a_{i, t}).
 $$
 
-And lastly, the advantage function characterizes a relative state-action value in that it quantifies how valuable a state-action pair is over a baseline.
-The advantage function can then be succinctly defined as 
+where $\hat{Q}$ is a value function estimated by the critic.
+The benefit of actor-critic algorithms is that they balance the issues with bias and variance that are common with value-learning and policy gradient methods respectively [@CITE].
+Consequently, actor-critic algorithms have achieved a large majority of the state of the art results in model-free deep RL [@CITE].  
 
-$$
-  A^\pi(s_t, a_t) = Q^\pi(s_t, a_t) - V^\pi(s_t)
-$$ 
-Learning $Q^\pi$, commonly called the Q-value function, is more powerful than learning the state-value function as Q-values easily prescribe what action to take when in a certain state, $a_t^* = \underset{a_t}{\text{argmax}} \, Q^\pi (s_t, a_t)$.
-Conversely, if we know the state-value function, we would have to perform a maximization over an expected value to find the optimal action, $a_t^* = \underset{a_t}{\text{argmax}} \, \mathbb{E}_{s_{t+1} \sim \,T(s_{t+1} \mid s_t, a_t)}[V^\pi(s_{t+1})]$, which is less tractable.
-Yet, learning the advantage function is often preferred in practice as advantage estimators favorably have lower variance than state-value and Q-value estimators [cite schulman gae].
 
 **Survey of RL Algorithms**
 
