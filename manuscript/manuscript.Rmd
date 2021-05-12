@@ -275,18 +275,20 @@ To avoid this issue, most policy gradient algorithms replace the empirical retur
 A sketch of a simple policy gradient algorithm is shown in FIGURE. 
 
 ## Value Learning
-Another way to approach the RL problem is by estimating a value function, and using the value function to retrieve a policy. 
+Another way to approach the RL problem is by estimating a value function, and then using the value function to retrieve a policy. 
 Value functions attempt to quantify the goodness of being in a state or taking an action from a state.
-Given that the objective of RL is to maximize the cumulative expected reward, "goodness" refers to the likelihood that a state or state-action pair will result in a high cumulative reward trajectory.
-The state-action-value or Q function finds the expected return provided a state and action, 
+Given that the objective of RL is to maximize the cumulative expected reward, "goodness" refers to how high of a cumulative reward the agent can expect to receive.
+For example, the state-action-value or Q function finds the expected return from a state and action pair under a policy, $\pi$, 
 
 $$
   Q^\pi(s_t, a_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t, a_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg].
 $$
 
-The general motivation is that if we know the Q function, then we can easily find the optimal action at any state by selecting the action with the highest Q-value: $a_t^* = \underset{a_t}{\text{argmax}} \, Q^\pi (s_t, a_t)$.
-In the case that the state-action space can be tractably represented in a table, one could employ an algorithm, like temporal-difference control -- see Sutton Ch. 6 for details -- which approximates the Q value for every state-action pair [@suttonbarto]. 
-Yet, for many decision-making problems, the state-action space cannot be tractably represented in a table; one effective alternative for this case is to use a neural network to approximate the Q-function. 
+The general motivation is that if we know the Q function under the condition that the given policy visits all state-action pairs [@suttonbarto 131; @Qproof], then we can easily find the optimal action at any state by selecting the action with the highest Q-value: $a_t^* = \underset{a_t}{\text{argmax}} \, Q^\pi (s_t, a_t)$.
+In the case that the state-action space can be tractably represented in a table, one could employ a  algorithm, like temporal-difference control -- see Sutton Ch. 6 for details -- which approximates the Q value for every state-action pair [@suttonbarto]. 
+Yet, for many decision-making problems, the state-action space cannot be tractably represented in a table; one effective alternative for this case is to use a neural network to approximate the Q-function, a method called deep Q-learning. 
+The general process for deep Q-learning differs from policy gradient methods, since instead of trying to maximize the return directly, the objective is to minimize the Bellman error.
+The Bellman error  
 
 
 
