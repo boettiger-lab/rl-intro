@@ -247,11 +247,6 @@ $$
 Note that this formalism extends to an infinite horizon case when $T= \infty$.
 While there are RL methods to deal with infinite horizon cases, we will only consider episodic MDP and POMDPs.
 
-<!-- Explain policy gradients as this is the natural progression
-So sketch out reinforce, ending that its susceptibility to high variance
-
-talk about value-based learning so q values and bellman recursion
--->
 ## Policy Gradients
 The most straightforward way to optimize the RL objective is through a policy search, whereby the agent continually updates a policy parameterized by $\theta$, $\pi_\theta$ -- in deep RL, this parameterized policy will be a neural network.
 There are both gradient-free and gradient-based policy search methods that have been successful in practice [@CITE; @CITE]; but for the sake of brevity, we will focus on gradient-based methods, which are more commonly encountered. 
