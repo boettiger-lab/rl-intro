@@ -653,9 +653,10 @@ For conservation, we anticipate that there will likely be a similar pattern, whe
 
 -   AI ethics, transparency
 
-<!-- first pass at this -->
+<!-- second pass at this -->
 
-Critical engagement in the ethical and power issues presented by decision making algorithms will be imperative to ensuring that applications of RL to ecological challenges are fair and just. While widespread discussion of the ethics of decision making algorithms across sectors such as policing, finance, and employment, are a commonplace little has been discussed on the biases and implications of implementing these methods in the environmental context. If algorithms are to play a meaningful role in the allocation and exploitation of natural resources from fish to forests, good intentions [@Joppa] may not be sufficient to ensure equitable outcomes. Mitigation of the power asymmetries that might arise from algorithmic applications are key [cite caleb's paper?]. Engagement with experts in governance and ethics to ensure that applications of AI to ecological challenges are applied responsibly and transparently.
+Algorithms are playing increasingly influential decision-making roles in sectors such as policing, finance, and employment, raising concerns about the ethics, biases, and power entrenched in both the algorithms and their outputs [@kalluri2020]. As algorithms play a greater role in environmental and conservation policy, will similar concerns arise? While this question has garnered  recent interest in the literature [@wearn2019; @adams2019; @scoville2021] the use use of decision making algorithms in environmental applications has largely been confined to the context of classification algorithms (i.e. to identify wildlife poaching [@adams2019] or illegal fishing behavior [@mcdonald2021]). Increasingly, applications of AI to meeting sustainable development goals [@], prioritizing protected area locations [@], and predicting However, good intentions are not sufficient to ensure equitable outcomes. Interdisciplinary collaborations with experts in algorithmic governance and ethics will be important ensure that applications of AI to ecological challenges are applied responsibly. 
+ 
 
 
 # a vision going forward
