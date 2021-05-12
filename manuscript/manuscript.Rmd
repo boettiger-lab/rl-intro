@@ -270,7 +270,7 @@ $$
 
 See the appendix for how this is derived. 
 The intuition behind this approximation is exactly what we want: the agent will increase the probability of repeating the actions for the inputted states proportional to the size of the return. 
-In practice, however, the empirical return tends to have high variance, resulting in a very noisy gradient ascent that impedes learning [@CITE].
+In practice, however, the empirical return tends to have high variance, resulting in very noisy gradients that impedes learning [@CITE].
 To avoid this issue, most policy gradient algorithms replace the empirical return with a different return estimator that has lower variance [@CITE GAE].
 A sketch of a simple policy gradient algorithm is shown in FIGURE. 
 
@@ -284,13 +284,26 @@ $$
   Q^\pi(s_t, a_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t, a_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg].
 $$
 
-The general motivation is that if we know the Q function under the condition that the given policy visits all state-action pairs [@suttonbarto 131; @Qproof], then we can easily find the optimal action at any state by selecting the action with the highest Q-value: $a_t^* = \underset{a_t}{\text{argmax}} \, Q^\pi (s_t, a_t)$.
+The general motivation is that if we know the Q function under certain conditions -- e.g. that the state-action space is discrete and that the given policy visits all state-action pairs repeatedly [@suttonbarto 131; @Qproof] --, then we can easily find the optimal action at any state by selecting the action with the highest Q-value: $a_t^* = \underset{a_t}{\text{argmax}} \, Q^\pi (s_t, a_t)$.
 In the case that the state-action space can be tractably represented in a table, one could employ a  algorithm, like temporal-difference control -- see Sutton Ch. 6 for details -- which approximates the Q value for every state-action pair [@suttonbarto]. 
 Yet, for many decision-making problems, the state-action space cannot be tractably represented in a table; one effective alternative for this case is to use a neural network to approximate the Q-function, a method called deep Q-learning. 
 The general process for deep Q-learning differs from policy gradient methods, since instead of trying to maximize the return directly, the objective is to minimize the Bellman error.
-The Bellman error  
+The Bellman error is a measure of how distant a given value function is from that value function which has been re-evaluated with recent environment interaction.
+In the case where the Q-function is approximated by some neural network and thus represented as $Q_\theta$, the Bellman error for one state-action pair would be
 
+$$
+  \mathcal{E} = r(s_t, a_t) + \gamma \, \underset{a}{\text{max}} \, Q_\theta(s_{t+1}, a) - Q_\theta(s_t, a_t).
+$$
 
+See the appendix/reference for details on how the Bellman Error is derived from eq. [@CITE]. 
+The general scheme for approximate value-learning with deep neural networks is to sample trajectories from the environment, evaluate the Bellman Error across a range of these samples then perform the following gradient descent,
+
+$$
+  \theta_{t+1} = \theta_t - \alpha \nabla_\theta \, \sum_i \mathcal{E}_i^2,
+$$
+
+where $i$ indexes the sample.
+After convergence to the Q function, the optimal policy could 
 
 
 
