@@ -190,7 +190,10 @@ We use the `gym` framework to turn several existing ecological models into valid
 
 ## Designing and training an agent
 <!-- Maybe rename this as Training and Tuning an Agent -> how to practically get an agent up and running -->
-
+<!-- Ecologist job to build environment; CS job to build agent 
+      Ok so talk about this in very general terms
+      selecting an agent, why you might want to use different ones
+-->
 Training a deep, model-free agent on an environment involves allowing the agent to interact with the environment for thousands or even millions of time steps. 
 Over the course of training, the agent will engage in a trial and error process whereby the agent continually updates weights on a collection of neural networks in response to the environment's reward signal, much like how reinforcement learning is believed to work in living creatures [@cite].
 Fundamental to this trial and error process is a balancing of explorative and exploitative behavior.
