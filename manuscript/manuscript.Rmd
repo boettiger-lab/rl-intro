@@ -156,19 +156,19 @@ An environment is a mathematical function, computer program, or real world exper
 <!-- ML: what are classical approaches below here? -->
 In contrast to classical approaches, there are few restrictions on what comprises a state or action. 
 The state may be continuous or discrete, completely or partially observed, single or multidimensional.
-For instance, we might represent an ecological community of 10 interacting species using an environment with a 10-dimensional continuously valued state space representing the possible population densities of each species.
-The action space can be similarly complex.
-For the previous environment, we might set the action space to be continuously valued and 10-dimensional, where each dimension corresponds to the amount of conservation effort aimed at each of these species during a time step.   
+For instance, we might represent an ecological community of 10 interacting species with a 10-dimensional continuously valued state space signifying the population density of each species.
+The action space can be similarly complex, since an action can be continuous or discrete, single or multidimensional.
+For the previous environment, we might set the action space to be continuously valued and 10-dimensional, where each dimension corresponds to the amount of conservation effort aimed at the different species over a time step.   
 The main focus of an RL environment, however, is in the environment's transition dynamics and reward function.
-The designer of the environment can make the environment follow any transition and reward function provided that both are functions of the current state and inputted action.
-This ability allows for RL environments to model a broad range of decision making problems.
+The designer of the environment can make the environment follow any transition and reward function provided that both are functions of the current state and action.
+This ability allows RL environments to model a broad range of decision making problems.
 For example, we can set the transitions to be deterministic or stochastic.
-We can also specify the reward function to be *sparse*, whereby a positive reward is only received for state-action pairs that require a long sequence of actions to come across, e.g. the end point in a maze.
-In other environments, an agent may have to learn to forgo immediate reward (or even accept an initial negative reward or cost) in order to maximize the net discounted reward over the simulation period, as we illustrate in examples here.
+We can also specify the reward function to be *sparse*, whereby a positive reward is only received for state-action pairs that can only be visited after a long sequence of actions, e.g. the end point in a maze.
+In other environments, an agent may have to learn to forgo immediate rewards (or even accept an initial negative reward) in order to maximize the net discounted reward over the simulation period, as we illustrate in examples here.
 Another important consideration in RL is whether to use an episodic or non-episodic environment.
 In episodic environments, there is a finite number of time steps during which the agent interacts with the environment, and for these environments, the designer must specify a stopping condition.
 Conversely, with non-episodic environments, the agent can interact with the environment ad infinitum. 
-For this paper, we only consider episodic environments.
+For this paper, we will only consider episodic environments.
 
 
 \begin{figure}
