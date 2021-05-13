@@ -116,12 +116,12 @@ What do we mean by an "agent"?
 
 Any application of RL can be divided into two components: an *environment* and an *agent*.
 An *environment* is typically a computer simulation, though it is possible to use the real world as the RL environment [@robotics].
-Over the course of an episode, an *agent*, which is often a computer program, continuously interacts with the environment. 
-At each time step, the agent performs an *action*, and as a result of this action, the environment will determine the next *state* and numerical *reward* that the agent will observe.
+Over the course of a task, an *agent*, which is often a computer program, continuously interacts with the environment. 
+At each time step, the agent observes the current *state* of the environment then performs an *action*; as a result of this action, the environment will transition to a new state and will transmit a numerical *reward* signal to the agent.
 The goal of the agent is to learn how to maximize its expected cumulative reward.
 The agent learns how to achieve this objective during a period called *training*.
 In training, the agent *explores* the available states and actions. 
-Once the agent comes across a highly rewarding sequence of states and actions, the agent will reinforce this behavior so that it is more likely for the agent to *exploit* the same high reward trajectory in future episodes.
+Once the agent comes across a highly rewarding sequence of states and actions, the agent will reinforce this behavior so that it is more likely for the agent to *exploit* the same high reward trajectory in the future.
 Throughout this process, the agent's behavior is codified into what is called a *policy*, which describes what action an agent should take for a given state.
 
 To solve the RL problem, algorithms either take a *model-free* or *model-based* approach. 
@@ -152,15 +152,24 @@ This same process occurs in value learning and actor-critic-based deep RL algori
 
 ## Designing and building an environment
 
-An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an observation of it's current *state* and associated *reward* as output.
-In contrast to classical approaches, there are few restrictions on what comprises a state or action, at least in principle.
-The state may be continuous or discrete, completely or only partially observed, one or many dimensions.
-For instance, we might represent a ecological community of 10 interacting species using an environment with 10 continuously valued states representing the possible population densities of each species.
-The action space may similarly complex, and the response of the environment to any possible action may be deterministic or stochastic in nature.
-The reward will in general depend on both the current state and choice of actions.
-An environment must also specify a stopping condition, such as when a particular state is reached or a pre-defined interval of time has elapsed.
-In some environments, a reward is only received after the agent successfully completes a potentially long sequence of complex actions, such as solving a maze.
+An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an observation of its current *state* and an associated *reward* as output.
+<!-- ML: what are classical approaches below here? -->
+In contrast to classical approaches, there are few restrictions on what comprises a state or action. 
+The state may be continuous or discrete, completely or partially observed, single or multidimensional.
+For instance, we might represent an ecological community of 10 interacting species using an environment with a 10-dimensional continuously valued state space representing the possible population densities of each species.
+The action space can be similarly complex.
+For the previous environment, we might set the action space to be continuously valued and 10-dimensional, where each dimension corresponds to the amount of conservation effort aimed at each of these species during a time step.   
+The main focus of an RL environment, however, is in the environment's transition dynamics and reward function.
+The designer of the environment can make the environment follow any transition and reward function provided that both are functions of the current state and inputted action.
+This ability allows for RL environments to model a broad range of decision making problems.
+For example, we can set the transitions to be deterministic or stochastic.
+We can also specify the reward function to be *sparse*, whereby a positive reward is only received for state-action pairs that require a long sequence of actions to come across, e.g. the end point in a maze.
 In other environments, an agent may have to learn to forgo immediate reward (or even accept an initial negative reward or cost) in order to maximize the net discounted reward over the simulation period, as we illustrate in examples here.
+Another important consideration in RL is whether to use an episodic or non-episodic environment.
+In episodic environments, there is a finite number of time steps during which the agent interacts with the environment, and for these environments, the designer must specify a stopping condition.
+Conversely, with non-episodic environments, the agent can interact with the environment ad infinitum. 
+For this paper, we only consider episodic environments.
+
 
 \begin{figure}
 \centering
