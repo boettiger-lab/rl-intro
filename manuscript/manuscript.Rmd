@@ -116,45 +116,62 @@ What do we mean by an "agent"?
 
 Any application of RL can be divided into two components: an *environment* and an *agent*.
 An *environment* is typically a computer simulation, though it is possible to use the real world as the RL environment [@robotics].
-Over the course of an episode, an *agent*, which is often a computer program, continuously interacts with the environment. 
-At each time step, the agent performs an *action*, and as a result of this action, the environment will determine the next *state* and numerical *reward* that the agent will observe.
+Over the course of a task, an *agent*, which is often a computer program, continuously interacts with the environment. 
+At each time step, the agent observes the current *state* of the environment then performs an *action*; as a result of this action, the environment will transition to a new state and will transmit a numerical *reward* signal to the agent.
 The goal of the agent is to learn how to maximize its expected cumulative reward.
 The agent learns how to achieve this objective during a period called *training*.
 In training, the agent *explores* the available states and actions. 
-Once the agent comes across a highly rewarding sequence of states and actions, the agent will reinforce this behavior so that it is more likely for the agent to *exploit* the same high reward trajectory in future episodes.
-Throughout this process, the agent's behavior is codified into what is called a *policy*, which is a mapping of states to actions.
+Once the agent comes across a highly rewarding sequence of states and actions, the agent will reinforce this behavior so that it is more likely for the agent to *exploit* the same high reward trajectory in the future.
+Throughout this process, the agent's behavior is codified into what is called a *policy*, which describes what action an agent should take for a given state.
 
 To solve the RL problem, algorithms either take a *model-free* or *model-based* approach. 
-The distinction is that *model-free* algorithms do not have access to a model of the environment; yet, *model-based* algorithms use a model of the environment to achieve the RL objective.
+The distinction is that *model-free* algorithms do not attempt to learn or use a model of the environment.
+Conversely, *Model-based* algorithms either learn or use a model of the environment to achieve the RL objective.
 A trade-off between these approaches is that when it is possible to quickly learn a model of the environment or the model is already known, model-based algorithms tend to require much less interaction with the environment to learn good-performing policies [@mbpo].
 Yet, frequently, learning a model of the environment is very difficult, and in these cases, model-free algorithms tend to outperform [@CITE].
 Since most of the recent focus in RL has gone towards model-free algorithms, we will focus on model-free agents for the rest of the paper.
 
-Amongst model-free algorithms, there is divergence around what functions the agent is attempting to learn.
+<!-- Write paragraph on classic approaches then compare to deep RL very broadly-->
+
+Among model-free algorithms, there is divergence around what functions the agent is attempting to learn in order to achieve the RL objective.
 Generally, model-free agents are either learning a policy function, a value function or both.
 For context, *value functions* are proxies for how high of a cumulative reward an agent can expect to receive from a given state or state-action pair.
 If an agent knows the value function, then the agent can find the optimal action at any state by selecting the action that will maximize the value function in expectation.
 The class of algorithms that exclusively try to learn a value function are called *value learning* methods.
 *Policy gradient* algorithms exclusively learn the policy.
-*Actor-critic* algorithms attempt to learn both a policy function and a value function, whereby the value function, which is learned separately from the policy, is used to inform the agent on the goodness of a selected action.
-There is a handful of advantages and disadvantages for each of these approaches that we will not go in depth -- for more, see [@CITE]; yet, the main point of distinction comes from the bias-variance trade-off.
-Policy gradients tend to struggle with high variance, value-learning tends to be biased while actor-critic methods balance these two concerns.
+And, lastly, *actor-critic* algorithms attempt to learn both a policy function and a value function, whereby the value function, which is learned separately from the policy, is used to inform the agent on the goodness of a selected action.
+There is a handful of advantages and disadvantages for each of these approaches that we will not go in depth on -- for more, see [@CITE]; yet, the main point of divergence comes from the bias-variance trade-off [@CITE].
+Generally, policy gradient algorithms tend to struggle with high variance, value-based learning tends to be biased while actor-critic methods balance these two concerns [@CITE; @CITE; @CITE].
 
-
-
-
+Neural networks become useful in RL when the environment has a large state-action space, which happens frequently with realistic decision-making problems. 
+Classic RL algorithms, like policy iteration, value iteration and TD-learning [@suttonbarto], fail when the state-action space is large, e.g. when the possible states and actions can not be represented in a tractable table [@CITE].
+Yet, over the last 10 years, researchers have shown that neural network-based RL algorithms can perform well on previously unsolvable environments.
+Neural networks have been widely useful in reinforcement learning because neural nets have the property of being general function approximators [@CITE].
+Whenever there is a need for an agent to approximate some function, say a policy function, value function or a transition function, neural networks can be used in this capacity.
+While there are other function approximators that can be used in RL, e.g. Gaussian processes, neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@CITE].
+We will not discuss in detail how neural networks work -- see [@CITE] for further background --, but the general process for how neural networks are used in RL is that at each learning step, the agent, say a policy gradient-based agent, will adjust the parameters in its policy neural network so that according to past experiences, the agent will be more likely to engage in highly rewarding behavior in the future. 
+This same process occurs in value learning and actor-critic-based deep RL algorithms, except these agents are adjusting either a value network or both a value and policy network respectively.
 
 ## Designing and building an environment
 
-An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an observation of it's current *state* and associated *reward* as output.
-In contrast to classical approaches, there are few restrictions on what comprises a state or action, at least in principle.
-The state may be continuous or discrete, completely or only partially observed, one or many dimensions.
-For instance, we might represent a ecological community of 10 interacting species using an environment with 10 continuously valued states representing the possible population densities of each species.
-The action space may similarly complex, and the response of the environment to any possible action may be deterministic or stochastic in nature.
-The reward will in general depend on both the current state and choice of actions.
-An environment must also specify a stopping condition, such as when a particular state is reached or a pre-defined interval of time has elapsed.
-In some environments, a reward is only received after the agent successfully completes a potentially long sequence of complex actions, such as solving a maze.
-In other environments, an agent may have to learn to forgo immediate reward (or even accept an initial negative reward or cost) in order to maximize the net discounted reward over the simulation period, as we illustrate in examples here.
+An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an observation of its current *state* and an associated *reward* as output.
+<!-- ML: what are classical approaches below here? -->
+In contrast to classical approaches, there are few restrictions on what comprises a state or action. 
+The state may be continuous or discrete, completely or partially observed, single or multidimensional.
+For instance, we might represent an ecological community of 10 interacting species with a 10-dimensional continuously valued state space signifying the population density of each species.
+The action space can be similarly complex, since an action can be continuous or discrete, single or multidimensional.
+For the previous environment, we might set the action space to be continuously valued and 10-dimensional, where each dimension corresponds to the amount of conservation effort aimed at the different species over a time step.   
+The main focus of an RL environment, however, is in the environment's transition dynamics and reward function.
+The designer of the environment can make the environment follow any transition and reward function provided that both are functions of the current state and action.
+This ability allows RL environments to model a broad range of decision making problems.
+For example, we can set the transitions to be deterministic or stochastic.
+We can also specify the reward function to be *sparse*, whereby a positive reward is only received for state-action pairs that can only be visited after a long sequence of actions, e.g. the end point in a maze.
+In other environments, an agent may have to learn to forgo immediate rewards (or even accept an initial negative reward) in order to maximize the net discounted reward over the simulation period, as we illustrate in examples here.
+Another important consideration in RL is whether to use an episodic or non-episodic environment.
+In episodic environments, there is a finite number of time steps during which the agent interacts with the environment, and for these environments, the designer must specify a stopping condition.
+Conversely, with non-episodic environments, the agent can interact with the environment ad infinitum. 
+For this paper, we will only consider episodic environments.
+
 
 \begin{figure}
 \centering
@@ -164,17 +181,31 @@ In other environments, an agent may have to learn to forgo immediate reward (or 
 
 @brockman2016 identified (1) the lack of standardization of environments used in publication and (2) the need for better benchmark environments as two core problems limiting more rapid advancement of RL research, and proposed the creation of the OpenAI `gym` framework to address both problems.
 The `gym` framework defines a standard interface and methods by which a developer can describe an arbitrary environment in a computer program.
-This allows the design of software agents which can interact and learn in that environment without knowing anything about its internal details.
-The `gym` python module created by OpenAI also provides over 100 pre-built environments that serve as benchmark problems against which new RL algorithms can be tested.
+This allows the design and application of software agents which can interact and learn in that environment without knowing anything about the environment's internal details.
+The `gym` Python module created by OpenAI also provides over 100 pre-built environments that serve as benchmark problems against which new RL algorithms can be tested.
 The `gym` framework is now recognized by all major software frameworks for writing RL algorithms (see Appendix, 'Deep RL Frameworks').
 While this library of environments span a range of difficulties from classic control problems that can be solved in closed form to complex three-dimensional robotics simulators, they include no examples of ecological or biological problems.
 We use the `gym` framework to turn several existing ecological models into valid environmental simulators that can similarly be used in any RL framework.
 
 
 ## Designing and training an agent
+<!-- Maybe rename this as Training and Tuning an Agent -> how to practically get an agent up and running -->
+<!-- Ecologist job to build environment; CS job to build agent 
+      Ok so talk about this in very general terms
+      selecting an agent, why you might want to use different ones
+-->
+Training a deep, model-free agent on an environment involves allowing the agent to interact with the environment for thousands or even millions of time steps. 
+Over the course of training, the agent will engage in a trial and error process whereby the agent continually updates weights on a collection of neural networks in response to the environment's reward signal, much like how reinforcement learning is believed to work in living creatures [@cite].
+Fundamental to this trial and error process is a balancing of explorative and exploitative behavior.
+The agent will occasionally need to propose exploratory actions that may result in higher rewards than previously seen. 
+Yet, the agent will also need to occasionally exploit the best perceived sequence of actions which may require marginal improvement to reach optimality.
+As the exploration-exploitation is currently unsolved, there are a range of approaches that RL algorithms employ.
 
-The training an agent on an environment involves allowing the agent to experience and respond to repeated simulations from the environment, thousands or even millions of times. 
-Over the course of training, weights on the neural network are updated in response to the reward given by the environment, much like reinforcement learning is believed to work in living creatures [@cite].
+Model-free algorithms can explore the environment in either an off-policy or on-policy manner. 
+The distinction here comes from what policy the agent is using during training.
+For off-policy algorithms, the agent is using a policy that can be different than the policy the agent will use during evaluation to select actions; while in on-policy algoirthms, the agent uses the same policy in training as the agent will use during evaluation.
+On top of this distinction, agents can learn either a deterministic or stochastic policy. 
+
 A neural network can be thought of as a generic function approximator, and these weights as parameters of that function that are estimated from 'data' generated by training.
 A typical neural network in RL may have thousands or hundreds of thousands of parameters, giving it the flexibility to learn very complex behaviors.
 The overall architecture of the neural network, as well as other parameters such as those governing how an agent learns, how an agent proposes actions, and how the agent discounts future rewards, and so forth are controlled by *hyperparameters*.
