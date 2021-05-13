@@ -655,8 +655,17 @@ For conservation, we anticipate that there will likely be a similar pattern, whe
 
 <!-- second pass at this -->
 
-Algorithms are playing increasingly influential decision-making roles in sectors such as policing, finance, and employment, raising concerns about the ethics, biases, and power entrenched in both the algorithms and their outputs [@kalluri2020]. As algorithms play a greater role in environmental and conservation policy, will similar concerns arise? While this question has garnered  recent interest in the literature [@wearn2019; @adams2019; @scoville2021] the use use of decision making algorithms in environmental applications has largely been confined to the context of classification algorithms (i.e. to identify wildlife poaching [@adams2019] or illegal fishing behavior [@mcdonald2021]). Increasingly, applications of AI to meeting sustainable development goals [@], prioritizing protected area locations [@], and predicting However, good intentions are not sufficient to ensure equitable outcomes. Interdisciplinary collaborations with experts in algorithmic governance and ethics will be important ensure that applications of AI to ecological challenges are applied responsibly. 
- 
+<!-- from end of Carl's discussion edits: Such benchmarks may further improve collaboration across disciplines as well, attracting the attention of AI expertise to these key issues facing our planet. -->
+<!-- If RL opens the door to greater role for artificial intelligence and engagement of technology firms in the machinery that determines environmental policy, this raises new concerns as well as new opportunities.   -->
+
+The increasingly influential role of AI in sectors as diverse as policing, finance, and employment has raised concern about the ethics, biases, and power entrenched in both decision-making algorithms and their outputs [@kalluri2020]. 
+As algorithms play a greater role in environmental and conservation policy, will similar issues arise?
+While this question has garnered  recent interest in the academic literature [@wearn2019; @adams2019; @scoville2021], the use of decision making algorithms in environmental contexts is still relatively isolated and in it's early stages.
+Examples of AI applications, and corresponding concerns, have largely been confined to the context of enforcing environmental laws (i.e. algorithms which predict wildlife poaching events [@adams2019] or identify illegal fishing behavior [@mcdonald2021; @swartz2021]). 
+However, more diverse applications of AI algorithms - such as applications which contribute to meeting sustainable development goals [@vinuesa2020] or designing  protected area networks - raise additional concerns of entrenching power asymmetries between those reliant on natural resources and those designing algorithms and their objectives.
+These issues of power become particularly acute when private industry holds the keys to propriety algorithms or environmental data, and generally operate without the same community engagement obligations of public agencies. 
+In these cases, good intentions might not be sufficient to ensure equitable outcomes. 
+Interdisciplinary collaborations with experts in algorithmic governance and ethics will be important ensure that applications of AI to ecological challenges promotes equity in both the procedural process of developing objective functions and the distribution of benefits that result from decisions.
 
 
 # a vision going forward
