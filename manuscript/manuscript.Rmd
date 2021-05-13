@@ -266,8 +266,8 @@ $$
 See the appendix for how this is derived. 
 The intuition behind this approximation is exactly what we want: the agent will increase the probability of repeating the actions for the inputted states proportional to the size of the return. 
 In practice, however, the empirical return tends to have high variance, resulting in very noisy gradients that impedes learning [@CITE].
-To avoid this issue, most policy gradient algorithms replace the empirical return with a different return estimator that has lower variance [@CITE GAE].
-A sketch of a simple policy gradient algorithm is shown in FIGURE. 
+To avoid this issue, most policy gradient algorithms replace the empirical return with a return estimator that has lower variance [@CITE GAE].
+A sketch of a simple policy gradient algorithm is shown in ALGORITHM. 
 
 ## Value Learning
 Another way to approach the RL problem is by estimating a value function, and then using the value function to retrieve a policy. 
