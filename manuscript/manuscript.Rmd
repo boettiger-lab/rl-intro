@@ -179,7 +179,7 @@ The `gym` framework is now recognized by all major software frameworks for writi
 While this library of environments span a range of difficulties from classic control problems that can be solved in closed form to complex three-dimensional robotics simulators, they include no examples of ecological or biological problems.
 We use the `gym` framework to turn several existing ecological models into valid environmental simulators that can similarly be used in any RL framework.
 
-# RL Algorithms
+# Deep RL Algorithms
 
 **Survey of RL Algorithms**
 
@@ -201,20 +201,8 @@ To solve the RL problem, algorithms either take a *model-free* or *model-based* 
 The distinction is that *model-free* algorithms do not attempt to learn or use a model of the environment; yet, *model-based* algorithms employ a model of the environment to achieve the RL objective.
 A trade-off between these approaches is that when it is possible to quickly learn a model of the environment or the model is already known, model-based algorithms tend to require much less interaction with the environment to learn good-performing policies [@mbpo].
 Yet, frequently, learning a model of the environment is very difficult, and in these cases, model-free algorithms tend to outperform [@CITE].
-Since most of the recent focus in RL has gone towards model-free algorithms, we will focus on model-free agents throughout the rest of the paper.
+Since most of the recent focus in RL has gone towards model-free algorithms, we will focus on model-free agents for the rest of the paper.
 
-<!-- 
-- Say that classically TD learning and dynamic program were common approaches to solving RL; but they fail with large state-action spaces
-- over past 10 years, neural network based rl algorithms have succeeded on large state-action spaces
-
-- on-policy vs off-policy, exploration vs exploitation
-
-other algorithm tidbits:
-- stochastic vs. determinstic 
-- all deep rl algorithms are formulated to work on different action/state spaces
--->
-
-<!-- These 2 paragraphs might make it back to the manuscript but going to keep them here for now -->
 Among model-free algorithms, there is divergence around what functions the agent is attempting to learn in order to achieve the RL objective.
 Generally, model-free agents are either learning a policy function, a value function or both.
 For context, *value functions* are proxies for how high of a cumulative reward an agent can expect to receive from a given state or state-action pair.
@@ -222,7 +210,7 @@ If an agent knows the value function, then the agent can find the optimal action
 The class of algorithms that exclusively try to learn a value function are called *value-based* methods.
 In contrast, *policy gradient* algorithms exclusively learn the policy.
 And, lastly, *actor-critic* algorithms attempt to learn both a policy function and a value function, whereby the value function, which is learned separately from the policy, is used to inform the agent on the goodness of a selected action.
-There is a handful of advantages and disadvantages for each of these approaches that we will not go in depth on -- for more, see [@CITE]; yet, the main point of divergence comes from the bias-variance trade-off [@CITE].
+There is a handful of advantages and disadvantages for each of these approaches that we will not go in depth on -- for more, see the appendix; yet, the main point of divergence comes from the bias-variance trade-off [@CITE].
 Generally, policy gradient algorithms tend to struggle with high variance, value-based methods tends to be biased while actor-critic methods balance these two concerns [@CITE; @CITE; @CITE].
 
 Neural networks become useful in RL when the environment has a large state-action space, which happens frequently with realistic decision-making problems. 
@@ -231,18 +219,24 @@ Yet, over the last 10 years, researchers have shown that neural network-based RL
 Neural networks have been widely useful in reinforcement learning because neural nets have the property of being general function approximators [@CITE].
 Whenever there is a need for an agent to approximate some function, say a policy function, value function or a transition function, neural networks can be used in this capacity.
 While there are other function approximators that can be used in RL, e.g. Gaussian processes, neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@CITE].
-We will not discuss in detail how neural networks work -- see [@CITE] for further background --, but the general process for how neural networks are used in RL is that at each learning step, the agent, say a policy gradient-based agent, will adjust the parameters in its policy neural network so that according to past experiences, the agent will be more likely to engage in highly rewarding behavior in the future. 
+We will not discuss in detail how neural networks work -- see [@CITE] for further background --, but the general process for how neural networks are used in RL is that at each learning step, the agent, say a policy gradient-based agent, will adjust the parameters in its policy neural network, the agent's neural network that it is using to approximate the policy function, so that according to past experiences, the agent will be more likely to engage in highly rewarding behavior in the future. 
 This same process occurs in value learning and actor-critic-based deep RL algorithms, except these agents are adjusting either a value network or both a value and policy network respectively
 
+Over the course of training, RL agents will engage in trial and error learning, whereby it will be necessary for the agent to explore new sequences of actions as well as exploit former high rewarding sequences.
+The agent will occasionally need to propose exploratory actions that may result in higher rewards than previously seen. 
+Yet, the agent will also need to occasionally exploit the best perceived sequence of actions which may require marginal improvement to reach optimality.
+The fundamental issue is that it is very difficult for the agent to know when it should engage in explorative or exploitative behavior. 
+This *exploration-exploitation dilemma* is an open research problem [@CITE], and current deep RL algorithms take a range of approaches towards exploration -- in the appendix, we discuss some of the more specific exploration algorithms.
+Yet, generally, the manner in which RL algorithms explore depend on whether the algorithms are *on-policy* or *off-policy*.
+The distinction between on and off-policy exploration comes from what policy the agent is using during training.
+For off-policy algorithms, the agent is using a policy that can be different than the policy the agent will use during evaluation to select actions; while in on-policy algorithms, the agent uses the same policy in training as the agent will use during evaluation.
+There are trade-offs to consider in using an off-policy or on-policy learner, which we will further discuss in the appendix.
 
-A further distinction to be made amongst RL algorithms is in what policy the agent uses to select actions.
-If an agent uses the same policy to take actions as the policy that the agent attempts to evaluate or improve, then this algorithm is on-policy.  <!-- Unclear what "to evaluate or improve" means.  Perhaps an example would help? -->
-If an agent uses a different policy to select actions than the policy that the agent evaluates or improves, then this algorithm is off-policy.
-The benefit of off-policy learning is that the agent does not need to collect a sample every time the agent updates its behavior; instead, the agent can learn from past experience, which increases sample efficiency [cite SAC paper]. <!-- Not clear what this means -->
-Yet, on-policy algorithms tend to be more stable in practice [cite Q-prop]. <!-- not clear how "stable" is defined/measured -->
-
-
-<!-- Kari: I think we need more background on what a neural network is, how it fits in, and what other options are - maybe use examples of hyperparameters that would be in all RL approaches not just those that use neural nets -->
+On top of all the already mentioned possible distinctions for model-free, deep RL algorithms, there are more algorithm design choices that can be made. 
+One important point of divergence is whether the agent learns a deterministic or stochastic policy.
+Another is whether the algorithm is formulated to work on a discrete, continuous or both a discrete and continuous action space.
+In table **, we provide some of the commonly used RL algorithms and delineate some of their important characteristics.
+In the appendix, we will introduce the considerations one should make in deciding whether an algorithm is well suited for a specific environment. 
 
 <!-- Can we add citations to each please -->
 <!-- 
@@ -297,16 +291,6 @@ APE-X & Distributed Prioritized Experience Replay & Model-free & Off-policy & & 
       selecting an agent, why you might want to use different ones
 -->
 Training a deep, model-free agent on an environment involves allowing the agent to interact with the environment for thousands or even millions of time steps. 
-Over the course of training, the agent will engage in a trial and error process whereby the agent continually updates weights on a collection of neural networks in response to the environment's reward signal, much like how reinforcement learning is believed to work in living creatures [@cite].
-Fundamental to this trial and error process is a balancing of explorative and exploitative behavior.
-The agent will occasionally need to propose exploratory actions that may result in higher rewards than previously seen. 
-Yet, the agent will also need to occasionally exploit the best perceived sequence of actions which may require marginal improvement to reach optimality.
-As the exploration-exploitation is currently unsolved, there are a range of approaches that RL algorithms employ.
-
-Model-free algorithms can explore the environment in either an off-policy or on-policy manner. 
-The distinction here comes from what policy the agent is using during training.
-For off-policy algorithms, the agent is using a policy that can be different than the policy the agent will use during evaluation to select actions; while in on-policy algoirthms, the agent uses the same policy in training as the agent will use during evaluation.
-On top of this distinction, agents can learn either a deterministic or stochastic policy. 
 
 In practice, the general process for attaining a good performing agent is to tune model hyperparameters then train an agent using the best hyperparameters. 
 Hyperparameters refer to the parameters in a RL algorithm that are not directly learned during the training process. <!-- better to define before using in opening sentence.  -->
