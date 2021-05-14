@@ -689,25 +689,6 @@ sims_df %>% inner_join(is_low) %>%
      from manuscript here for sake of word count
 -->
 
-<!-- These 2 paragraphs might make it back to the manuscript but going to keep them here for now -->
-Among model-free algorithms, there is divergence around what functions the agent is attempting to learn in order to achieve the RL objective.
-Generally, model-free agents are either learning a policy function, a value function or both.
-For context, *value functions* are proxies for how high of a cumulative reward an agent can expect to receive from a given state or state-action pair.
-If an agent knows the value function, then the agent can find the optimal action at any state by selecting the action that will maximize the value function in expectation.
-The class of algorithms that exclusively try to learn a value function are called *value learning* methods.
-*Policy gradient* algorithms exclusively learn the policy.
-And, lastly, *actor-critic* algorithms attempt to learn both a policy function and a value function, whereby the value function, which is learned separately from the policy, is used to inform the agent on the goodness of a selected action.
-There is a handful of advantages and disadvantages for each of these approaches that we will not go in depth on -- for more, see [@CITE]; yet, the main point of divergence comes from the bias-variance trade-off [@CITE].
-Generally, policy gradient algorithms tend to struggle with high variance, value-based learning tends to be biased while actor-critic methods balance these two concerns [@CITE; @CITE; @CITE].
-
-Neural networks become useful in RL when the environment has a large state-action space, which happens frequently with realistic decision-making problems. 
-Classic RL algorithms, like policy iteration, value iteration and TD-learning [@suttonbarto], fail when the state-action space is large, e.g. when the possible states and actions can not be represented in a tractable table [@CITE].
-Yet, over the last 10 years, researchers have shown that neural network-based RL algorithms can perform well on previously unsolvable environments.
-Neural networks have been widely useful in reinforcement learning because neural nets have the property of being general function approximators [@CITE].
-Whenever there is a need for an agent to approximate some function, say a policy function, value function or a transition function, neural networks can be used in this capacity.
-While there are other function approximators that can be used in RL, e.g. Gaussian processes, neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@CITE].
-We will not discuss in detail how neural networks work -- see [@CITE] for further background --, but the general process for how neural networks are used in RL is that at each learning step, the agent, say a policy gradient-based agent, will adjust the parameters in its policy neural network so that according to past experiences, the agent will be more likely to engage in highly rewarding behavior in the future. 
-This same process occurs in value learning and actor-critic-based deep RL algorithms, except these agents are adjusting either a value network or both a value and policy network respectively.
 
 ## Policy Gradients
 The most straightforward way to optimize the RL objective is through a policy search, whereby the agent continually updates a policy parameterized by $\theta$, $\pi_\theta$ -- in deep RL, this parameterized policy will be a neural network.
