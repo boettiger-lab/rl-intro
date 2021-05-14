@@ -179,6 +179,40 @@ The `gym` framework is now recognized by all major software frameworks for writi
 While this library of environments span a range of difficulties from classic control problems that can be solved in closed form to complex three-dimensional robotics simulators, they include no examples of ecological or biological problems.
 We use the `gym` framework to turn several existing ecological models into valid environmental simulators that can similarly be used in any RL framework.
 
+## Training and tuning an agent
+<!-- Maybe rename this as Training and Tuning an Agent -> how to practically get an agent up and running -->
+<!-- Ecologist job to build environment; CS job to build agent 
+      Ok so talk about this in very general terms
+      selecting an agent, why you might want to use different ones
+-->
+Training a deep, model-free agent on an environment involves allowing the agent to interact with the environment for thousands or even millions of time steps.
+The training period involves a trial and error process whereby the agent will perform an action and then receive feedback from the environment in the form of a reward. 
+This process will repeat until the environment transitions to a terminal state, after which the environment will reset to some starting condition.
+According to the algorithm that the agent follows, the agent will explore different state-action trajectories and use its experience to improve its policy.
+The amount of time needed for an agent to learn high reward yielding behavior cannot be predetermined and depends on a host of factors including the amount of dedicated compute, the simulation complexity of the environment, model complexity of the agent and more.
+Yet, overall, it has been well established that deep, model-free RL agents tend to be very sample inefficient [@cite], so it is recommended to provide a generous training budget for these agents.
+
+Hyperparameters refer to the parameters in a deep, RL algorithm that are not directly learned during the training process.
+For example, a weight in an agent's neural network is not a hyperparameter, but the number of hidden layers in this network would be a hyperparameter.
+Since the optimal hyperparameters cannot be found analytically [@cite], it is necessary to find a good-performing set of hyperparameters in a process called hyperparameter tuning.
+Hyperparameter tuning consists of the following general steps in repetition: proposing a new set of hyperparameters, training an agent with this set, then examining the resulting performance.
+This procedure can be automated through standard multi-dimensional optimization approaches. 
+Since one round of training can be time intensive, hyperparameter tuning, which consists of usually numerous rounds of training, can be particularly time intensive.
+Hyperparameter tuning, however, is a necessary step in evaluating the performance of an algorithm and should be a standard component of any RL workflow.
+
+
+<!-- 
+Placeholder table as figure, rather hacky (pandoc doesn't like `longtable`) 
+Make a nice table box in latex instead if we're keeping this
+-->
+\begin{figure}
+\centering
+\includegraphics[width=0.9\linewidth]{table1.pdf}
+\end{figure}
+
+
+
+
 # Deep RL Algorithms
 
 **Survey of RL Algorithms**
@@ -283,38 +317,6 @@ APE-X & Distributed Prioritized Experience Replay & Model-free & Off-policy & & 
 \end{tabular}
 \end{center}
 ```
-
-## Training and tuning an agent
-<!-- Maybe rename this as Training and Tuning an Agent -> how to practically get an agent up and running -->
-<!-- Ecologist job to build environment; CS job to build agent 
-      Ok so talk about this in very general terms
-      selecting an agent, why you might want to use different ones
--->
-Training a deep, model-free agent on an environment involves allowing the agent to interact with the environment for thousands or even millions of time steps. 
-
-In practice, the general process for attaining a good performing agent is to tune model hyperparameters then train an agent using the best hyperparameters. 
-Hyperparameters refer to the parameters in a RL algorithm that are not directly learned during the training process. <!-- better to define before using in opening sentence.  -->
-For example, a weight in the neural network is a model parameter, but the number of hidden layers in the neural network is a hyperparameter.
-Since the optimal hyperparameters cannot be found analytically, tuning should be done to find a good-performing set of hyperparameters.
-The process of tuning can be automated through standard multi-dimensional optimization approaches: proposing new combinations of hyperparameters, training an agent, and examining the resulting performance.
-Since one round of training can be time intensive, hyperparameter tuning, which consists of usually numerous rounds of training, can be particularly time intensive.
-
-
-
-
-<!--
-A rapidly growing set of material for learning about deep reinforcement learning is now freely available.... (maybe just describe this in the appendix)
--->
-
-
-<!-- 
-Placeholder table as figure, rather hacky (pandoc doesn't like `longtable`) 
-Make a nice table box in latex instead if we're keeping this
--->
-\begin{figure}
-\centering
-\includegraphics[width=0.9\linewidth]{table1.pdf}
-\end{figure}
 
 
 
