@@ -1,7 +1,6 @@
 ---
 title: Deep Reinforcement Learning for Conservation Decisions
 authors:
-    
   - name: Marcus Lapeyrolerie
     department: Department of Environmental Science, Policy, and Management
     affiliation: University of California, Berkeley
@@ -152,10 +151,10 @@ In some environments, a reward is only received after the agent successfully com
 In other environments, an agent may have to learn to forgo immediate reward (or even accept an initial negative reward or cost) in order to maximize the net discounted reward over the simulation period, as we illustrate in examples here.
 
 \begin{figure}
-\centering
-\includegraphics[width=0.5\linewidth]{fig1.pdf}
-\caption{Reinforcement Learning focuses on the repeated feedback of agent interacting with an \emph{environment}. The agent performs an action which influences the environment's future \emph{state}.  The agent receives an observation of the new state and reward from the environment.}
+\includegraphics[width=\linewidth]{fig1.pdf}
+\caption{Deep Reinforcement Learning:  An artificial intelligence \emph{agent} uses a \emph{neural network} to select an \emph{action} in response to an \emph{observation} of the \emph{environment}, receiving a \emph{reward} (or punishment) from the environment as a result.  The agent is \emph{trained} to maximize the reward through the experience of trying different actions over repeated \emph{epsiodes} of interacting with the environment.  Over the course of training, the agent adjusts parameter weights on the neural network as it learns which actions lead to the best cumulative rewards. A researcher may \emph{tune} an agent by considering iterative trials that train different agents with different \emph{hyperparameters}, such as different neural network architectures.  An agent trained with the most successful combination of hyperparameters can then be tested in an evaluation environment.}
 \end{figure}
+
 
 @brockman2016 identified (1) the lack of standardization of environments used in publication and (2) the need for better benchmark environments as two core problems limiting more rapid advancement of RL research, and proposed the creation of the OpenAI `gym` framework to address both problems.
 The `gym` framework defines a standard interface and methods by which a developer can describe an arbitrary environment in a computer program.
@@ -592,40 +591,50 @@ Many of our most realistic ecological models exist only as numerical simulations
 
 
 <!-- Solving 'real' problems will be hard -->
-However, successfully applying RL to complex ecological problems is no easy task.
+Successfully applying RL to complex ecological problems is no easy task.
 The flexibility of the approach makes it relatively straightforward to include realistic biology and environmental science in framing an RL problem, but training an RL agent to reach an acceptable level of performance is another task.
 As the examples we have presented illustrate, it is important to begin with simple problems, including those for which an optimal strategy is already known.
 Such examples provide important benchmarks against which to calibrate the performance, tuning and training requirements of RL,
 and can easily be extended into more complex problems once RL agents can master the basics.
 Finding acceptable policies even in relatively simple problems may prove beyond the reach of existing algorithms and available computing power.
-<!-- something about several technical caveats: instability, interpretability reward design-->
+In seeking either to adopt or assess a deep RL-based approach to an ecological issue, we highlight three key issues that are important to bear in mind: instability, interpretability, and reward design.
 
 <!-- reason 1: instability-->
-One leading problem with deep RL is instability.
+One leading challenge for deep RL today is the problem of instability.
+RL agents trained on narrowly defined environments may perform poorly even when the environment is altered in seemingly trivial way, such as a re-scaling of parameters.
+To avoid this, researchers should seek to both train and evaluate agents against a range of environments representing different parameters or processes dynamics.
+Stable performance can be challenging even when using the same environment.
 For a range of reasons, including high variance [@cite] and the exploration vs. exploitation trade-off [@cite], model-free and model-based algorithms tend to have unstable performance on environments with non-tabular state-action spaces [cite RL that matters].
-For instance, it is not uncommon to observe vastly different behavior when two agents are initialized with different random seeds [cite ibid].
-Since model-based and model-free algorithms typically have a large number of hyperparameters, each of which can contribute to training instability, it is practically impossible to identify the source of instability.
-The hope of the RL practitioner is that after doing an exhaustive hyperparameter search, the practitioner will find a set of hyperparameters that results in a robust, well-performing agent, but there are no guarantees that hyperparameter tuning will lead to this outcome.
-<!--CB: I think we can say more about how to diagnose this problem if not fix it.
-    Likewise should address the importance of assessing robustness across multiple models/environments, probably at least as important an issue as robustness to nuciance hyperparameters like random seed.
-    -->
+For instance, it is not uncommon to observe vastly different behavior when an agent is initialized with different random seeds [cite ibid].
+Such unstable behavior can often be avoided by alternate selection of hyperparameters, so researchers should consider stability as well as performance during hyperparameter selection.
+The choice of RL algorithm, design of the reward function, and duration of training can also influence stability.
 
-<!-- reason 2: interpretability --> 
-In the context of conservation, we anticipate that there will be a host of specific challenges to using deep RL methods.
-Interpretability is likely to be the biggest barrier to adoption. <!-- don't need to rank them -->
+
+<!--
+Under some conditions, RL agents can prove adept at _transfer learning_, in which an agent trained in one environment performs well under a different environment.
+-->
+<!-- if we're really recommending 'testing' for stability, maybe we need to demo that in the appendix-->
+
+<!-- reason 2: interpretability -->
+Interpretability is a common challenge ot the adoption of most ML methods [@cite]. 
 Although there have been some attempts to increase the transparency of RL agents that use neural network as function approximators [cite], it is still very difficult to explain the behavior of RL-trained agents.
-Another challenge is that DRL algorithms are very sample inefficient, and to overcome sample inefficiency for conservation decision-making problems that are often data poor, relying on simulations to train agents will be necessary.
-While there are positives to using simulated data, any assumptions or biases that are included in the model will determine agent behavior.
+As our examples have illustrated, it may be possible to gain intuition on an agent's behavior by visualizing the action selected against each possible state, though this becomes more difficult in large problems.
+Another challenge is that Deep RL algorithms are very sample inefficient, all though progress is being made to improve this [@cite].  
+-->
+
 
 <!-- reason 3: reward design -->
 An issue that is central to any applied optimization problem is using the right objective.
-There have been many examples in which explicit reward design goes horribly wrong [cite].
+There have been many examples in which explicit reward design goes very wrong [cite].
 And for ecological systems, which are often very complex and impossible to fully observe, it seems that bad reward design is quite likely.
 Moreover, specifying a reward function for conservation brings up various ethical concerns -- e.g. who gets to specify the reward function and will the values of the greater community be represented in the reward function.
-One recently proposed framework to overcome challenges with explicit reward design is called AI alignment, wherein the agent observes humans, infers the preferences of humans and then acts as to satisfy human preferences.
-Yet, in the context of training an agent to say conserve a species, there are questions that could easily arise, foremost will the agent infer that humans don't care about a certain species so acts in a way that leads to that species' extinction?
-There is a definite need for exploration of the ethics of using DRL for conservation.
+RL researchers often introduce modified reward functions during training that help an agent perform better on the original objective [@cite].
+This approach is particularly common when rewards are sparse, such as in a game of Chess where the only objective that counts is whether or not you win, but during training, an RL algorithm may reward the agent for intermediate steps such as capturing a piece.
 
+<!--
+One recently proposed framework to overcome challenges with explicit reward design is called AI alignment, wherein the agent observes humans, infers the preferences of humans and then acts as to satisfy human preferences.
+There is a definite need for exploration of the ethics of using DRL for conservation.
+-->
 <!-- reason 4/additional reasons, like sparse rewards -->
 Ultimately, we anticipate that getting deep RL to work well on fully detailed conservation decision-making problems will be challenging.
 Beyond typically having large state-action spaces for agents to explore, conservation problems tend to have sparse reward structures.
