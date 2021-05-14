@@ -564,7 +564,7 @@ Consequently, that research must also confront the challenge of making robust, r
 The science of ecological management and quantitative decision-making has a long history [e.g. @Schaefer1954; @Walters1974] and remains an active area of research [@Possingham2006; @Fischer2009; @Polasky2011].
 However, the limitations of classical methods such as optimal control frequently constrain applications to relatively simplified models [@Possingham2006], ignoring elements such as spatial or temporal heterogeneity and autocorrelation, stochasticity, imperfect observations, age or state structure or other sources of complexity that are both pervasive and influential on ecological dynamics [@HastingsEncylopedia].
 Complexity comes not only from the ecological processes but also the available actions.
-While conservation objectives are often framed in broad, simple terms, the potential action space is often huge: conservation efforts can be implemented in a wide variety of ways, and the most effective policies may vary in both space and time. <!-- Millie: can we say something more precise about 'simple terms' or add some citation here?-->
+Conservation efforts can be implemented in a wide variety of ways, and the most effective policies may vary in both space and time.
 While such complex dynamics and large state and action spaces are intractable to classical methods, they are straight forward to implement in simulation environments such as those used to train an RL algorithm.
 Neural networks used in deep RL have proven remarkably effective in handling such complexity, particularly when leveraging immense computing resources increasingly available through advances in hardware and software [@gpu_computing]. 
 
