@@ -198,23 +198,32 @@ Algorithm
 There is an ever increasing multitude of reinforcement learning algorithms, and while there are far too many algorithms to discuss in detail in this paper, we will herein classify and touch on some current methods.
 
 To solve the RL problem, algorithms either take a *model-free* or *model-based* approach. 
-The distinction is that *model-free* algorithms do not have access to a model of the environment; yet, *model-based* algorithms use a model of the environment to achieve the RL objective.
+The distinction is that *model-free* algorithms do not attempt to learn or use a model of the environment; yet, *model-based* algorithms employ a model of the environment to achieve the RL objective.
 A trade-off between these approaches is that when it is possible to quickly learn a model of the environment or the model is already known, model-based algorithms tend to require much less interaction with the environment to learn good-performing policies [@mbpo].
 Yet, frequently, learning a model of the environment is very difficult, and in these cases, model-free algorithms tend to outperform [@CITE].
 Since most of the recent focus in RL has gone towards model-free algorithms, we will focus on model-free agents throughout the rest of the paper.
 
-<!-- classic algorithms transition to neural networks>
+<!-- 
+- Say that classically TD learning and dynamic program were common approaches to solving RL; but they fail with large state-action spaces
+- over past 10 years, neural network based rl algorithms have succeeded on large state-action spaces
+
+- on-policy vs off-policy, exploration vs exploitation
+
+other algorithm tidbits:
+- stochastic vs. determinstic 
+- all deep rl algorithms are formulated to work on different action/state spaces
+-->
 
 <!-- These 2 paragraphs might make it back to the manuscript but going to keep them here for now -->
 Among model-free algorithms, there is divergence around what functions the agent is attempting to learn in order to achieve the RL objective.
 Generally, model-free agents are either learning a policy function, a value function or both.
 For context, *value functions* are proxies for how high of a cumulative reward an agent can expect to receive from a given state or state-action pair.
 If an agent knows the value function, then the agent can find the optimal action at any state by selecting the action that will maximize the value function in expectation.
-The class of algorithms that exclusively try to learn a value function are called *value learning* methods.
-*Policy gradient* algorithms exclusively learn the policy.
+The class of algorithms that exclusively try to learn a value function are called *value-based* methods.
+In contrast, *policy gradient* algorithms exclusively learn the policy.
 And, lastly, *actor-critic* algorithms attempt to learn both a policy function and a value function, whereby the value function, which is learned separately from the policy, is used to inform the agent on the goodness of a selected action.
 There is a handful of advantages and disadvantages for each of these approaches that we will not go in depth on -- for more, see [@CITE]; yet, the main point of divergence comes from the bias-variance trade-off [@CITE].
-Generally, policy gradient algorithms tend to struggle with high variance, value-based learning tends to be biased while actor-critic methods balance these two concerns [@CITE; @CITE; @CITE].
+Generally, policy gradient algorithms tend to struggle with high variance, value-based methods tends to be biased while actor-critic methods balance these two concerns [@CITE; @CITE; @CITE].
 
 Neural networks become useful in RL when the environment has a large state-action space, which happens frequently with realistic decision-making problems. 
 Classic RL algorithms, like policy iteration, value iteration and TD-learning [@suttonbarto], fail when the state-action space is large, e.g. when the possible states and actions can not be represented in a tractable table [@CITE].
