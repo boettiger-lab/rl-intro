@@ -190,12 +190,11 @@ Yet, overall, it has been well established that deep, model-free RL agents tend 
 As practitioners, an advantage of using deep, model-free algorithms is that since they function autonomously and do not require any knowledge about the environment, we can readily test how these algorithms perform without knowing much about the environment's transition dynamics or all the inner workings of the algorithm.
 
 Hyperparameters refer to the parameters in a deep, RL algorithm that are not directly learned during the training process.
-For example, a weight in an agent's neural network is not a hyperparameter, but the number of hidden layers in this network would be a hyperparameter.
 Since the optimal hyperparameters cannot be found analytically [@cite], it is necessary to find a good-performing set of hyperparameters in a process called hyperparameter tuning.
 Hyperparameter tuning consists of the following general steps in repetition: proposing a new set of hyperparameters, training an agent with this set, then examining the resulting performance.
 This procedure can be automated through standard multi-dimensional optimization approaches. 
 Since one round of training can be time intensive, hyperparameter tuning, which consists of usually numerous rounds of training, can be particularly time intensive.
-Hyperparameter tuning, however, is a necessary step in evaluating the performance of an algorithm and should be a standard component of any RL workflow.
+Hyperparameter tuning, however, is a necessary step in evaluating the performance of an algorithm and should be a standard component of any deep RL workflow.
 
 
 <!-- 
