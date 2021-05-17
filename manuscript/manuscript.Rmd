@@ -307,7 +307,7 @@ Should we do anything to better reflect the 'family tree' here? (e.g. DQN -> DDP
 \hline
 Algorithm & Description & Model & Policy & Action Space & State Space \\
 \hline
-MBPO & Model-based Policy Optimization [@mbpo] & Model-based & On-policy & &\\
+MBPO & Model-based Policy Optimization [@mbpo] & Model-based & On-policy & Continuous & Continuous\\
 \hline
 MCTS & Monte Carlo Tree Search [@suttonbarto] & Model-based & Either & & \\
 \hline
