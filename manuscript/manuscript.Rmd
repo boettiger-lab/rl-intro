@@ -185,7 +185,7 @@ Make a nice table box in latex instead if we're keeping this
 
 # Formal RL Concepts
 
-In this brief section, we will introduce the concept of the RL environment as a POMDP; we will then use POMDP definitions to ultimately define the RL objective.
+In this brief section, we will introduce the concept of the RL environment as a POMDP; we will then use POMDP definitions to define the RL objective.
 Since all RL algorithms are either directly or indirectly maximizing the RL objective, understanding the RL objective is crucial to understanding how RL algorithms work. <!-- ML: this seems like an obvious sentence to me but am stuck on it atm so revisions welcomed-->
 
 The reinforcement learning environment is typically formalized as a discrete-time partially observable Markov decision process (POMDP).
