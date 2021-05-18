@@ -185,20 +185,25 @@ Make a nice table box in latex instead if we're keeping this
 
 # Formal RL Concepts
 
-The reinforcement learning problem is typically formalized as a discrete-time partially observable Markov decision process (POMDP).
+In this brief section, we will introduce the concept of the RL environment as a POMDP; we will then use POMDP definitions to ultimately define the RL objective.
+Since all RL algorithms are either directly or indirectly maximizing the RL objective, understanding the RL objective is crucial to understanding how RL algorithms work. <!-- ML: this seems like an obvious sentence to me but am stuck on it atm so revisions welcomed-->
+
+The reinforcement learning environment is typically formalized as a discrete-time partially observable Markov decision process (POMDP).
 A POMDP is a 7-tuple that consists of the following: 
 - $\mathcal{S}$: a set of states called the state space
 - $\mathcal{A}$: a set of actions called the action space
-- $\Omega$ : a set of observations called the  observation space
+- $\Omega$ : a set of observations called the observation space
 - $E(o_{t}| s_{t})$: an emission distribution, which accounts for an agent's observation being different from environment's state
 - $T(s_{t+1}|s_t, a_t)$: a state transition operator which describes the dynamics of the system
 - $r(s_t, a_t)$: a reward function
 - $d_0(s_0)$: an initial state distribution
 - $\gamma \in (0,1]$: a discount factor
 
-After the agent makes an observation at time t, $o_t$, the agent selects an action, $a_t$, according to its policy, $\pi$, which maps observations to a probability distribution over actions, $\pi: \Omega \rightarrow p(\mathcal{A} \mid \Omega)$.
-This action will cause the environment to transition to a new state according to its state transition operator. 
-The agent will then receive a new observation and the process will repeat until a terminal state is reached.
+The agent interacts with the environment in an iterative loop, whereby the agent only has access to the observation space, action space and the discounted reward signal, $\gamma^t \, r(s_t, a_t)$.
+At each time step, the agent makes an observation of the environment at time t, $o_t$, and selects an action, $a_t$, according to its policy, $\pi$, which maps observations to a probability distribution over actions, $\pi: \Omega \rightarrow p(\mathcal{A} \mid \Omega)$.
+The action will cause the environment to transition to a new state according to the state transition operator. 
+The agent will then receive a new observation and a discounted reward signal, $\gamma^t \, r(s_t, a_t)$, as feedback. 
+This process will repeat until a terminal state is reached.
 As the agent interacts with the environment, the agent will create a trajectory in state-action space given as $\tau = (s_0, a_0, \dots, s_H, a_H)$ where H denotes the horizon or length of the state-action sequence.
 From these definitions, we can provide an agent's trajectory distribution for a given policy as,
 
@@ -206,10 +211,7 @@ $$
   p_\pi(\tau) = d_0(s_0) \prod_{t=0}^H \pi(a_t | o_t) \, E(o_{t}| s_{t}) \, T(s_{t+1} | s_t, a_t)
 $$
 
-An important property of POMDPs and MDPs is that they are memoryless; the future, $s_{t+1}$, does not depend on the past but only on the state and action at the present time.
-This Markov property, which is often an unrealistic assumption, is held in most of the RL algorithms that we discuss in the next section.
-
-In formal terms, the goal of reinforcement learning is to find an optimal policy distribution, $\pi^*(a_t|o_t)$, that maximizes the expected return, $J(\pi)$:
+The goal of reinforcement learning is for the agent to find an optimal policy distribution, $\pi^*(a_t|o_t)$, that maximizes the expected return, $J(\pi)$:
 
 $$
   \pi^* = \underset{\pi}{\text{argmax}} \,\, \mathbb{E}_{\tau \sim p_\pi(\tau)}\Big[\sum_{t=0}^{H} \gamma^t r(s_t, a_t) \Big] =  \underset{\pi}{\text{argmax}} \,\, J (\pi)
@@ -217,6 +219,7 @@ $$
 
 Note that this formalism extends to an infinite horizon case when $T= \infty$.
 While there are RL methods to deal with infinite horizon cases, we will only present methods for finite horizon or episodic POMDPs.
+In the appendix, we will go into further detail on the general approaches that model-free deep RL algorithms take towards optimizing the RL objective. 
 
 # Deep RL Algorithms
 
