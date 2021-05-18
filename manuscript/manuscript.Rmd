@@ -185,7 +185,7 @@ Make a nice table box in latex instead if we're keeping this
 
 # Formal RL Concepts
 
-The reinforcement learning problem is typically formalized as a partially observable Markov decision process (POMDP).
+The reinforcement learning problem is typically formalized as a discrete-time partially observable Markov decision process (POMDP).
 A POMDP is a 7-tuple that consists of the following: 
 - $\mathcal{S}$: a set of states called the state space
 - $\mathcal{A}$: a set of actions called the action space
@@ -216,7 +216,7 @@ $$
 $$
 
 Note that this formalism extends to an infinite horizon case when $T= \infty$.
-While there are RL methods to deal with infinite horizon cases, we will only present methods for finite horizon or episodic MDP and POMDPs.
+While there are RL methods to deal with infinite horizon cases, we will only present methods for finite horizon or episodic POMDPs.
 
 # Deep RL Algorithms
 
@@ -267,7 +267,7 @@ Yet, the agent may also need to focus on past sequences of actions which may req
 The fundamental issue is that it is very difficult for the agent to know when it should engage in explorative or exploitative behavior. 
 This *exploration-exploitation dilemma* is an open research problem [@berger-tal_exploration-exploitation_2014], and current deep RL algorithms take a range of approaches towards this dilemma -- in the appendix, we discuss some of the more specific exploration algorithms.
 Yet, generally, the manner in which RL algorithms explore depend on whether the algorithms are *on-policy* or *off-policy*.
-The distinction between on and off-policy exploration comes from what policy the agent is using to select actions during training.
+The distinction between on and off-policy evaluation comes from what policy the agent is using to select actions during training.
 For off-policy algorithms, the agent uses a policy during training that can be different from the policy that the agent will use during evaluation; while in on-policy algorithms, the agent uses the same policy in training as the agent will use during evaluation.
 There are trade-offs to consider in using an off-policy or on-policy learner, which we will further discuss in the appendix.
 
@@ -295,33 +295,38 @@ Should we do anything to better reflect the 'family tree' here? (e.g. DQN -> DDP
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|c|}
 \hline
-Algorithm & Description & Model & Evaluation & Policy & Constraints  \\
+Algorithm & Description & Model & Method & Evaluation  & Constraints  \\
 \hline
-MBPO & Model-based Policy Optimization [@mbpo] & Model-based & On-policy & Deterministic & \\
+MBPO & Model-based Policy Optimization [@mbpo] & Model-based & Planning & On-policy & \\
 \hline
-MCTS & Monte Carlo Tree Search [@suttonbarto] & Model-based & Either & & \\
+MCTS* & Monte Carlo Tree Search [@suttonbarto] & Model-based & Planning & Either & Not suited for continuous action and state spaces \\
 \hline
-A2C  & Advantage Actor Critic [@a2c] & Model-free & On-policy& &\\
+A2C  & Advantage Actor Critic [@a2c] & Model-free & Actor Critic  & On-policy & \\
 \hline
-A3C  & Asynchronous A2C & Model-free [@a3c] & On-policy & &\\
+A3C  & Asynchronous A2C [@a3c] & Model-free & Actor Critic & On-policy & \\
 \hline
-TRPO  & Trust Region Policy Optimization [@trpo] & Model-free & On-policy & &\\
+ACKTR  &  Actor Critic using Kronecker-Factored Trust Region [@acktr] & Model-free & Actor Critic & On-policy & \\
 \hline
-PPO  & Proximal Policy Optimization [@ppo] & Model-free & On-policy & &\\
+ACER  &  Actor Critic with Experience Replay [@wang_sample_2017] & Model-free & Actor Critic & Off-policy & Not suited for discrete action spaces \\
 \hline
-DQN & Deep Q Networks [@dqn] & Model-free & Off-policy& &\\
+TRPO  & Trust Region Policy Optimization [@trpo] & Model-free & Actor Critic & On-policy & \\
 \hline
-DDPG & Deep Deterministic Policy Gradient [@ddpg] & Model-free & Off-policy & &\\
+PPO  & Proximal Policy Optimization [@ppo] & Model-free & Actor Critic & On-policy & \\
 \hline
-TD3 & Twin Delayed DDPG [@td3] & Model-free & Off-policy & &\\
+DQN & Deep Q Networks [@dqn] & Model-free & Value-based & Off-policy & Not suited for continuous action spaces; Suffers from overestimation bias\\
 \hline
-SAC & Soft Actor Critic [@sac] & Model-free & Off-policy & &\\
+Double DQN & Deep Q Networks [@van_hasselt_deep_2015] & Model-free & Value-based & Off-policy & Not suited for continuous action spaces \\
 \hline
-IMPALA & Importance Weighted Actor Learner [@impala] & Model-free & Off-policy & &\\
+DDPG & Deep Deterministic Policy Gradient [@ddpg] & Model-free & Actor Critic & Off-policy & Not suited for discrete action spaces\\
 \hline
-APE-X & Distributed Prioritized Experience Replay [@apex] & Model-free & Off-policy & & \\
+TD3 & Twin Delayed DDPG [@td3] & Model-free & Actor Critic & Off-policy & Not suited for discrete action spaces \\
+\hline
+SAC & Soft Actor Critic [@sac] & Model-free & Actor Critic & Off-policy & Not suited for discrete action spaces\\
+\hline
+IMPALA & Importance Weighted Actor Learner [@impala] & Model-free & Actor Critic & Off-policy & \\
 \hline
 \end{tabular}
+\caption{A survey of popular deep RL algorithms. With the plethora of deep RL algorithms, this table aims to show some of the most common ones. Model-free algorithms are in the majority in this table as the model-free approach has garnered more attention in recent years. Model-based approaches like MCTS, which is the basis for AlphaZero, are still able to achieve state of the art performances on certain tasks, so they should not be overlooked. Despite there being a range of different algorithms in this table, many of them are closely related to one another. E.g. Double DQN makes a small adjustment to DQN; PPO is an evolution of TRPO; TD3 is an evolution of DDPG; and, A2C is marginally different from A3C. These small differences, however, can result in large change in agent performance. All deep RL algorithms have their respective weak points, and it is impossible to know how algorithms will perform on a task until they are tuned and evaluated. As a deep rl practitioner, the best thing to do then is to find a range of algorithms that can work on your problem's state and action space, tune the algorithms, and see how they perform.}
 \end{center}
 ```
 # Examples
