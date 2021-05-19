@@ -683,6 +683,124 @@ sims_df %>% inner_join(is_low) %>%
   geom_line(color = pal[1], show.legend = FALSE) + facet_wrap(~rep)
 ```
 
+# RL
 
+<!-- Not tightened up yet to make sense in the appendix, just migrating more nuts and bolts RL stuff
+     from manuscript here for sake of word count
+-->
+
+<!-- These 2 paragraphs might make it back to the manuscript but going to keep them here for now -->
+Among model-free algorithms, there is divergence around what functions the agent is attempting to learn in order to achieve the RL objective.
+Generally, model-free agents are either learning a policy function, a value function or both.
+For context, *value functions* are proxies for how high of a cumulative reward an agent can expect to receive from a given state or state-action pair.
+If an agent knows the value function, then the agent can find the optimal action at any state by selecting the action that will maximize the value function in expectation.
+The class of algorithms that exclusively try to learn a value function are called *value learning* methods.
+*Policy gradient* algorithms exclusively learn the policy.
+And, lastly, *actor-critic* algorithms attempt to learn both a policy function and a value function, whereby the value function, which is learned separately from the policy, is used to inform the agent on the goodness of a selected action.
+There is a handful of advantages and disadvantages for each of these approaches that we will not go in depth on -- for more, see [@CITE]; yet, the main point of divergence comes from the bias-variance trade-off [@CITE].
+Generally, policy gradient algorithms tend to struggle with high variance, value-based learning tends to be biased while actor-critic methods balance these two concerns [@CITE; @CITE; @CITE].
+
+Neural networks become useful in RL when the environment has a large state-action space, which happens frequently with realistic decision-making problems. 
+Classic RL algorithms, like policy iteration, value iteration and TD-learning [@suttonbarto], fail when the state-action space is large, e.g. when the possible states and actions can not be represented in a tractable table [@CITE].
+Yet, over the last 10 years, researchers have shown that neural network-based RL algorithms can perform well on previously unsolvable environments.
+Neural networks have been widely useful in reinforcement learning because neural nets have the property of being general function approximators [@CITE].
+Whenever there is a need for an agent to approximate some function, say a policy function, value function or a transition function, neural networks can be used in this capacity.
+While there are other function approximators that can be used in RL, e.g. Gaussian processes, neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@CITE].
+We will not discuss in detail how neural networks work -- see [@CITE] for further background --, but the general process for how neural networks are used in RL is that at each learning step, the agent, say a policy gradient-based agent, will adjust the parameters in its policy neural network so that according to past experiences, the agent will be more likely to engage in highly rewarding behavior in the future. 
+This same process occurs in value learning and actor-critic-based deep RL algorithms, except these agents are adjusting either a value network or both a value and policy network respectively.
+
+## Policy Gradients
+The most straightforward way to optimize the RL objective is through a policy search, whereby the agent continually updates a policy parameterized by $\theta$, $\pi_\theta$ -- in deep RL, this parameterized policy will be a neural network.
+There are both gradient-free and gradient-based policy search methods that have been successful in practice [@CITE; @CITE]; but for the sake of brevity, we will focus on gradient-based methods, which are more commonly encountered. 
+In policy gradient methods, algorithms are performing gradient ascent on the expected return, $J(\pi_\theta)$, to find the optimal policy parameters. 
+At each gradient step, the following update is performed,
+
+$$
+  \theta_{t+1} = \theta_t + \alpha \nabla_\theta J(\pi_\theta).
+$$
+
+Supposing that the agent has interacted with the environment and has collected some trajectories denoted by, $\tau_i$, then $\nabla J(\pi_\theta)$ can be estimated as:
+
+$$
+  \nabla_\theta J(\pi_\theta) \approx \sum_{i,t} \nabla_\theta \log{\pi_\theta (a_{i,t} \mid s_{i,t})} \Big( \sum_{t'=t}^H \gamma^{t'-t} r(s_{i, t'}, a_{i, t'}) \Big).
+$$
+
+See the appendix for how this is derived. 
+The intuition behind this approximation is exactly what we want: the agent will increase the probability of repeating the actions for the inputted states proportional to the size of the return. 
+In practice, however, the empirical return tends to have high variance, resulting in very noisy gradients that impedes learning [@CITE].
+To avoid this issue, most policy gradient algorithms replace the empirical return with a return estimator that has lower variance [@CITE GAE].
+A sketch of a simple policy gradient algorithm is shown in ALGORITHM. 
+
+## Value Learning
+Another way to approach the RL problem is by estimating a value function, and then using the value function to retrieve a policy. 
+Value functions attempt to quantify the goodness of being in a state or taking an action from a state.
+Given that the objective of RL is to maximize the cumulative expected reward, "goodness" refers to how high of a cumulative reward the agent can expect to receive.
+For example, the state-action-value or Q function finds the expected return from a state and action pair under a policy, $\pi$, 
+
+$$
+  Q^\pi(s_t, a_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t, a_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg].
+$$
+
+The general Q-learning motivation is that if we know the Q function under certain conditions -- e.g. that the state-action space is discrete and that the given policy visits all state-action pairs repeatedly [@suttonbarto 131; @Qproof] --, then we can easily find the optimal action at any state by selecting the action with the highest Q-value: $a_t^* = \underset{a_t}{\text{argmax}} \, Q^\pi (s_t, a_t)$.
+In the case that the state-action space can be tractably represented in a table, one could employ a  algorithm, like temporal-difference control -- see Sutton Ch. 6 for details -- which approximates the Q value for every state-action pair [@suttonbarto]. 
+Yet, for many decision-making problems, the state-action space cannot be tractably represented in a table; for this case, one effective alternative is to use a neural network to approximate the Q-function, a method called deep Q-learning. 
+The general process for deep Q-learning differs from policy gradient methods, since instead of trying to maximize the return directly, the objective is to minimize the Bellman error.
+The Bellman error is a measure of how distant a given value function is from that value function which has been re-evaluated with recent environment interaction.
+Suppose we attempt to approximate the Q-function with a neural network and thus represent this approximate Q-function as as $Q_\phi$, the Bellman error for one state-action pair would be
+
+$$
+  \mathcal{E} = r(s_t, a_t) + \gamma \, \underset{a}{\text{max}} \, Q_\phi(s_{t+1}, a) - Q_\phi(s_t, a_t).
+$$
+
+See the appendix/reference for details on how the Bellman Error is derived from eq. [@CITE]. 
+The general scheme for approximate value-learning with deep neural networks is to sample trajectories from the environment, evaluate the Bellman Error across these samples -- with the samples indexed by $i$ --, and then perform the following gradient descent:
+
+$$
+  \phi_{t+1} = \phi_t - \alpha \nabla_\phi \, \sum_i \mathcal{E}_i^2 
+$$
+
+When being evaluated, a deep Q-learning agent will select actions by inputting the current state to the Q network and then identifying the state-action pair with the highest estimated Q value.
+The benefit of using neural networks to approximate Q-functions is that neural networks are able to generalize Q functions over unseen state-action pairs, whereas classic methods like TD-learning are not able to generalize [@CITE].
+But there a host of problems with getting neural-network-based value-learning agents to work in practice; see @CITE for more insight on these issues.   
+The primary concern with these methods is that they tend to suffer from bias which is introduced by fitting a value network to a target that incorporates an estimated value function [@CITE].  
+
+## Actor-Critic
+Actor-critic algorithms integrate the main components from both value-learning and policy gradient based methods.
+The "actor" attempts to learn the policy, and the "critic" attempts to learn a value function.
+While the general algorithm for the critic is exactly the same as mentioned in the value-learning section, the actor differs from vanilla policy gradient algorithms by incorporating the critic in its gradient ascent step.
+Instead of estimating the gradient of the return as in eq ..., the gradient of the return is estimated as 
+
+$$
+  \nabla_\theta J(\pi_\theta) \approx \sum_{i,t} \nabla_\theta \log{\pi_\theta (a_{i,t} \mid s_{i,t})} \, \hat{Q}(s_{i,t}, a_{i, t}).
+$$
+
+where $\hat{Q}$ is a value function estimated by the critic.
+The benefit of actor-critic algorithms is that they balance the issues with bias and variance that are common with value-learning and policy gradient methods respectively [@CITE].
+Consequently, actor-critic algorithms have achieved a large majority of the state of the art results in model-free deep RL [@CITE].  
+
+## Value Functions 
+
+There are 3 value functions that are commonly used across RL algorithms: the state-value function, $V^\pi(s_t)$, the state-action value function, $Q^\pi(s_t, a_t)$, and the advantage function, $A^\pi(s_t, a_t)$.
+The state-value function is defined as the expected return from a given state,
+
+$$
+  V^\pi(s_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg]
+$$
+
+Meanwhile, the state-action-value or quality function, finds the expected return given a state and action, 
+
+$$
+  Q^\pi(s_t, a_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t, a_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg]
+$$
+
+And lastly, the advantage function characterizes a relative state-action value in that it quantifies how valuable a state-action pair is over a baseline.
+The advantage function can then be succinctly defined as 
+
+$$
+  A^\pi(s_t, a_t) = Q^\pi(s_t, a_t) - V^\pi(s_t)
+$$ 
+Learning $Q^\pi$, commonly called the Q-value function, is more powerful than learning the state-value function as Q-values easily prescribe what action to take when in a certain state, $a_t^* = \underset{a_t}{\text{argmax}} \, Q^\pi (s_t, a_t)$.
+Conversely, if we know the state-value function, we would have to perform a maximization over an expected value to find the optimal action, $a_t^* = \underset{a_t}{\text{argmax}} \, \mathbb{E}_{s_{t+1} \sim \,T(s_{t+1} \mid s_t, a_t)}[V^\pi(s_{t+1})]$, which is less tractable.
+Yet, learning the advantage function is often preferred in practice as advantage estimators favorably have lower variance than state-value and Q-value estimators [cite schulman gae].
 ----
 
