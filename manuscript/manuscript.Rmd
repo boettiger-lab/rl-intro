@@ -167,14 +167,6 @@ Since one round of training can be time intensive, hyperparameter tuning, which 
 Hyperparameter tuning, however, is a necessary step in evaluating the performance of an algorithm and should be a standard component of any deep RL workflow.
 
 
-<!-- 
-Placeholder table as figure, rather hacky (pandoc doesn't like `longtable`) 
-Make a nice table box in latex instead if we're keeping this
--->
-\begin{figure}
-\centering
-\includegraphics[width=0.9\linewidth]{table1.pdf}
-\end{figure}
 
 # Formal RL Concepts
 
@@ -287,44 +279,10 @@ Can we add HER (since delayed reward case may be particularly interesting)
 Should we do anything to better reflect the 'family tree' here? (e.g. DQN -> DDPG -> TD3)
 
 -->
-```{=latex}
-\begin{center}
-\begin{tabular}{|c|c|c|c|c|c|}
-\hline
-Algorithm & Description & Model & Method & Evaluation  & Constraints  \\
-\hline
-MBPO & Model-based Policy Optimization [@mbpo] & Model-based & Planning & On-policy & \\
-\hline
-MCTS* & Monte Carlo Tree Search [@suttonbarto] & Model-based & Planning & Either & Not suited for continuous action and state spaces \\
-\hline
-A2C  & Advantage Actor Critic [@a2c] & Model-free & Actor Critic  & On-policy & \\
-\hline
-A3C  & Asynchronous A2C [@a3c] & Model-free & Actor Critic & On-policy & \\
-\hline
-ACKTR  &  Actor Critic using Kronecker-Factored Trust Region [@acktr] & Model-free & Actor Critic & On-policy & \\
-\hline
-ACER  &  Actor Critic with Experience Replay [@wang_sample_2017] & Model-free & Actor Critic & Off-policy & Not suited for discrete action spaces \\
-\hline
-TRPO  & Trust Region Policy Optimization [@trpo] & Model-free & Actor Critic & On-policy & \\
-\hline
-PPO  & Proximal Policy Optimization [@ppo] & Model-free & Actor Critic & On-policy & \\
-\hline
-DQN & Deep Q Networks [@dqn] & Model-free & Value-based & Off-policy & Not suited for continuous action spaces; Suffers from overestimation bias\\
-\hline
-Double DQN & Deep Q Networks [@van_hasselt_deep_2015] & Model-free & Value-based & Off-policy & Not suited for continuous action spaces \\
-\hline
-DDPG & Deep Deterministic Policy Gradient [@ddpg] & Model-free & Actor Critic & Off-policy & Not suited for discrete action spaces\\
-\hline
-TD3 & Twin Delayed DDPG [@td3] & Model-free & Actor Critic & Off-policy & Not suited for discrete action spaces \\
-\hline
-SAC & Soft Actor Critic [@sac] & Model-free & Actor Critic & Off-policy & Not suited for discrete action spaces\\
-\hline
-IMPALA & Importance Weighted Actor Learner [@impala] & Model-free & Actor Critic & Off-policy & \\
-\hline
-\end{tabular}
-\caption{A survey of popular deep RL algorithms. With the plethora of deep RL algorithms, this table aims to show some of the most common ones. Model-free algorithms are in the majority in this table as the model-free approach has garnered more attention in recent years. Model-based approaches like MCTS, which is the basis for AlphaZero, are still able to achieve state of the art performances on certain tasks, so they should not be overlooked. Despite there being a range of different algorithms in this table, many of them are closely related to one another. E.g. Double DQN makes a small adjustment to DQN; PPO is an evolution of TRPO; TD3 is an evolution of DDPG; and, A2C is marginally different from A3C. These small differences, however, can result in large change in agent performance. All deep RL algorithms have their respective weak points, and it is impossible to know how algorithms will perform on a task until they are tuned and evaluated. As a deep rl practitioner, the best thing to do then is to find a range of algorithms that can work on your problem's state and action space, tune the algorithms, and see how they perform.}
-\end{center}
-```
+
+
+
+
 # Examples
 
 We provide three examples that illustrate the application and potential of deep RL to ecological and conservation problems, highlighting both the potential and challenges there-in.
@@ -401,7 +359,7 @@ fig_reward <- reward_df %>%
   ylab("reward")
 ```
 
-```{r fig1, fig.cap="Fisheries management using neural network agents trained with RL algorithms A2C and TD3 compared to optimal management.  Top panel: mean fish population size over time across 100 replicates. Shaded region shows the 95% confidence interval over simulations.  Lower left: The optimal solution is policy of constant escapement. Below the target escapement of 0.5, no harvest occurs, while any stock above that level is immediately harvested back down (red line).  RL agents both adopt a policies that cease any harvest below this level, while allowing a somewhat higher escapement than optimal just above the optimal escapement level.  A2C policy is non-deterministic, and overharvest from very high stock sizes.  Lower Right: Mean cumulative reward over time across simulations. TD3 achieves nearly-optimal mean utility. Mean reward under A2C is lower, though the confidence interval still overlaps the mean reward of optimal management."}
+```{r fig_fish, fig.cap="Fisheries management using neural network agents trained with RL algorithms A2C and TD3 compared to optimal management.  Top panel: mean fish population size over time across 100 replicates. Shaded region shows the 95% confidence interval over simulations.  Lower left: The optimal solution is policy of constant escapement. Below the target escapement of 0.5, no harvest occurs, while any stock above that level is immediately harvested back down (red line).  RL agents both adopt a policies that cease any harvest below this level, while allowing a somewhat higher escapement than optimal just above the optimal escapement level.  A2C policy is non-deterministic, and overharvest from very high stock sizes.  Lower Right: Mean cumulative reward over time across simulations. TD3 achieves nearly-optimal mean utility. Mean reward under A2C is lower, though the confidence interval still overlaps the mean reward of optimal management."}
 fig_sims / ( fig_policy + fig_reward)
 ```
 
@@ -481,7 +439,7 @@ fig_reward <- reward_df %>%
   ylab("reward")
 ```
 
-```{r fig2, fig.cap=""}
+```{r fig_conservation, fig.cap=""}
 fig_sims / ( fig_policy + fig_reward)
 ```
 
