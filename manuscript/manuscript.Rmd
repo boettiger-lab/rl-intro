@@ -110,91 +110,61 @@ What do we mean by an "agent"?
 
 Any application of RL can be divided into two components: an *environment* and an *agent*.
 An *environment* is typically a computer simulation, though it is possible to use the real world as the RL environment [@robotics].
-Over the course of an episode, an *agent*, which is often a computer program, continuously interacts with the environment. 
-At each time step, the agent performs an *action*, and as a result of this action, the environment will determine the next *state* and numerical *reward* that the agent will observe.
+Over the course of a task, an *agent*, which is often a computer program, continuously interacts with the environment. 
+At each time step, the agent observes the current *state* of the environment then performs an *action*; as a result of this action, the environment will transition to a new state and will transmit a numerical *reward* signal to the agent.
 The goal of the agent is to learn how to maximize its expected cumulative reward.
 The agent learns how to achieve this objective during a period called *training*.
 In training, the agent *explores* the available states and actions. 
-Once the agent comes across a highly rewarding sequence of states and actions, the agent will reinforce this behavior so that it is more likely for the agent to *exploit* the same high reward trajectory in future episodes.
-Throughout this process, the agent's behavior is codified into what is called a *policy*, which is a mapping of states to actions.
-
-To solve the RL problem, algorithms either take a *model-free* or *model-based* approach. 
-The distinction is that *model-free* algorithms do not have access to a model of the environment; yet, *model-based* algorithms use a model of the environment to achieve the RL objective.
-A trade-off between these approaches is that when it is possible to quickly learn a model of the environment or the model is already known, model-based algorithms tend to require much less interaction with the environment to learn good-performing policies [@mbpo].
-Yet, frequently, learning a model of the environment is very difficult, and in these cases, model-free algorithms tend to outperform [@CITE].
-Since most of the recent focus in RL has gone towards model-free algorithms, we will focus on model-free agents for the rest of the paper.
-
-Amongst model-free algorithms, there is divergence around what functions the agent is attempting to learn.
-Generally, model-free agents are either learning a policy function, a value function or both.
-For context, *value functions* are proxies for how high of a cumulative reward an agent can expect to receive from a given state or state-action pair.
-If an agent knows the value function, then the agent can find the optimal action at any state by selecting the action that will maximize the value function in expectation.
-The class of algorithms that exclusively try to learn a value function are called *value learning* methods.
-*Policy gradient* algorithms exclusively learn the policy.
-*Actor-critic* algorithms attempt to learn both a policy function and a value function, whereby the value function, which is learned separately from the policy, is used to inform the agent on the goodness of a selected action.
-There is a handful of advantages and disadvantages for each of these approaches that we will not go in depth -- for more, see [@CITE]; yet, the main point of distinction comes from the bias-variance trade-off.
-Policy gradients tend to struggle with high variance, value-learning tends to be biased while actor-critic methods balance these two concerns.
-
-
-
+Once the agent comes across a highly rewarding sequence of states and actions, the agent will reinforce this behavior so that it is more likely for the agent to *exploit* the same high reward trajectory in the future.
+Throughout this process, the agent's behavior is codified into what is called a *policy*, which describes what action an agent should take for a given state.
 
 
 ## Designing and building an environment
 
-An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an observation of it's current *state* and associated *reward* as output.
-In contrast to classical approaches, there are few restrictions on what comprises a state or action, at least in principle.
-The state may be continuous or discrete, completely or only partially observed, one or many dimensions.
-For instance, we might represent a ecological community of 10 interacting species using an environment with 10 continuously valued states representing the possible population densities of each species.
-The action space may similarly complex, and the response of the environment to any possible action may be deterministic or stochastic in nature.
-The reward will in general depend on both the current state and choice of actions.
-An environment must also specify a stopping condition, such as when a particular state is reached or a pre-defined interval of time has elapsed.
-In some environments, a reward is only received after the agent successfully completes a potentially long sequence of complex actions, such as solving a maze.
-In other environments, an agent may have to learn to forgo immediate reward (or even accept an initial negative reward or cost) in order to maximize the net discounted reward over the simulation period, as we illustrate in examples here.
+An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an observation of its current *state* and an associated *reward* as output.
+<!-- ML: what are classical approaches below here? -->
+In contrast to classical approaches, there are few restrictions on what comprises a state or action. 
+The state may be continuous or discrete, completely or partially observed, single or multidimensional.
+For instance, we might represent an ecological community of 10 interacting species with a 10-dimensional continuously valued state space signifying the population density of each species.
+The action space can be similarly complex, since an action can be continuous or discrete, single or multidimensional.
+For the previous environment, we might set the action space to be continuously valued and 10-dimensional, where each dimension corresponds to the amount of conservation effort aimed at the different species over a time step.   
+The main focus of an RL environment, however, is in the environment's transition dynamics and reward function.
+The designer of the environment can make the environment follow any transition and reward function provided that both are functions of the current state and action.
+This ability allows RL environments to model a broad range of decision making problems.
+For example, we can set the transitions to be deterministic or stochastic.
+We can also specify the reward function to be *sparse*, whereby a positive reward can only be received after a long sequence of actions, e.g. the end point in a maze.
+In other environments, an agent may have to learn to forgo immediate rewards (or even accept an initial negative reward) in order to maximize the net discounted reward as we illustrate in examples here.
+
 
 \begin{figure}
 \includegraphics[width=\linewidth]{fig1.pdf}
 \caption{Deep Reinforcement Learning:  An artificial intelligence \emph{agent} uses a \emph{neural network} to select an \emph{action} in response to an \emph{observation} of the \emph{environment}, receiving a \emph{reward} (or punishment) from the environment as a result.  The agent is \emph{trained} to maximize the reward through the experience of trying different actions over repeated \emph{epsiodes} of interacting with the environment.  Over the course of training, the agent adjusts parameter weights on the neural network as it learns which actions lead to the best cumulative rewards. A researcher may \emph{tune} an agent by considering iterative trials that train different agents with different \emph{hyperparameters}, such as different neural network architectures.  An agent trained with the most successful combination of hyperparameters can then be tested in an evaluation environment.}
 \end{figure}
 
-
 @brockman2016 identified (1) the lack of standardization of environments used in publication and (2) the need for better benchmark environments as two core problems limiting more rapid advancement of RL research, and proposed the creation of the OpenAI `gym` framework to address both problems.
 The `gym` framework defines a standard interface and methods by which a developer can describe an arbitrary environment in a computer program.
-This allows the design of software agents which can interact and learn in that environment without knowing anything about its internal details.
-The `gym` python module created by OpenAI also provides over 100 pre-built environments that serve as benchmark problems against which new RL algorithms can be tested.
+This allows the design and application of software agents which can interact and learn in that environment without knowing anything about the environment's internal details.
+The `gym` Python module created by OpenAI also provides over 100 pre-built environments that serve as benchmark problems against which new RL algorithms can be tested.
 The `gym` framework is now recognized by all major software frameworks for writing RL algorithms (see Appendix, 'Deep RL Frameworks').
 While this library of environments span a range of difficulties from classic control problems that can be solved in closed form to complex three-dimensional robotics simulators, they include no examples of ecological or biological problems.
 We use the `gym` framework to turn several existing ecological models into valid environmental simulators that can similarly be used in any RL framework.
 
+## Training and tuning an agent
 
-## Designing and training an agent
+Training a deep RL agent on an environment involves allowing the agent to interact with the environment for thousands or even millions of time steps.
+The training period involves a trial and error process whereby the agent will perform an action and then receive feedback from the environment in the form of a reward. 
+This process will repeat until the environment transitions to a terminal state, after which the environment will reset to an initial state.
+According to the algorithm that the agent follows, the agent will explore the state-action space and use its experience to improve its policy.
+The amount of time needed for an agent to learn high reward yielding behavior cannot be predetermined and depends on a host of factors including the amount of dedicated compute, complexity of the environment, complexity of the agent and more.
+Yet, overall, it has been well established that deep, model-free RL agents tend to be very sample inefficient [@gu_q-prop_2017], so it is recommended to provide a generous training budget for these agents.
+An advantage of using deep, model-free algorithms is that since they function autonomously and do not require any knowledge about the environment, we can readily test how these algorithms perform without knowing much about the environment's transition dynamics or all the inner workings of the algorithm.
 
-The training an agent on an environment involves allowing the agent to experience and respond to repeated simulations from the environment, thousands or even millions of times. 
-Over the course of training, weights on the neural network are updated in response to the reward given by the environment, much like reinforcement learning is believed to work in living creatures [@cite].
-A neural network can be thought of as a generic function approximator, and these weights as parameters of that function that are estimated from 'data' generated by training.
-A typical neural network in RL may have thousands or hundreds of thousands of parameters, giving it the flexibility to learn very complex behaviors.
-The overall architecture of the neural network, as well as other parameters such as those governing how an agent learns, how an agent proposes actions, and how the agent discounts future rewards, and so forth are controlled by *hyperparameters*.
-To initialize a new, untrained agent, we must specify a handful or so of these hyperparameters, which are held fixed over the course of training.
-The particular selection of hyperparameters required depends on which *RL algorithm* our agent will be based.
-The RL algorithm specifies precisely how the agent will learn from its environment:
-Is the algorithm model-based or model-free? 
-Stochastic or deterministic? 
-"Off-policy" or "on-policy"? 
-Does it use a random noise model to propose actions?
-Does it permit a continuous action space or require discrete actions?
-The design of RL algorithms has been and remains an area of intense research and rapid development [Table 2].
-Open source implementations by professional software development teams often follow swiftly after new algorithms are published [@Ssb3; @tf-agents].
-In the following section, we summarize some of the key concepts that make up an RL algorithm, and highlight relevant distinctions between important algorithms today.
-
-
-<!-- Something about given RL algorithm being able to solve lots of different environments with no pre-specified knowledge. cite examples @AlphaZero and @DQN; but still depends on hyperparameters -->
-The process of selecting hyperparameters for a given RL algorithm to maximize it's performance on a given environment is referred to as hyperparameter *tuning*.
-The process of tuning can be automated through standard multi-dimensional optimization approaches: proposing new combinations of hyperparameters, training an agent, and examining the resulting performance.
-Because training even on a fixed set of hyperparameters can be computationally intensive, tuning must be targeted appropriately.
-Considerations in how the environment simulation is implemented, such as the normalization of state and/or action spaces, can significantly improve performance of many RL algorithms on a diverse range of problems without requiring extensive tuning.
-
-
-<!--
-A rapidly growing set of material for learning about deep reinforcement learning is now freely available.... (maybe just describe this in the appendix)
--->
+Hyperparameters refer to the parameters in a deep, RL algorithm that are not directly learned during the training process.
+Since the optimal hyperparameters vary across environments and can not be predetermined [@drlthatmatters], it is necessary to find a good-performing set of hyperparameters in a process called hyperparameter tuning.
+Hyperparameter tuning consists of the following general steps in repetition: proposing a new set of hyperparameters, training an agent with these hyperparameters, then examining the resulting performance.
+This procedure can be automated through standard multi-dimensional optimization approaches. 
+Since one round of training can be time intensive, hyperparameter tuning, which consists of usually numerous rounds of training, can be particularly time intensive.
+Hyperparameter tuning, however, is a necessary step in evaluating the performance of an algorithm and should be a standard component of any deep RL workflow.
 
 
 <!-- 
@@ -206,69 +176,45 @@ Make a nice table box in latex instead if we're keeping this
 \includegraphics[width=0.9\linewidth]{table1.pdf}
 \end{figure}
 
+# Formal RL Concepts
 
-# RL Algorithms
+In this brief section, we will introduce the concept of the RL environment as a POMDP; we will then use POMDP definitions to define the RL objective.
+Since all RL algorithms are either directly or indirectly maximizing the RL objective, understanding the RL objective is crucial to understanding how RL algorithms work. <!-- ML: this seems like an obvious sentence to me but am stuck on it atm so revisions welcomed-->
 
-<!-- 
+The reinforcement learning environment is typically formalized as a discrete-time partially observable Markov decision process (POMDP).
+A POMDP is a 7-tuple that consists of the following: 
+- $\mathcal{S}$: a set of states called the state space
+- $\mathcal{A}$: a set of actions called the action space
+- $\Omega$ : a set of observations called the observation space
+- $E(o_{t}| s_{t})$: an emission distribution, which accounts for an agent's observation being different from environment's state
+- $T(s_{t+1}|s_t, a_t)$: a state transition operator which describes the dynamics of the system
+- $r(s_t, a_t)$: a reward function
+- $d_0(s_0)$: an initial state distribution
+- $\gamma \in (0,1]$: a discount factor
 
-I think we can lean more heavily both in references to and paralleling the presentation of some of the existing background material. 
-
-
-
--->
-
-The basic problem set-up of RL is as follows: at a time step, $t$, the agent observes a representation of the environment's state, $s_t$, and must accordingly select an action, $a_t$; at the next time step, the agent will observe a new state, $s_{t+1}$, and will receive a numerical reward, $r_{t+1}$.
-This new state, $s_{t+1}$, and reward, $r_{t+1}$, are determined by the environment.
-The task for the agent is to learn a *policy*, $\pi$, that prescribes what action the agent should perform after observing a certain state.
-The agent interacts with the environment via trial and error in what is called the *training* period, during which the agent continually updates its policy in order to maximize its expected cumulative sum of rewards.
-
-
-<!-- Still can't decide if this statement is too strong; i.e. that at least theoretically / LSTM, RL permits learning processes which are not Markovian in the observed variables -->
-When the environment is fully observable, i.e. when the state that the agent observes fully characterizes the system, the reinforcement learning problem can be formalized as a Markov Decision Process (MDP).
-An MDP consists of the following: a set of states, $\mathcal{S}$, called the state space; a set of actions, $\mathcal{A}$, called the action space; a state transition operator, $T(s_{t+1}|s_t, a_t)$, which describes the dynamics of the system; a reward function, $r(s_t, a_t)$; an initial state distribution, $d_0(s_0)$; and a discount factor, $\gamma \in (0,1]$. As the agent interacts with the environment, the agent will create a trajectory in state-action space given as $\tau = (s_0, a_0, \dots, s_H, a_H)$ where H denotes the horizon or length of the state-action sequence.
-From this definition, we can provide an agent's trajectory distribution for a given policy as,
-
-$$
-  p_\pi(\tau) = d_0(s_0) \prod_{t=0}^H \pi(a_t \mid s_t) T(s_{t+1} \mid s_t, a_t)
-$$
-
-When the agent cannot fully observe the state of the system, reinforcement learning can then be described by a Partially Observable Markov Decision Process (POMDP), wherein there is an additional distribution, $E(o_{t}| s_{t})$, which accounts for the observation being different from system's actual state.
-An important property of POMDPs and MDPs is that they are memoryless; the future, $s_{t+1}$, does not depend on the past but only on the state and action at the present time.
-This Markov property, which is often an unrealistic assumption, is held in most of the RL algorithms that we will discuss.
-
-In formal terms, the goal of reinforcement learning is to find an optimal policy distribution, $\pi^*(a_t | s_t)$ or $\pi^*(a_t|o_t)$ for MDP and POMDP cases respectively, that maximizes the expected cumulative, discounted reward:
+The agent interacts with the environment in an iterative loop, whereby the agent only has access to the observation space, action space and the discounted reward signal, $\gamma^t \, r(s_t, a_t)$.
+At each time step, the agent makes an observation of the environment at time t, $o_t$, and selects an action, $a_t$, according to its policy, $\pi$, which maps observations to a probability distribution over actions, $\pi: \Omega \rightarrow p(\mathcal{A} \mid \Omega)$.
+The action will cause the environment to transition to a new state according to the state transition operator. 
+The agent will then receive a new observation and a discounted reward signal, $\gamma^t \, r(s_t, a_t)$, as feedback. 
+This process will repeat until a terminal state is reached.
+As the agent interacts with the environment, the agent will create a trajectory in state-action space given as $\tau = (s_0, a_0, \dots, s_H, a_H)$ where H denotes the horizon or length of the state-action sequence.
+From these definitions, we can provide an agent's trajectory distribution for a given policy as,
 
 $$
-  \pi^* = \underset{\pi}{\text{argmax}} \,\, \mathbb{E}_{\tau \sim p_\pi(\tau)}\Big[\sum_{t=0}^{H} \gamma^t r(s_t, a_t) \Big]
+  p_\pi(\tau) = d_0(s_0) \prod_{t=0}^H \pi(a_t | o_t) \, E(o_{t}| s_{t}) \, T(s_{t+1} | s_t, a_t)
+$$
+
+The goal of reinforcement learning is for the agent to find an optimal policy distribution, $\pi^*(a_t|o_t)$, that maximizes the expected return, $J(\pi)$:
+
+$$
+  \pi^* = \underset{\pi}{\text{argmax}} \,\, \mathbb{E}_{\tau \sim p_\pi(\tau)}\Big[\sum_{t=0}^{H} \gamma^t r(s_t, a_t) \Big] =  \underset{\pi}{\text{argmax}} \,\, J (\pi)
 $$
 
 Note that this formalism extends to an infinite horizon case when $T= \infty$.
-While there are RL methods to deal with infinite horizon cases, we will only consider episodic MDP and POMDPs.
+While there are RL methods to deal with infinite horizon cases, we will only present methods for finite horizon or episodic POMDPs.
+In the appendix, we will go into further detail on the general approaches that model-free deep RL algorithms take towards optimizing the RL objective. 
 
-Many reinforcement learning algorithms center around estimating value functions, which attempt to quantify the goodness of being in a state or taking an action from a state.
-Given that the objective of RL is to maximize the cumulative expected reward, "goodness" refers to the likelihood that a state or state-action pair will result in a high cumulative reward trajectory.
-There are 3 value functions that are commonly used across RL algorithms: the state-value function, $V^\pi(s_t)$, the state-action value function, $Q^\pi(s_t, a_t)$, and the advantage function, $A^\pi(s_t, a_t)$.
-The state-value function is defined as the expected return from a given state,
-
-$$
-  V^\pi(s_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg]
-$$
-
-Meanwhile, the state-action-value or quality function, finds the expected return given a state and action, 
-
-$$
-  Q^\pi(s_t, a_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t, a_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg]
-$$
-
-And lastly, the advantage function characterizes a relative state-action value in that it quantifies how valuable a state-action pair is over a baseline.
-The advantage function can then be succinctly defined as 
-
-$$
-  A^\pi(s_t, a_t) = Q^\pi(s_t, a_t) - V^\pi(s_t)
-$$ 
-Learning $Q^\pi$, commonly called the Q-value function, is more powerful than learning the state-value function as Q-values easily prescribe what action to take when in a certain state, $a_t^* = \underset{a_t}{\text{argmax}} \, Q^\pi (s_t, a_t)$.
-Conversely, if we know the state-value function, we would have to perform a maximization over an expected value to find the optimal action, $a_t^* = \underset{a_t}{\text{argmax}} \, \mathbb{E}_{s_{t+1} \sim \,T(s_{t+1} \mid s_t, a_t)}[V^\pi(s_{t+1})]$, which is less tractable.
-Yet, learning the advantage function is often preferred in practice as advantage estimators favorably have lower variance than state-value and Q-value estimators [cite schulman gae].
+# Deep RL Algorithms
 
 **Survey of RL Algorithms**
 
@@ -284,35 +230,48 @@ Algorithm
 
 -->
 
-
 There is an ever increasing multitude of reinforcement learning algorithms, and while there are far too many algorithms to discuss in detail in this paper, we will herein classify and touch on some current methods.
-RL algorithms can generally be split into 2 groups, model-based and model-free RL.
-In model-based RL, the agent is attempting to learn the state transition operator, $T$. <!-- Sometimes the agent is just assuming this is given, right? -->
-Once the transition model is known, the agent can then use the transition model to plan out what is the optimal action, often with Model Predictive Control [cite tassa 2012 MPC], or the agent can use the transition model to generate more samples to aid learning [cite Sutton dyna, alphago?]. <!-- For most recent methods focus on an approximate solution, since optimal is computationally impossible.  In contrast most readers will assume this step is trivial, if the transition matrix is known there's nothing more to do but "look" at the predicted transitions and make a choice. -->
-In model-free RL, the agent does not attempt to learn a dynamics model and instead tries to either learn a parameterized policy, learn a value function, or try to learn both a parameterized policy and a value function.
-The general trade-off between model-free and model-based approaches is that in practice, model-based algorithms are often more sample efficient than model-free algorithms but often fail to surpass model-free algorithms in overall agent performance [cite?]
 
+To solve the RL problem, algorithms either take a *model-free* or *model-based* approach. 
+The distinction is that *model-free* algorithms do not attempt to learn or use a model of the environment; yet, *model-based* algorithms employ a model of the environment to achieve the RL objective.
+A trade-off between these approaches is that when it is possible to quickly learn a model of the environment or the model is already known, model-based algorithms tend to require much less interaction with the environment to learn good-performing policies [@mbpo].
+Yet, frequently, learning a model of the environment is very difficult, and in these cases, model-free algorithms tend to outperform [@mbpo].
+Since most of the recent focus in RL has gone towards model-free algorithms, we will focus on model-free agents for the rest of the paper.
 
-A further distinction to be made amongst RL algorithms is in what policy the agent uses to select actions.
-If an agent uses the same policy to take actions as the policy that the agent attempts to evaluate or improve, then this algorithm is on-policy.  <!-- Unclear what "to evaluate or improve" means.  Perhaps an example would help? -->
-If an agent uses a different policy to select actions than the policy that the agent evaluates or improves, then this algorithm is off-policy.
-The benefit of off-policy learning is that the agent does not need to collect a sample every time the agent updates its behavior; instead, the agent can learn from past experience, which increases sample efficiency [cite SAC paper]. <!-- Not clear what this means -->
-Yet, on-policy algorithms tend to be more stable in practice [cite Q-prop]. <!-- not clear how "stable" is defined/measured -->
+Among model-free algorithms, there is divergence around what functions the agent is attempting to learn in order to achieve the RL objective.
+Generally, model-free agents are either learning a policy function, a value function or both.
+For context, *value functions* are proxies for how high of a cumulative reward an agent can expect to receive from a given state or state-action pair.
+If an agent knows the value function, then the agent can find the optimal action at any state by selecting the action that will maximize the value function in expectation.
+The class of algorithms that exclusively try to learn a value function are called *value-based* methods.
+In contrast, *policy gradient* algorithms exclusively learn the policy.
+And, lastly, *actor-critic* algorithms attempt to learn both a policy function and a value function, whereby the value function is used to inform the agent on the goodness of a selected action.
+There is a handful of advantages and disadvantages for each of these approaches that we will not get into in depth -- for more, see the appendix; yet, the main point of divergence comes from the bias-variance trade-off [@suttonbarto].
+Generally, policy gradient algorithms tend to struggle with high variance, value-based methods tends to be biased while actor-critic methods balance these two concerns [@suttonbarto; @qbias].
 
-The field of reinforcement learning has proliferated over the past 10 years on account of contributions from deep learning.
-In every reinforcement learning algorithm, the agent is attempting to learn some function, whether it is a policy function and/or a value function.
-Neural networks, which have the property of being universal function approximators [cite], are thus a powerful tool in reinforcement learning since neural networks can be used to approximate policy and/or value functions whose form is unknown.
-Additionally, the ability of neural networks to autonomously devise low-dimensional representations of data is very beneficial when state observations are high dimension, for instance in the case of image-based observations. <!-- Yes! should stress why that matters -->
-The typical process for using neural networks in RL is that the agent is attempting to optimize a policy and/or value network using the backpropagation algorithm -- an exception is made here for evolutionary algorithms which did not employ gradient-based methods. <!-- Fixme: needs to be clear that NN parameters are being fit by the "training" step. No point mentioning back-propagation, evolutionary algorithms, or gradient methdos if we are not going to define them.  -->
+Neural networks become useful in RL when the environment has a large state-action space, which happens frequently with realistic decision-making problems. 
+Classic RL algorithms, like policy iteration, value iteration and TD-learning, fail when the state-action space is large, e.g. when the possible states and actions can not be represented in a tractable table [@suttonbarto].
+Yet, over the last 10 years, researchers have shown that neural network-based RL algorithms can perform well on previously unsolvable environments.
+Neural networks have been widely useful in reinforcement learning because neural nets have the property of being general function approximators [@universalapproximators].
+Whenever there is a need for an agent to approximate some function, say a policy function, value function or a transition function, neural networks can be used in this capacity.
+While there are other function approximators that can be used in RL, e.g. Gaussian processes [@grande14], neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@briefsurveydrl].
+We will not discuss in detail how neural networks work -- see [@lecun_deep_2015] for further background --, but the general process for how neural networks are used in RL is that at each learning step, the agent, say a policy gradient-based agent, will adjust the parameters in its policy neural network, the agent's neural network that it is using to approximate the policy function, so that according to past experiences, the agent will be more likely to engage in highly rewarding behavior in the future. 
+This same process occurs in value learning and actor-critic-based deep RL algorithms, except these agents are adjusting either a value network or both a value and policy network respectively
 
-Deep RL has excelled in solving sequential decision-making problems that have non-tabular state-action spaces, problems that are typically intractable with classical methods. <!-- non-tabular undefined -->
+Over the course of training, RL agents will engage in trial and error learning, whereby it will be necessary for the agent to explore new sequences of actions as well as exploit past high rewarding sequences.
+Occasionally, the agent will need to propose exploratory actions that may result in higher rewards than previously seen. 
+Yet, the agent may also need to focus on past sequences of actions which may require marginal improvement to reach optimality.
+The fundamental issue is that it is very difficult for the agent to know when it should engage in explorative or exploitative behavior. 
+This *exploration-exploitation dilemma* is an open research problem [@berger-tal_exploration-exploitation_2014], and current deep RL algorithms take a range of approaches towards this dilemma -- in the appendix, we discuss some of the more specific exploration algorithms.
+Yet, generally, the manner in which RL algorithms explore depend on whether the algorithms are *on-policy* or *off-policy*.
+The distinction between on and off-policy evaluation comes from what policy the agent is using to select actions during training.
+For off-policy algorithms, the agent uses a policy during training that can be different from the policy that the agent will use during evaluation; while in on-policy algorithms, the agent uses the same policy in training as the agent will use during evaluation.
+There are trade-offs to consider in using an off-policy or on-policy learner, which we will further discuss in the appendix.
 
-In practice, the general process for attaining a good performing agent is to tune model hyperparameters then train an agent using the best hyperparameters. 
-Hyperparameters refer to the parameters in a RL algorithm that are not directly learned during the training process. <!-- better to define before using in opening sentence.  -->
-For example, a weight in the neural network is a model parameter, but the number of hidden layers in the neural network is a hyperparameter.
-Since the optimal hyperparameters cannot be found analytically, tuning should be done to find a good-performing set of hyperparameters.
-The hyperparameter tuning process consists of sampling then evaluating a set of hyperparameters, where tuning trials are often ranked by mean cumulative reward.
-Since one round of training can be time intensive, hyperparameter tuning, which consists of usually numerous rounds of training, can be particularly time intensive.
+On top of the aforementioned distinctions for model-free, deep RL algorithms, there are more algorithm design choices that can be made. 
+One important point of divergence is whether the agent learns a deterministic or stochastic policy.
+Another is whether the algorithm is formulated to work on a discrete, continuous or both a discrete and continuous state and action space.
+In table **, we provide some of the commonly used RL algorithms and delineate some of their important characteristics.
+In the appendix, we will introduce the considerations one should make in deciding whether an algorithm is well suited for a specific environment. 
 
 <!-- Kari: I think we need more background on what a neural network is, how it fits in, and what other options are - maybe use examples of hyperparameters that would be in all RL approaches not just those that use neural nets -->
 
@@ -332,33 +291,38 @@ Should we do anything to better reflect the 'family tree' here? (e.g. DQN -> DDP
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|c|}
 \hline
-Algorithm & Description & Model & Policy & Action Space & State Space \\
+Algorithm & Description & Model & Method & Evaluation  & Constraints  \\
 \hline
-MBPO & Model-based Policy Optimization & Model-based & On-policy& &\\
+MBPO & Model-based Policy Optimization [@mbpo] & Model-based & Planning & On-policy & \\
 \hline
-MCTS & Monte Carlo Tree Search & Model-based & Either & & \\
+MCTS* & Monte Carlo Tree Search [@suttonbarto] & Model-based & Planning & Either & Not suited for continuous action and state spaces \\
 \hline
-A2C  & Advantage Actor Critic & Model-free & On-policy& &\\
+A2C  & Advantage Actor Critic [@a2c] & Model-free & Actor Critic  & On-policy & \\
 \hline
-A3C  & Asynchronous A2C & Model-free & On-policy & &\\
+A3C  & Asynchronous A2C [@a3c] & Model-free & Actor Critic & On-policy & \\
 \hline
-TRPO  & Trust Region Policy Optimization & Model-free & On-policy & &\\
+ACKTR  &  Actor Critic using Kronecker-Factored Trust Region [@acktr] & Model-free & Actor Critic & On-policy & \\
 \hline
-PPO  & Proximal Policy Optimization & Model-free & On-policy & &\\
+ACER  &  Actor Critic with Experience Replay [@wang_sample_2017] & Model-free & Actor Critic & Off-policy & Not suited for discrete action spaces \\
 \hline
-DQN & Deep Q Networks & Model-free & Off-policy& &\\
+TRPO  & Trust Region Policy Optimization [@trpo] & Model-free & Actor Critic & On-policy & \\
 \hline
-DDPG & Deep Deterministic Policy Gradient & Model-free & Off-policy & &\\
+PPO  & Proximal Policy Optimization [@ppo] & Model-free & Actor Critic & On-policy & \\
 \hline
-TD3 & Twin Delayed DDPG & Model-free & Off-policy & &\\
+DQN & Deep Q Networks [@dqn] & Model-free & Value-based & Off-policy & Not suited for continuous action spaces; Suffers from overestimation bias\\
 \hline
-SAC & Soft Actor Critic & Model-free & Off-policy & &\\
+Double DQN & Deep Q Networks [@van_hasselt_deep_2015] & Model-free & Value-based & Off-policy & Not suited for continuous action spaces \\
 \hline
-IMPALA & Importance Weighted Actor Learner & Model-free & Off-policy & &\\
+DDPG & Deep Deterministic Policy Gradient [@ddpg] & Model-free & Actor Critic & Off-policy & Not suited for discrete action spaces\\
 \hline
-APE-X & Distributed Prioritized Experience Replay & Model-free & Off-policy & & \\
+TD3 & Twin Delayed DDPG [@td3] & Model-free & Actor Critic & Off-policy & Not suited for discrete action spaces \\
+\hline
+SAC & Soft Actor Critic [@sac] & Model-free & Actor Critic & Off-policy & Not suited for discrete action spaces\\
+\hline
+IMPALA & Importance Weighted Actor Learner [@impala] & Model-free & Actor Critic & Off-policy & \\
 \hline
 \end{tabular}
+\caption{A survey of popular deep RL algorithms. With the plethora of deep RL algorithms, this table aims to show some of the most common ones. Model-free algorithms are in the majority in this table as the model-free approach has garnered more attention in recent years. Model-based approaches like MCTS, which is the basis for AlphaZero, are still able to achieve state of the art performances on certain tasks, so they should not be overlooked. Despite there being a range of different algorithms in this table, many of them are closely related to one another. E.g. Double DQN makes a small adjustment to DQN; PPO is an evolution of TRPO; TD3 is an evolution of DDPG; and, A2C is marginally different from A3C. These small differences, however, can result in large change in agent performance. All deep RL algorithms have their respective weak points, and it is impossible to know how algorithms will perform on a task until they are tuned and evaluated. As a deep rl practitioner, the best thing to do then is to find a range of algorithms that can work on your problem's state and action space, tune the algorithms, and see how they perform.}
 \end{center}
 ```
 # Examples
