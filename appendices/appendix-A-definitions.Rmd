@@ -21,11 +21,13 @@ authors:
 
 
 keywords:
-  - blah
-  - blee
-  - bloo
-  - these are optional and can be removed
-bibliography: references.bib
+  - Decision Theory
+  - Conservation
+  - Artificial Intelligence
+  - Machine Learning
+  - Tipping Points
+  - Fisheries
+bibliography: ../manuscript/references.bib
 
 header-includes:
   - \usepackage{amsmath}

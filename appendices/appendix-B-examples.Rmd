@@ -25,7 +25,7 @@ keywords:
   - blee
   - bloo
   - these are optional and can be removed
-bibliography: references.bib
+bibliography: ../manuscript/references.bib
 
 header-includes:
   - \usepackage{amsmath}
