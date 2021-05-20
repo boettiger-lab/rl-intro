@@ -26,7 +26,7 @@ jobs:
           R -e 'renv::restore()'
       - name: Appendix
         run: |-
-          Rscript -e "rmarkdown::render('manuscript/appendix.Rmd')"
+          Rscript -e "rmarkdown::render('appendices/appendix-B-examples.Rmd')"
       - name: Manuscript
         run: |-
           Rscript -e "rmarkdown::render('manuscript/manuscript.Rmd')"
