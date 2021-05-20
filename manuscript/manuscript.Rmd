@@ -108,6 +108,8 @@ What do we mean by an "agent"?
 
 -->
 
+<!-- ML: need to change some of the language here to be consistent with POMDP set up later-->
+
 Any application of RL can be divided into two components: an *environment* and an *agent*.
 An *environment* is typically a computer simulation, though it is possible to use the real world as the RL environment [@robotics].
 Over the course of a task, an *agent*, which is often a computer program, continuously interacts with the environment. 
@@ -128,7 +130,7 @@ The state may be continuous or discrete, completely or partially observed, singl
 For instance, we might represent an ecological community of 10 interacting species with a 10-dimensional continuously valued state space signifying the population density of each species.
 The action space can be similarly complex, since an action can be continuous or discrete, single or multidimensional.
 For the previous environment, we might set the action space to be continuously valued and 10-dimensional, where each dimension corresponds to the amount of conservation effort aimed at the different species over a time step.   
-The main focus of an RL environment, however, is in the environment's transition dynamics and reward function.
+The main focus of building an RL environment, however, is in the environment's transition dynamics and reward function.
 The designer of the environment can make the environment follow any transition and reward function provided that both are functions of the current state and action.
 This ability allows RL environments to model a broad range of decision making problems.
 For example, we can set the transitions to be deterministic or stochastic.
@@ -157,9 +159,9 @@ This process will repeat until the environment transitions to a terminal state, 
 According to the algorithm that the agent follows, the agent will explore the state-action space and use its experience to improve its policy.
 The amount of time needed for an agent to learn high reward yielding behavior cannot be predetermined and depends on a host of factors including the amount of dedicated compute, complexity of the environment, complexity of the agent and more.
 Yet, overall, it has been well established that deep, model-free RL agents tend to be very sample inefficient [@gu_q-prop_2017], so it is recommended to provide a generous training budget for these agents.
-An advantage of using deep, model-free algorithms is that since they function autonomously and do not require any knowledge about the environment, we can readily test how these algorithms perform without knowing much about the environment's transition dynamics or all the inner workings of the algorithm.
+An advantage of using deep, model-free algorithms is that since they function autonomously and do not require any knowledge about the environment, we can readily test how these algorithms perform without knowing anything about the environment's transition dynamics or the inner workings of the algorithm.
 
-Hyperparameters refer to the parameters in a deep, RL algorithm that are not directly learned during the training process.
+Hyperparameters refer to the parameters in a deep, RL algorithm that control the learning process, e.g. the step size to use for gradient descent steps.
 Since the optimal hyperparameters vary across environments and can not be predetermined [@drlthatmatters], it is necessary to find a good-performing set of hyperparameters in a process called hyperparameter tuning.
 Hyperparameter tuning consists of the following general steps in repetition: proposing a new set of hyperparameters, training an agent with these hyperparameters, then examining the resulting performance.
 This procedure can be automated through standard multi-dimensional optimization approaches. 
@@ -175,13 +177,21 @@ Since all RL algorithms are either directly or indirectly maximizing the RL obje
 
 The reinforcement learning environment is typically formalized as a discrete-time partially observable Markov decision process (POMDP).
 A POMDP is a 7-tuple that consists of the following: 
+
 - $\mathcal{S}$: a set of states called the state space
+
 - $\mathcal{A}$: a set of actions called the action space
+
 - $\Omega$ : a set of observations called the observation space
+
 - $E(o_{t}| s_{t})$: an emission distribution, which accounts for an agent's observation being different from environment's state
+
 - $T(s_{t+1}|s_t, a_t)$: a state transition operator which describes the dynamics of the system
+
 - $r(s_t, a_t)$: a reward function
+
 - $d_0(s_0)$: an initial state distribution
+
 - $\gamma \in (0,1]$: a discount factor
 
 The agent interacts with the environment in an iterative loop, whereby the agent only has access to the observation space, action space and the discounted reward signal, $\gamma^t \, r(s_t, a_t)$.
@@ -236,17 +246,18 @@ For context, *value functions* are proxies for how high of a cumulative reward a
 If an agent knows the value function, then the agent can find the optimal action at any state by selecting the action that will maximize the value function in expectation.
 The class of algorithms that exclusively try to learn a value function are called *value-based* methods.
 In contrast, *policy gradient* algorithms exclusively learn the policy.
-And, lastly, *actor-critic* algorithms attempt to learn both a policy function and a value function, whereby the value function is used to inform the agent on the goodness of a selected action.
+And, lastly, *actor-critic* algorithms attempt to learn both a policy and value function, whereby the value function is used to inform the agent on the goodness of a selected action.
 There is a handful of advantages and disadvantages for each of these approaches that we will not get into in depth -- for more, see the appendix; yet, the main point of divergence comes from the bias-variance trade-off [@suttonbarto].
 Generally, policy gradient algorithms tend to struggle with high variance, value-based methods tends to be biased while actor-critic methods balance these two concerns [@suttonbarto; @qbias].
+<!-- ML: I think we can keep the bias-variance discussion in the appendix and cut these 2 sentences-->
 
 Neural networks become useful in RL when the environment has a large state-action space, which happens frequently with realistic decision-making problems. 
 Classic RL algorithms, like policy iteration, value iteration and TD-learning, fail when the state-action space is large, e.g. when the possible states and actions can not be represented in a tractable table [@suttonbarto].
 Yet, over the last 10 years, researchers have shown that neural network-based RL algorithms can perform well on previously unsolvable environments.
 Neural networks have been widely useful in reinforcement learning because neural nets have the property of being general function approximators [@universalapproximators].
-Whenever there is a need for an agent to approximate some function, say a policy function, value function or a transition function, neural networks can be used in this capacity.
+Whenever there is a need for an agent to approximate some function, say a policy function or value function, neural networks can be used in this capacity.
 While there are other function approximators that can be used in RL, e.g. Gaussian processes [@grande14], neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@briefsurveydrl].
-We will not discuss in detail how neural networks work -- see [@lecun_deep_2015] for further background --, but the general process for how neural networks are used in RL is that at each learning step, the agent, say a policy gradient-based agent, will adjust the parameters in its policy neural network, the agent's neural network that it is using to approximate the policy function, so that according to past experiences, the agent will be more likely to engage in highly rewarding behavior in the future. 
+We will not discuss in detail how neural networks work -- see [@lecun_deep_2015] for further background --, but the general process for how neural networks are used in RL is that at each learning step, the agent, say a policy gradient-based agent, will adjust the parameters in its policy neural network, the neural network that the agent is using to approximate the policy function, so that according to past experiences, the agent will be more likely to engage in highly rewarding behavior in the future. 
 This same process occurs in value learning and actor-critic-based deep RL algorithms, except these agents are adjusting either a value network or both a value and policy network respectively
 
 Over the course of training, RL agents will engage in trial and error learning, whereby it will be necessary for the agent to explore new sequences of actions as well as exploit past high rewarding sequences.
@@ -304,7 +315,7 @@ txtcolor <- "#586e75"
 
 The first example focuses on the important but well-studied problem of setting harvest quotas in fisheries management.
 Determining fishing quotas is both a critical ecological issue [@Worm2006; @Worm2009; @Costello2018], and also a textbook example that has long informed the management of renewable resources within fisheries and beyond [@Clark1990].
-Given a population growth model that predicts the total biomass of a fish stock in the following year as a function of the current biomass, it straight forward to determine what biomass corresponds to the maximum growth rate of the stock, or $B_{\textrm{MSY}}$, the biomass at Maximum Sustainable Yield (MSY) [@Schaefer1954].
+Given a population growth model that predicts the total biomass of a fish stock in the following year as a function of the current biomass, it is straight forward to determine what biomass corresponds to the maximum growth rate of the stock, or $B_{\textrm{MSY}}$, the biomass at Maximum Sustainable Yield (MSY) [@Schaefer1954].
 When the population growth rate is stochastic, the problem is slightly harder to solve, as the harvest quota must constantly adjust to the ups and downs of stochastic growth, but it is still possible to show the optimal strategy merely seeks to maintain the stock at $B_{\textrm{MSY}}$, adjusted for any discounting of future yields [@Reed1979].
 
 This provides a natural first benchmark for deep RL approaches, since we can compare the RL solution to the mathematical optimum directly.
@@ -316,7 +327,7 @@ In short, the manager seeks to optimize the net present value (discounted cumula
 In the classical approach, the best model of the fish population dynamics must first be estimated from data, potentially with posterior distributions over parameter estimates reflecting any uncertainty.
 From this model, the optimal harvest policy -- that is, the a function which returns the optimal quota for each possible observed stock size -- can be determined either by analytic [@Reed1979] or numerical [@Marescot2013] methods, depending on the complexity of the model.
 In a RL approach, the model is instead replaced by a computer simulation, usually referred to as an "environment." The simplest simulation is merely an implementation of the estimated model itself.
-However, unlike an analytic or SDP solution that is derived directly from the estimated model, the RL approach makes no assumption about the precise functional form or parameter values underlying the dynamics -- it is in principle agnostic to the details of the simulation.
+However, unlike an analytic or SDP solution that is derived directly from the estimated model, the RL approach makes no assumption about the precise functional form or parameter values underlying the dynamics -- it is in principle agnostic to the details of the simulation. <!-- ML: I think this sentence should be tightened up re RL, like one could use a model-based algorithm which uses an inputted model under the RL umbrella-->
 
 We will illustrate the potential differences between two RL algorithms used to train the agents, one based on the "Advantage Actor Critic" algorithm, usually referred to as A2C [@A2C], and one based on Twin Delayed Deep Deterministic Policy Gradient, commonly known as TD3 [@TD3] (a generalization of Deep Deterministic Policy Gradient, or DDPG, which extends the DQN algorithm @DQN to a continuous action space using the deterministic policy gradient).
 
@@ -324,6 +335,7 @@ A step-by-step walk-through for training both agents on this environment is prov
 We compare the resulting management, policy, and reward under either RL agent to that achieved by the optimal management solution [Fig 1].
 Despite having no knowledge of the underlying model and clear differences in the resulting strategies, both RL agents learn enough to achieve nearly optimal performance.
 
+<!-- ML: I'm have some uneasiness about this figure. Is A2C tuned? I think we'd probably want to do tuning and training with a set seed so that everything is reproducible?  -->
 ```{r message=FALSE, include=FALSE}
 sims_df <- read_csv( "figs/sims_df.csv")
 policy_df <- read_csv("figs/policy_df.csv")
@@ -446,7 +458,7 @@ fig_sims / ( fig_policy + fig_reward)
 The TD3-trained neural network agent proves far more successful in preventing chance transitions across the tipping point, consistently achieving a higher cumulative ecosystem service value across replicates than the steady-state strategy.
 
 Examining the replicate management trajectories and corresponding rewards [Fig 3] reveal that the RL agent incurs significantly higher costs in the initial phases of the simulation, dipping the cumulative reward into negative territory on average and well below the reward realized by the simple steady-state strategy.
-This initial investment then begins to pay off -- by about 200th time step the RL agent has surpassed the performance of the steady state strategy.
+This initial investment then begins to pay off -- by about the 200th time step the RL agent has surpassed the performance of the steady state strategy.
 The policy plot provides more intuition for the RL agent's strategy: at very high state values, the RL agent opts for no conservation action -- so far from the tipping point, no response is required.
 Near the tipping point, the RL agent steeply ramps up the conservation effort, and retains this effort even as the system falls below the critical threshold, where a sufficiently aggressive response can tip the system back into recovery.
 For a system at or very close to the zero-state, the RL agent gives up, opting for no action.
@@ -463,7 +475,8 @@ Only 3 out of 100 replicates degrade far enough for the RL agent to give up the 
 Such examination makes it clear how the RL agent's use of a more dynamic strategy out-preforms the steady-state strategy.
 The various kinks in the RL policy function also suggest that this solution is nevertheless surely not the optimal solution -- such features are typical of RL-based policies, where such spandral-like features from early experimentation may become baked into the long-term strategy if adjusting them has little improvement on the final reward.
 Further tuning of hyper-parameters, increased training, alterations to the training algorithm or an entirely different training algorithm would likely be able to further improve upon this performance.
-The use of a recurrent neural network (RNN) architecture instead of the multi-layer perceptron (MLP) used here would open the door for the policy to reflect the non-autonomous dynamics more directly.
+The use of a recurrent neural network (RNN) architecture instead of the multi-layer perceptron (MLP) used here would open the door for the policy to reflect the non-autonomous dynamics more directly. 
+<!-- ML: I think it might be confusing to introduce RNNs, maybe just say different architectures, maybe make a footnote-->
 
 ## Unsolved environments: Wildfires and other examples
 
@@ -495,18 +508,19 @@ Rarely do we know the underlying functional forms for ecological processes -- is
 Methods which must first assume something about the structure or functional form of a process before estimating the corresponding parameter can only ever be as good as those structural assumptions.
 Frequently available ecological data is insufficient to distinguish between possible alternative models [@devalpine], or the correct model may be non-identifiable with any amount of data.
 Model-free RL approaches offer a powerful way to factor this thorny issue.
-The model-free RL agent needs to make no such a priori hypothesis about a particular functional form.
+The model-free RL agent needs to make no such a priori hypothesis about a particular functional form. <!-- ML: I feel like the remaining part of this dont full drive home the benefit of model-free rl, like its able to learn good performing policies even in the case when a model is very difficult or impossible to learn. -->
 Alternative models can easily be implemented in simulations, allowing an agent to train against both contingencies.
 A successful agent will learn a policy that works well in both scenarios.
 This is analogous to classical approaches for integrating over parameter or model uncertainty [e.g. @Walters1981; @Ludwig1982],
 
 <!-- Real problems are harder than these examples -->
+<!-- ML: I feel like this paragraph could be condensed with the one above -->
 The examples presented here only scrape the surface of possible RL applications to conservation problems.
 The examples we have focused on are intentionally quite simple, though it is worth remembering that these very same simple models have a long history of relevance and application in both research and policy contexts.
 Despite their simplicity, the optimal strategy is not always obvious before hand, however intuitive it may appear in retrospect.
 In the case of the ecosystem tipping point scenario, the optimal strategy is unknown, and the approximate solution found by our RL implementation could almost certainly be improved upon.
 Even at it's best, an RL-trained agent can only be as good as the scenarios on which it has been trained.
-In these simple examples in which the simulation implements a single model, training is analgous to classical methods which take the model as given [@Marescot2013].
+In these simple examples in which the simulation implements a single model, training is analogous to classical methods which take the model as given [@Marescot2013].
 But classical approaches can be difficult to generalize when the underlying model is unknown: alternative models may require a completely different approach.
 In contrast, the process of training an RL algorithm on a more complex problem is no different than the simple one: we only need access to a simulation which can generate plausible future states in response to possible actions.
 Many of our most realistic ecological models exist only as numerical simulations of lower-level dynamics, such as the individual-based models used in the management of forests and wildfire [@sortie; @firemodel], disease [@disease], marine ecosystems [@ecopath], or global climate change [@gcm].
@@ -522,6 +536,7 @@ Finding acceptable policies even in relatively simple problems may prove beyond 
 In seeking either to adopt or assess a deep RL-based approach to an ecological issue, we highlight three key issues that are important to bear in mind: instability, interpretability, and reward design.
 
 <!-- reason 1: instability-->
+<!-- ML: I think this needs to be tightened up a bit-->
 One leading challenge for deep RL today is the problem of instability.
 RL agents trained on narrowly defined environments may perform poorly even when the environment is altered in seemingly trivial way, such as a re-scaling of parameters.
 To avoid this, researchers should seek to both train and evaluate agents against a range of environments representing different parameters or processes dynamics.
@@ -538,14 +553,16 @@ Under some conditions, RL agents can prove adept at _transfer learning_, in whic
 <!-- if we're really recommending 'testing' for stability, maybe we need to demo that in the appendix-->
 
 <!-- reason 2: interpretability -->
-Interpretability is a common challenge ot the adoption of most ML methods [@cite]. 
+<!-- ML: Re our OU talk, might be worth saying that this is a barrier to adoption? If we want to ultimately use these RL agents to make important decisions, it would be hard to swallow us blindly using them without having any sense to what is going on. -->
+Interpretability is a common challenge at the adoption of most ML methods [@cite]. 
 Although there have been some attempts to increase the transparency of RL agents that use neural network as function approximators [cite], it is still very difficult to explain the behavior of RL-trained agents.
 As our examples have illustrated, it may be possible to gain intuition on an agent's behavior by visualizing the action selected against each possible state, though this becomes more difficult in large problems.
-Another challenge is that Deep RL algorithms are very sample inefficient, all though progress is being made to improve this [@cite].  
+Another challenge is that Deep RL algorithms are very sample inefficient, all though progress is being made to improve this [@cite]. <!-- ML: I think we can cut this sentence, mentionned it in passing earlier-->
 -->
 
 
 <!-- reason 3: reward design -->
+<!-- ML: I'll take a pass at this paragraph in a new branch. I think it would be useful to put terms on stuff in here, like reward shaping and reward hacking which we are talking around. -->
 An issue that is central to any applied optimization problem is using the right objective.
 There have been many examples in which explicit reward design goes very wrong [cite].
 And for ecological systems, which are often very complex and impossible to fully observe, it seems that bad reward design is quite likely.
@@ -558,6 +575,7 @@ One recently proposed framework to overcome challenges with explicit reward desi
 There is a definite need for exploration of the ethics of using DRL for conservation.
 -->
 <!-- reason 4/additional reasons, like sparse rewards -->
+<!-- ML: I don't know if this paragraph is adding that much. Since we talk about sparsity in reward design, i think we can add a sentence or 2 there that conveys the message here.-->
 Ultimately, we anticipate that getting deep RL to work well on fully detailed conservation decision-making problems will be challenging.
 Beyond typically having large state-action spaces for agents to explore, conservation problems tend to have sparse reward structures.
 E.g. rarely does an action in conservation lead to immediate rewards; instead, benefits are typically observed after actions have been performed.
@@ -599,7 +617,7 @@ Interdisciplinary collaborations with experts in algorithmic governance and ethi
 <!-- Discussion really doesn't discuss/draw conclusions from the fisheries and tipping points examples! Do we need to or maybe not since it's not about the science-->
 
 
-
+<!-- ML: I think talking about the examples in a very passing manner is fine as the point is primarily to show that RL can work. To conclude, I feel like we could portray the vision of open ai gym environments building a CS-ecology community.-->
 
 
 
