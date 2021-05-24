@@ -51,7 +51,7 @@ editor_options:
 
 
 <!-- Environmental problems, ML -->
-Advances in both available data and computing power have begun to open the door to a greater role for machine learning (ML) in addressing some of our planet’s most pressing environmental problems, such as the growing frequency and intensity of wildfire [@wildfire], over-exploited fisheries [@worm2006], declining biodiversity [@biodiversity], and zoonotic pandemics [@covid].
+Advances in both available data and computing power have begun to open the door to a greater role for machine learning (ML) in addressing some of our planet’s most pressing environmental problems, such as the growing frequency and intensity of wildfire [@wildfire], over-exploited fisheries [@Worm2006], declining biodiversity [@biodiversity], and zoonotic pandemics [@covid].
 But will ML approaches really help us tackle a changing planet?
 Applications of ML in ecology have begun to illustrate the promise of two methods of ML: *supervised learning* [@joseph2020] and *unsupervised learning* [@unsupervised], but have so far largely overlooked the third and possibly most promising approach in the ML triad: *reinforcement learning* (RL).
 Three features distinguish RL from other ML methods in ways that are particularly well suited to addressing global ecological change issues:
@@ -314,15 +314,15 @@ txtcolor <- "#586e75"
 ## Sustainable harvest
 
 The first example focuses on the important but well-studied problem of setting harvest quotas in fisheries management.
-Determining fishing quotas is both a critical ecological issue [@Worm2006; @Worm2009; @Costello2018], and also a textbook example that has long informed the management of renewable resources within fisheries and beyond [@Clark1990].
+Determining fishing quotas is both a critical ecological issue [@Worm2006; @Worm2009; @Costello2016], and also a textbook example that has long informed the management of renewable resources within fisheries and beyond [@Clark1990].
 Given a population growth model that predicts the total biomass of a fish stock in the following year as a function of the current biomass, it is straight forward to determine what biomass corresponds to the maximum growth rate of the stock, or $B_{\textrm{MSY}}$, the biomass at Maximum Sustainable Yield (MSY) [@Schaefer1954].
 When the population growth rate is stochastic, the problem is slightly harder to solve, as the harvest quota must constantly adjust to the ups and downs of stochastic growth, but it is still possible to show the optimal strategy merely seeks to maintain the stock at $B_{\textrm{MSY}}$, adjusted for any discounting of future yields [@Reed1979].
 
 This provides a natural first benchmark for deep RL approaches, since we can compare the RL solution to the mathematical optimum directly.
 The problem is also of interest because the RL approach can be extended to consider ecological dynamics that either surpass the complexity possible with SDP methods, or violate assumptions of such classical approaches).
-Moreover, fisheries management is both an important global challenge in it's own right [@Worm2006; @Costello2018] as well as a common test case to understand ecological dynamics and conservation management more broadly [@something].
+Moreover, fisheries management is both an important global challenge in it's own right [@Worm2006; @Costello2016] as well as a common test case to understand ecological dynamics and conservation management more broadly [@something].
 
-For illustrative purposes, we consider the simplest version of the dynamic optimal harvest problem as outlined by [@Clark1974] (for the deterministic case) and [@Reed1979] (under stochastic recruitment).
+For illustrative purposes, we consider the simplest version of the dynamic optimal harvest problem as outlined by [@Clark1973] (for the deterministic case) and [@Reed1979] (under stochastic recruitment).
 In short, the manager seeks to optimize the net present value (discounted cumulative catch) of a fishery, observing the stock size each year and setting an appropriate harvest quota in response.
 In the classical approach, the best model of the fish population dynamics must first be estimated from data, potentially with posterior distributions over parameter estimates reflecting any uncertainty.
 From this model, the optimal harvest policy -- that is, the a function which returns the optimal quota for each possible observed stock size -- can be determined either by analytic [@Reed1979] or numerical [@Marescot2013] methods, depending on the complexity of the model.
@@ -393,10 +393,10 @@ Training these agents in a variety of alternative contexts can improve there abi
 
 Our second example focuses on a case for which we do not already have an existing, provably optimal policy to compare against.
 We consider the generic problem of an ecosystem facing slowly deteriorating environmental conditions which move the dynamics closer towards a tipping point [Fig 2].
-This model of a critical transition has been posited widely in ecological systems, from the simple consumer-resource model of [@May1977] on which our dynamics are based, to microbial dynamics [@Dai2013] lake ecosystem communities [@Carpenter2008] to planetary ecosystems [@Barnkosky2014].
+This model of a critical transition has been posited widely in ecological systems, from the simple consumer-resource model of [@May1977] on which our dynamics are based, to microbial dynamics [@Dai2012] lake ecosystem communities [@Carpenter2011] to planetary ecosystems [@Barnosky2012].
 On top of these ecological dynamics we introduce an explicit ecosystem service model quantifying the value of more desirable 'high' state relative to the 'low' state.
 For simplicity, we assume a proportional benefit $b$ associated with the ecosystem state $X(t)$.
-Thus when the ecosystem is near the 'high' equilibrium $\hat X_H$, the corresponding ecosystem benefit $b \hat X_H$ is higher than at the low equilibrium, $b x_L$, consistent with the intuitive description of ecosystem tipping points [@Barnosky2014].
+Thus when the ecosystem is near the 'high' equilibrium $\hat X_H$, the corresponding ecosystem benefit $b \hat X_H$ is higher than at the low equilibrium, $b x_L$, consistent with the intuitive description of ecosystem tipping points [@Barnosky2012].
 We also enumerate the possible actions which a manager may take in response to environmental degradation.
 In the absence of any management response, we assume the environment deteriorates at a fixed rate $\alpha$, which can be thought of as the incremental increase in global mean temperature or similar anthropogenic forcing term.
 Management can respond to slow or even reverse this trend by choosing an opposing action $A_t$.
@@ -495,8 +495,8 @@ To better illustrate the generality of RL approach and more typical complexity o
 Ecological challenges facing the planet today are complex and outcomes are both uncertain and consequential.
 Even our best models and best research will never provide a crystal ball to the future, only better elucidate possible scenarios.
 Consequently, that research must also confront the challenge of making robust, resilient decisions in a changing world.
-The science of ecological management and quantitative decision-making has a long history [e.g. @Schaefer1954; @Walters1974] and remains an active area of research [@Possingham2006; @Fischer2009; @Polasky2011].
-However, the limitations of classical methods such as optimal control frequently constrain applications to relatively simplified models [@Possingham2006], ignoring elements such as spatial or temporal heterogeneity and autocorrelation, stochasticity, imperfect observations, age or state structure or other sources of complexity that are both pervasive and influential on ecological dynamics [@HastingsEncylopedia].
+The science of ecological management and quantitative decision-making has a long history [e.g. @Schaefer1954; @Walters1978] and remains an active area of research [@Possingham2006; @Fischer2009; @Polasky2011].
+However, the limitations of classical methods such as optimal control frequently constrain applications to relatively simplified models [@Possingham2006], ignoring elements such as spatial or temporal heterogeneity and autocorrelation, stochasticity, imperfect observations, age or state structure or other sources of complexity that are both pervasive and influential on ecological dynamics [@Hastings2012].
 Complexity comes not only from the ecological processes but also the available actions.
 Conservation efforts can be implemented in a wide variety of ways, and the most effective policies may vary in both space and time.
 While such complex dynamics and large state and action spaces are intractable to classical methods, they are straight forward to implement in simulation environments such as those used to train an RL algorithm.
@@ -523,7 +523,7 @@ Even at it's best, an RL-trained agent can only be as good as the scenarios on w
 In these simple examples in which the simulation implements a single model, training is analogous to classical methods which take the model as given [@Marescot2013].
 But classical approaches can be difficult to generalize when the underlying model is unknown: alternative models may require a completely different approach.
 In contrast, the process of training an RL algorithm on a more complex problem is no different than the simple one: we only need access to a simulation which can generate plausible future states in response to possible actions.
-Many of our most realistic ecological models exist only as numerical simulations of lower-level dynamics, such as the individual-based models used in the management of forests and wildfire [@sortie; @firemodel], disease [@disease], marine ecosystems [@ecopath], or global climate change [@gcm].
+Many of our most realistic ecological models exist only as numerical simulations of lower-level dynamics, such as the individual-based models used in the management of forests and wildfire [@sortie; @wildfire], disease [@covid], marine ecosystems [@ecopath], or global climate change [@dice].
 
 
 <!-- Solving 'real' problems will be hard -->
@@ -587,7 +587,7 @@ For conservation, we anticipate that there will likely be a similar pattern, whe
 Deep RL is still a very young field, where despite several landmark successes, potential far outstrips practice.
 Recent advances in the field have proven the potential of the approach to solve complex problems [@alphaGo2016; @alphaGoZero; @alphazero; @DQN], but typically leveraging large teams with decades of experience in ML and millions of dollars worth of computing power [@alphaGoZero].
 Successes have so far been concentrated in applications to games and robotics, not scientific and policy domains, though this is beginning to change [@protein_folding].
-Leading developers of new algorithms for deep RL benchmark the performance of their algorithms against such problems in part because simulations of games and robotic movement are readily available through open source frameworks designed to interface with RL algorithms [@gym], and performance can easily be compared against alternatives on public leaderboards [@gym].
+Leading developers of new algorithms for deep RL benchmark the performance of their algorithms against such problems in part because simulations of games and robotic movement are readily available through open source frameworks designed to interface with RL algorithms [brockman2016], and performance can easily be compared against alternatives on public leaderboards [brockman2016].
 Iterative improvements to well-posed public challenges have proven immensely effective in the computer science community in tackling difficult problems, which allow many teams with diverse expertise not only to compete but to learn from each other [@netflix_prize; @imagenet].
 Advances in both computational power and algorithmic efficiency continue to reduce costs at a dramatic pace, significantly faster than Moore's law [@openai_costs].
 By working to develop similarly well-posed challenges as clear benchmarks, ecology and environmental science researchers may both be better able to replicate that collaborative, iterative success in cracking hard problems.
