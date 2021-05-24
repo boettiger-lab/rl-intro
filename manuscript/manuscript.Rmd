@@ -64,9 +64,8 @@ Despite relevance to uncertainty and decision making that could make RL uniquely
 To date, the problems considered by RL research have largely been drawn from examples in robotic movement and games like Go and Starcraft [@lillicrap; @alphazero; @alphastar]
 Complex environmental problems share many similarities to these tasks and games: the need to plan many moves ahead given a large number of possible outcomes, to account for uncertainty and to respond with contingency to the unexpected.
 RL agents typically develop their strategies by interacting with simulators, a practice that should not be unsettling to ecologists since learning from simulators is common across ecology.
-Rich, processes-based simulations such as the SORTIE model in forest management [@sortie], Ecopath with Ecosim in fisheries management [@ecopath], or global circulation models (GCMs) in climate [@gcm] are already used to explore scenarios and inform ecosystem management. 
+Rich, processes-based simulations such as the SORTIE model in forest management [@sortie], Ecopath with Ecosim in fisheries management [@ecopath], or climate change policy models [@dice] are already used to explore scenarios and inform ecosystem management. 
 Even simpler simulators are frequently employed throughout ecology to guide understanding and response.
-<!-- Kari: ick, jargon heavy.  Need to say: some existing methods, but limited to simple problems or simple solutions -->
 Decision-theoretic approaches based on optimal control techniques can only find the best strategy in the simplest of ecological models; the so called "curse of dimensionality" makes problems with a large number of states or actions intractable by conventional methods [@Possingham2006; @Marescot2013].
 Neural-network-based RL techniques, referred to as *deep RL*, have proven particularly effective in problems involving complex, high-dimensional spaces that have previously proven intractable to classical methods.
 We believe that the application of RL methods to simulations of ecological processes will open the door to a new paradigm for tackling tough environmental change problems.
@@ -88,27 +87,14 @@ We intend to continue to expand this library of ecological management benchmarks
 # RL overview
 
 <!-- Conceptual picture: (A) an "environment", and (B) an "agent"
-
-What do we mean by an "environment"?  
-  - Transition function
-  - "reward"
-  - examples
-  
-  
-What do we mean by an "agent"?
-
-  Model-based vs Model free.  We focus on Model free agents which use Neural networks, a subset of deep RL
-
   Components of an agent: 
     - *neural network*, whose *parameters* are estimated by *training* +
     - an RL algorithm, whose *hyperparameters* (including NN structure) are estimated by *tuning*
     - High-level overview of an RL algorithm components (model/model-free, on/off policy, stochastic/deterministic, etc).
-
   conceptual explanation of 'model-free', what it means to have a "policy" without modeling/predicting transitions
 
 -->
 
-<!-- ML: need to change some of the language here to be consistent with POMDP set up later-->
 
 Any application of RL can be divided into two components: an *environment* and an *agent*.
 An *environment* is typically a computer simulation, though it is possible to use the real world as the RL environment [@robotics].
@@ -124,11 +110,8 @@ Throughout this process, the agent's behavior is codified into what is called a 
 ## Designing and building an environment
 
 An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an observation of its current *state* and an associated *reward* as output.
-<!-- ML: what are classical approaches below here? -->
-In contrast to classical approaches, there are few restrictions on what comprises a state or action. 
-The state may be continuous or discrete, completely or partially observed, single or multidimensional.
-For instance, we might represent an ecological community of 10 interacting species with a 10-dimensional continuously valued state space signifying the population density of each species.
-The action space can be similarly complex, since an action can be continuous or discrete, single or multidimensional.
+In contrast to classical approaches [@Marescot2013], there are few restrictions on what comprises a state or action. 
+States and actions may be continuous or discrete, completely or partially observed, single or multidimensional.
 For the previous environment, we might set the action space to be continuously valued and 10-dimensional, where each dimension corresponds to the amount of conservation effort aimed at the different species over a time step.   
 The main focus of building an RL environment, however, is in the environment's transition dynamics and reward function.
 The designer of the environment can make the environment follow any transition and reward function provided that both are functions of the current state and action.
@@ -218,8 +201,6 @@ In the appendix, we will go into further detail on the general approaches that m
 
 # Deep RL Algorithms
 
-**Survey of RL Algorithms**
-
 <!-- 
 
 Conceptual figure:
@@ -273,30 +254,15 @@ There are trade-offs to consider in using an off-policy or on-policy learner, wh
 On top of the aforementioned distinctions for model-free, deep RL algorithms, there are more algorithm design choices that can be made. 
 One important point of divergence is whether the agent learns a deterministic or stochastic policy.
 Another is whether the algorithm is formulated to work on a discrete, continuous or both a discrete and continuous state and action space.
-In table **, we provide some of the commonly used RL algorithms and delineate some of their important characteristics.
+In table 1, we provide some of the commonly used RL algorithms and delineate some of their important characteristics.
 In the appendix, we will introduce the considerations one should make in deciding whether an algorithm is well suited for a specific environment. 
-
-<!-- Kari: I think we need more background on what a neural network is, how it fits in, and what other options are - maybe use examples of hyperparameters that would be in all RL approaches not just those that use neural nets -->
-
-<!-- Can we add citations to each please -->
-<!-- 
-
-Should we mention:
-
-- Temporal Differencing, RIENFORCE
-- SARSA, 
-- Double DQN?  
-Can we add HER (since delayed reward case may be particularly interesting)
-Should we do anything to better reflect the 'family tree' here? (e.g. DQN -> DDPG -> TD3)
-
--->
 
 
 
 
 # Examples
 
-We provide three examples that illustrate the application and potential of deep RL to ecological and conservation problems, highlighting both the potential and challenges there-in.
+We provide three examples that illustrate the application and potential of deep RL to ecological and conservation problems, highlighting both the potential and the inherent challenges.
 
 ```{r knitr, include = FALSE}
 library(tidyverse)
@@ -332,7 +298,7 @@ However, unlike an analytic or SDP solution that is derived directly from the es
 We will illustrate the potential differences between two RL algorithms used to train the agents, one based on the "Advantage Actor Critic" algorithm, usually referred to as A2C [@A2C], and one based on Twin Delayed Deep Deterministic Policy Gradient, commonly known as TD3 [@TD3] (a generalization of Deep Deterministic Policy Gradient, or DDPG, which extends the DQN algorithm @DQN to a continuous action space using the deterministic policy gradient).
 
 A step-by-step walk-through for training both agents on this environment is provided in the Appendix.
-We compare the resulting management, policy, and reward under either RL agent to that achieved by the optimal management solution [Fig 1].
+We compare the resulting management, policy, and reward under either RL agent to that achieved by the optimal management solution [Fig 2].
 Despite having no knowledge of the underlying model and clear differences in the resulting strategies, both RL agents learn enough to achieve nearly optimal performance.
 
 <!-- ML: I'm have some uneasiness about this figure. Is A2C tuned? I think we'd probably want to do tuning and training with a set seed so that everything is reproducible?  -->
@@ -465,7 +431,7 @@ For a system at or very close to the zero-state, the RL agent gives up, opting f
 Recall that the quadratic scaling of cost makes the rapid response of the TD3 algorithm much more costly to achieve the same net environmental improvement divided into smaller increments over a longer timeline.
 However, our RL agent has discovered that the extra investment for a rapid response is well justified as the risk of crossing a tipping point increases.
 
-A close examination of the trajectories of individual simulations which cross the tipping point under either management strategy (see appendix, fig S1, S2) further highlights the difference between these two approaches.
+A close examination of the trajectories of individual simulations which cross the tipping point under either management strategy (see appendix B, fig S1, S2) further highlights the difference between these two approaches.
 Under the steady-state strategy, the system remains poised too close to the tipping point: stochastic noise eventually drives most replicates across the threshold, where the steady-state strategy is too weak to bring them back once they collapse.
 As replicate after replicate stochastically crashes, the mean state and mean reward bend increasingly downwards.
 In contrast, the RL agent edges the system slightly farther away from the tipping point, decreasing but not eliminating the chance of a chance transition.
@@ -474,9 +440,8 @@ Only 3 out of 100 replicates degrade far enough for the RL agent to give up the 
 
 Such examination makes it clear how the RL agent's use of a more dynamic strategy out-preforms the steady-state strategy.
 The various kinks in the RL policy function also suggest that this solution is nevertheless surely not the optimal solution -- such features are typical of RL-based policies, where such spandral-like features from early experimentation may become baked into the long-term strategy if adjusting them has little improvement on the final reward.
-Further tuning of hyper-parameters, increased training, alterations to the training algorithm or an entirely different training algorithm would likely be able to further improve upon this performance.
-The use of a recurrent neural network (RNN) architecture instead of the multi-layer perceptron (MLP) used here would open the door for the policy to reflect the non-autonomous dynamics more directly. 
-<!-- ML: I think it might be confusing to introduce RNNs, maybe just say different architectures, maybe make a footnote-->
+Further tuning of hyper-parameters, increased training, alterations or alternatives to the training algorithm would likely be able to further improve upon this performance.
+<!-- ML: I think it might be confusing to introduce RNNs, maybe just say different architectures, maybe make a footnote.  CB: agree, revised above-->
 
 ## Unsolved environments: Wildfires and other examples
 
@@ -508,13 +473,12 @@ Rarely do we know the underlying functional forms for ecological processes -- is
 Methods which must first assume something about the structure or functional form of a process before estimating the corresponding parameter can only ever be as good as those structural assumptions.
 Frequently available ecological data is insufficient to distinguish between possible alternative models [@devalpine], or the correct model may be non-identifiable with any amount of data.
 Model-free RL approaches offer a powerful way to factor this thorny issue.
-The model-free RL agent needs to make no such a priori hypothesis about a particular functional form. <!-- ML: I feel like the remaining part of this dont full drive home the benefit of model-free rl, like its able to learn good performing policies even in the case when a model is very difficult or impossible to learn. -->
-Alternative models can easily be implemented in simulations, allowing an agent to train against both contingencies.
-A successful agent will learn a policy that works well in both scenarios.
-This is analogous to classical approaches for integrating over parameter or model uncertainty [e.g. @Walters1981; @Ludwig1982],
+The model-free RL agent needs to make no such a priori hypothesis about a particular functional form.
+Model-free approaches have proven successful at learning effective policies even when the underlying model may be difficult or impossible to learn [@alphago], as long as simulations of possible mechanisms are available.
 
 <!-- Real problems are harder than these examples -->
 <!-- ML: I feel like this paragraph could be condensed with the one above -->
+<!-- CB: I think "model free is great" and "real problems are harder than these examples" are two distinct messages though and at least one would get lost in mashing them together.  Perhaps the message doesn't come across in the current version.  Does look like this paragraph is similar in overall message to the next one though, maybe could be combined with that?  -->
 The examples presented here only scrape the surface of possible RL applications to conservation problems.
 The examples we have focused on are intentionally quite simple, though it is worth remembering that these very same simple models have a long history of relevance and application in both research and policy contexts.
 Despite their simplicity, the optimal strategy is not always obvious before hand, however intuitive it may appear in retrospect.
@@ -533,7 +497,9 @@ As the examples we have presented illustrate, it is important to begin with simp
 Such examples provide important benchmarks against which to calibrate the performance, tuning and training requirements of RL,
 and can easily be extended into more complex problems once RL agents can master the basics.
 Finding acceptable policies even in relatively simple problems may prove beyond the reach of existing algorithms and available computing power.
+<!-- Marcus is working on tightening up these next few paragraphs, precisely which issues actually get highlighted TBD-->
 In seeking either to adopt or assess a deep RL-based approach to an ecological issue, we highlight three key issues that are important to bear in mind: instability, interpretability, and reward design.
+
 
 <!-- reason 1: instability-->
 <!-- ML: I think this needs to be tightened up a bit-->
