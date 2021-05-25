@@ -112,7 +112,6 @@ Throughout this process, the agent's behavior is codified into what is called a 
 An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an observation of its current *state* and an associated *reward* as output.
 In contrast to classical approaches [@Marescot2013], there are few restrictions on what comprises a state or action. 
 States and actions may be continuous or discrete, completely or partially observed, single or multidimensional.
-For the previous environment, we might set the action space to be continuously valued and 10-dimensional, where each dimension corresponds to the amount of conservation effort aimed at the different species over a time step.   
 The main focus of building an RL environment, however, is in the environment's transition dynamics and reward function.
 The designer of the environment can make the environment follow any transition and reward function provided that both are functions of the current state and action.
 This ability allows RL environments to model a broad range of decision making problems.
@@ -474,7 +473,7 @@ Methods which must first assume something about the structure or functional form
 Frequently available ecological data is insufficient to distinguish between possible alternative models [@devalpine], or the correct model may be non-identifiable with any amount of data.
 Model-free RL approaches offer a powerful way to factor this thorny issue.
 The model-free RL agent needs to make no such a priori hypothesis about a particular functional form.
-Model-free approaches have proven successful at learning effective policies even when the underlying model may be difficult or impossible to learn [@alphago], as long as simulations of possible mechanisms are available.
+Model-free approaches have proven successful at learning effective policies even when the underlying model may be difficult or impossible to learn [@Pong2020], as long as simulations of possible mechanisms are available.
 
 <!-- Real problems are harder than these examples -->
 <!-- ML: I feel like this paragraph could be condensed with the one above -->
