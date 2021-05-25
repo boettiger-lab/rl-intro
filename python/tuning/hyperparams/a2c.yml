@@ -1,0 +1,35 @@
+#tuned
+fishing-v1:
+  n_envs: 4
+  n_timesteps: !!float 3e5
+  policy: 'MlpPolicy'
+  gamma: 0.995
+  normalize_advantage: False
+  max_grad_norm: 0.7
+  use_rms_prop: False
+  gae_lambda: 0.92
+  n_steps: 8
+  learning_rate: 0.0006987399679768267
+  ent_coef: 3.585469128347999e-05
+  vf_coef: 0.48712388559858977
+  policy_kwargs: "dict(activation_fn=nn.ReLU,
+                       ortho_init=True,
+                       net_arch=[dict(pi=[256, 256], vf=[256, 256])]
+                       )"
+
+#tuned
+conservation-v6:
+  n_envs: 4
+  n_timesteps: !!float 3e5
+  policy: 'MlpPolicy'
+  gamma: 0.9999
+  normalize_advantage: True
+  max_grad_norm: 0.6
+  use_rms_prop: False
+  gae_lambda: 0.8
+  n_steps: 128
+  learning_rate: 0.021243170810461984
+  ent_coef: 1.7498876702865585e-07
+  vf_coef: 0.12495864179484306
+  policy_kwargs: "dict(ortho_init=False)"
+
