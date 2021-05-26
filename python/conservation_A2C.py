@@ -12,7 +12,7 @@ seed = 24
 env = make_vec_env("conservation-v6", n_envs = 4, seed = seed)
 
 # Create an A2C agent
-a2c = sb3.A2C("MlpPolicy",
+agent = sb3.A2C("MlpPolicy",
               env, 
               seed=seed,
               gamma= 0.9999,
@@ -27,10 +27,10 @@ a2c = sb3.A2C("MlpPolicy",
               policy_kwargs= dict(ortho_init=False))
 
 # Train the agent for a fixed number of timesteps
-a2c.learn(total_timesteps=300000)
+agent.learn(total_timesteps=300000)
 
 # Save our trained agent for future use
-a2c.save("cache/conservation_a2c")
+agent.save("cache/conservation_a2c")
 
 
 # Evaluation
