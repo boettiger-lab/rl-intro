@@ -497,19 +497,24 @@ Such examples provide important benchmarks against which to calibrate the perfor
 and can easily be extended into more complex problems once RL agents can master the basics.
 Finding acceptable policies even in relatively simple problems may prove beyond the reach of existing algorithms and available computing power.
 <!-- Marcus is working on tightening up these next few paragraphs, precisely which issues actually get highlighted TBD-->
-In seeking either to adopt or assess a deep RL-based approach to an ecological issue, we highlight three key issues that are important to bear in mind: instability, interpretability, and reward design.
+In seeking either to adopt or assess a deep RL-based approach to an ecological issue, we highlight three key issues that are important to bear in mind: generalizability, interpretability, and reward design.
 
 
 <!-- reason 1: instability-->
-<!-- ML: I think this needs to be tightened up a bit-->
-One leading challenge for deep RL today is the problem of instability.
-RL agents trained on narrowly defined environments may perform poorly even when the environment is altered in seemingly trivial way, such as a re-scaling of parameters.
-To avoid this, researchers should seek to both train and evaluate agents against a range of environments representing different parameters or processes dynamics.
-Stable performance can be challenging even when using the same environment.
-For a range of reasons, including high variance [@cite] and the exploration vs. exploitation trade-off [@cite], model-free and model-based algorithms tend to have unstable performance on environments with non-tabular state-action spaces [cite RL that matters].
-For instance, it is not uncommon to observe vastly different behavior when an agent is initialized with different random seeds [cite ibid].
-Such unstable behavior can often be avoided by alternate selection of hyperparameters, so researchers should consider stability as well as performance during hyperparameter selection.
-The choice of RL algorithm, design of the reward function, and duration of training can also influence stability.
+<!-- ML: pivoting this to generalizability but still rewrote past paragraph which might fit in the appendix somewhere-->
+Currently, deep RL agents struggle to generalize their skills [@generalization].
+This inability can be observed in training: if you train an agent on an environment that demands learning a wide range of tasks, the agent will likely fail to converge to an optimal policy [@CITE].
+And, during evaluation, if you give an agent any novel task, including tasks that are closely related to the examples that the agent saw in training, the agent will likely fail to generalize its policy to this new situation [@CITE].
+These failures are all due to the brittleness of deep neural networks. 
+Across deep learning, neural networks tend to perform exceptionally well on narrowly specified problems, yet neural networks show great fragility when given new situations or problem statements that require flexibility [@CITE].
+
+<!-- 
+A significant current challenge in deep RL is the problem of instability.
+For a range of reasons, including high variance of returns and the exploration vs. exploitation dilemma, deep RL algorithms tend to have unstable performance on environments with large state-action spaces [@drlthatmatters].
+For example, @drlthatmatters show that initializing the same agent with different random seeds can lead to significant differences in agent performance.
+Such unstable behavior can be avoided by finding a robust set of hyperparameters or using algorithms that are designed to have greater reliability [@qprop], thus researchers should consider stability as well as performance during hyperparameter tuning and algorithm selection.
+-->
+
 
 
 <!--
@@ -519,7 +524,8 @@ Under some conditions, RL agents can prove adept at _transfer learning_, in whic
 
 <!-- reason 2: interpretability -->
 <!-- ML: Re our OU talk, might be worth saying that this is a barrier to adoption? If we want to ultimately use these RL agents to make important decisions, it would be hard to swallow us blindly using them without having any sense to what is going on. -->
-Interpretability is a common challenge at the adoption of most ML methods [@cite]. 
+Interpretability is an issue that may hinder the adoption of deep RL methods [@cite].
+
 Although there have been some attempts to increase the transparency of RL agents that use neural network as function approximators [cite], it is still very difficult to explain the behavior of RL-trained agents.
 As our examples have illustrated, it may be possible to gain intuition on an agent's behavior by visualizing the action selected against each possible state, though this becomes more difficult in large problems.
 Another challenge is that Deep RL algorithms are very sample inefficient, all though progress is being made to improve this [@cite]. <!-- ML: I think we can cut this sentence, mentionned it in passing earlier-->
