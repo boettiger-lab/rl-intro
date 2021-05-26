@@ -28,4 +28,12 @@ agent.learn(total_timesteps = 3e5)
 # Save our trained agent for future use
 agent.save("cache/conservation_ppo")
 
+# Evaluation
+env = gym.make("conservation-v6")
+sims = env.simulate(agent, reps = 100)
+policy = env.policyfn(agent, reps = 5)
+
+env.plot(sims, "conservation_ppo.png")
+env.plot_policy(policy, "conservation_ppo_policy.png")
+
 

@@ -27,3 +27,10 @@ agent.learn(total_timesteps = 3e5)
 agent.save("cache/fishing_ppo")
 
 
+# Evaluation 
+env = gym.make("fishing-v1", sigma= 0.1)
+sims = env.simulate(agent, reps = 100)
+policy = env.policyfn(agent, reps = 5)
+
+env.plot(sims, "fishing_ppo.png")
+env.plot_policy(policy, "fishing_ppo_policy.png")

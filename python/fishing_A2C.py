@@ -35,3 +35,11 @@ a2c.learn(total_timesteps=300000)
 
 # Save our trained agent for future use
 a2c.save("cache/fishing_a2c")
+
+# Evaluation
+env = gym.make("fishing-v1", sigma= 0.1)
+sims = env.simulate(agent, reps = 100)
+policy = env.policyfn(agent, reps = 5)
+
+env.plot(sims, "fishing_a2c.png")
+env.plot_policy(policy, "fishing_a2c_policy.png")
