@@ -10,7 +10,7 @@ from stable_baselines3.common.env_util import make_vec_env
 
 seed = 24
 # Create a fishing environment
-env = make_vec_env("fishing-v1", sigma=0.1, n_envs = 4, seed = seed)
+env = make_vec_env("fishing-v1", n_envs = 4, seed = seed, env_kwargs = {"sigma": 0.1})
 
 # Create an A2C agent
 a2c = sb3.A2C("MlpPolicy",

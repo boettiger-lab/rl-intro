@@ -3,7 +3,7 @@ from stable_baselines3.common.env_util import make_vec_env
 import gym_fishing
 
 seed = 24
-env = make_vec_env("fishing-v1", n_envs = 4, seed = seed)
+env = make_vec_env("fishing-v1", n_envs = 4, seed = seed, env_kwargs = {"sigma": 0.1})
 total_timesteps = 3e5
 
 agent = PPO('MlpPolicy', 
