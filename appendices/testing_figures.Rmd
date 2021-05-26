@@ -36,6 +36,10 @@ output:
     keep_tex: true
 ---
 
+```{r}
+renv::restore()
+```
+
 ```{r knitr, include = FALSE}
 knitr::opts_chunk$set(echo=FALSE, message = FALSE, warning = FALSE,
                       fig.width = 7, fig.height = 4, cache = FALSE)
