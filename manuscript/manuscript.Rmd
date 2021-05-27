@@ -537,25 +537,13 @@ Despite limited progress to make neural networks more explainable, interpretabil
 <!-- ML: I'll take a pass at this paragraph in a new branch. I think it would be useful to put terms on stuff in here, like reward shaping and reward hacking which we are talking around. -->
 A fundamental issue for all applied optimization problems is using the right objective.
 There have been many examples in which explicit reward design produces unanticipated agent behavior that is highly undesirable [@CITE].
-For ecological systems, which are typically very complex and difficult to fully understand, it seems that bad reward design is quite likely.
-To avoid these undesirable outcomes, RL researchers often *shape* the reward functions so that the agent can more easily learn a good-performing policy [@cite].
-This approach is particularly common when rewards are *sparse*, such as in a game of Chess where the objective is to win and there are no true immediate rewards.
-In this case, one might shape the reward function so that the agent is awarded for capturing the opponent's pieces, but this could easily lead to a policy where the agent focuses on capturing pieces instead of winning the game.
-Since benefits in conservation typically come long after their corresponding actions, sparse reward.
+Thus, for ecological systems, which are typically difficult to control and fully understand, specifying a reward function could easily produce behavior that opposes the intents of the RL practitioner.
+To guide agents to learn desirable policies, RL researchers often *shape* the reward function so that the agent will more readily learn a certain behavior[@cite].
+This approach is particularly common when rewards are *sparse*, which occurs when there are few state-action pairs that have strong feedback signals.
+Frequently, when researchers do not shape the rewards on sparse reward problems, the RL agent learns nothing [@CITE], but reward shaping can still produce unintended agent behavior [@CITE]. 
+Given the nature of many conservation problems, where benefits rarely come immediately and thus the reward structures are sparse, RL agents will likely have difficulty learning anything, or, in the case that researchers shape the rewards to aid learning, the agents may learn policies that are undesirable.
 Moreover, specifying a reward function for conservation brings up various ethical concerns -- e.g. who gets to specify the reward function and will the values of the greater community be represented in the reward function.
 
-<!--
-One recently proposed framework to overcome challenges with explicit reward design is called AI alignment, wherein the agent observes humans, infers the preferences of humans and then acts as to satisfy human preferences.
-There is a definite need for exploration of the ethics of using DRL for conservation.
--->
-<!-- reason 4/additional reasons, like sparse rewards -->
-<!-- ML: I don't know if this paragraph is adding that much. Since we talk about sparsity in reward design, i think we can add a sentence or 2 there that conveys the message here.-->
-Ultimately, we anticipate that getting deep RL to work well on fully detailed conservation decision-making problems will be challenging.
-Beyond typically having large state-action spaces for agents to explore, conservation problems tend to have sparse reward structures.
-E.g. rarely does an action in conservation lead to immediate rewards; instead, benefits are typically observed after actions have been performed.
-Sparse reward structures are challenging for DRL agents, because of the credit assignment problem [cite].
-To solve sparse reward environments, many researchers have employed customized algorithms to achieve better performance than standard DRL methods [cite Montezuma].
-For conservation, we anticipate that there will likely be a similar pattern, wherein bespoke RL methods will attain better performance than general methods.
 
 <!-- But never fear, hard problems have been solved before!-->
 Deep RL is still a very young field, where despite several landmark successes, potential far outstrips practice.
