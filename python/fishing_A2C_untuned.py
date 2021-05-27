@@ -1,4 +1,4 @@
-# Fishing using A2C
+# Fishing using (untuned) A2C
 
 import numpy as np
 import stable_baselines3 as sb3
@@ -24,13 +24,13 @@ a2c.save("cache/a2c")
 a2c = sb3.A2C.load("cache/a2c")
 
 
-# Example simulation of the agent
+# Example manual simulation of the agent
 state = env.get_state(0.75)
 for i in range(1, 10):
     action, null = a2c.predict(state)
     state, reward, done, info = env.step(action)
 
-## Or more consisely:
+## Or more consisely using built-in method:
 a2c_sims = env.simulate(a2c, reps=500)
 
 # Estimate the 'Policy function'

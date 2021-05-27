@@ -39,7 +39,7 @@
    publisher={American Association for the Advancement of Science}
  }
 
-@article{sac,
+@article{SAC,
 	title = {Soft {Actor}-{Critic}: {Off}-{Policy} {Maximum} {Entropy} {Deep} {Reinforcement} {Learning} with a {Stochastic} {Actor}},
 	shorttitle = {Soft {Actor}-{Critic}},
 	url = {http://arxiv.org/abs/1801.01290},
@@ -55,7 +55,7 @@
 	file = {arXiv Fulltext PDF:/home/cboettig/Zotero/storage/EMT3HQTG/Haarnoja et al. - 2018 - Soft Actor-Critic Off-Policy Maximum Entropy Deep.pdf:application/pdf;arXiv.org Snapshot:/home/cboettig/Zotero/storage/TRBDQEN5/1801.html:text/html}
 }
 
-@article{td3,
+@article{TD3,
 	title = {Addressing {Function} {Approximation} {Error} in {Actor}-{Critic} {Methods}},
 	url = {http://arxiv.org/abs/1802.09477},
 	abstract = {In value-based reinforcement learning methods such as deep Q-learning, function approximation errors are known to lead to overestimated value estimates and suboptimal policies. We show that this problem persists in an actor-critic setting and propose novel mechanisms to minimize its effects on both the actor and the critic. Our algorithm builds on Double Q-learning, by taking the minimum value between a pair of critics to limit overestimation. We draw the connection between target networks and overestimation bias, and suggest delaying policy updates to reduce per-update error and further improve performance. We evaluate our method on the suite of OpenAI gym tasks, outperforming the state of the art in every environment tested.},
@@ -70,7 +70,7 @@
 	file = {arXiv Fulltext PDF:/home/cboettig/Zotero/storage/7QWN2IXY/Fujimoto et al. - 2018 - Addressing Function Approximation Error in Actor-C.pdf:application/pdf;arXiv.org Snapshot:/home/cboettig/Zotero/storage/8QGUZGAP/1802.html:text/html}
 }
 
-@article{her,
+@article{HER,
 	title = {Hindsight {Experience} {Replay}},
 	url = {http://arxiv.org/abs/1707.01495},
 	abstract = {Dealing with sparse rewards is one of the biggest challenges in Reinforcement Learning (RL). We present a novel technique called Hindsight Experience Replay which allows sample-efficient learning from rewards which are sparse and binary and therefore avoid the need for complicated reward engineering. It can be combined with an arbitrary off-policy RL algorithm and may be seen as a form of implicit curriculum. We demonstrate our approach on the task of manipulating objects with a robotic arm. In particular, we run experiments on three different tasks: pushing, sliding, and pick-and-place, in each case using only binary rewards indicating whether or not the task is completed. Our ablation studies show that Hindsight Experience Replay is a crucial ingredient which makes training possible in these challenging environments. We show that our policies trained on a physics simulation can be deployed on a physical robot and successfully complete the task.},
@@ -84,7 +84,7 @@
 	file = {arXiv Fulltext PDF:/home/cboettig/Zotero/storage/FH3QSE54/Andrychowicz et al. - 2018 - Hindsight Experience Replay.pdf:application/pdf;arXiv.org Snapshot:/home/cboettig/Zotero/storage/DH3PBZBY/1707.html:text/html}
 }
 
-@article{dqn,
+@article{DQN,
 	title = {Human-level control through deep reinforcement learning},
 	volume = {518},
 	issn = {0028-0836, 1476-4687},
@@ -100,7 +100,7 @@
 	pages = {529--533}
 }
 
-@article{dqn_arxiv,
+@article{DQN_arxiv,
 	title = {Playing {Atari} with {Deep} {Reinforcement} {Learning}},
 	url = {http://arxiv.org/abs/1312.5602},
 	abstract = {We present the first deep learning model to successfully learn control policies directly from high-dimensional sensory input using reinforcement learning. The model is a convolutional neural network, trained with a variant of Q-learning, whose input is raw pixels and whose output is a value function estimating future rewards. We apply our method to seven Atari 2600 games from the Arcade Learning Environment, with no adjustment of the architecture or learning algorithm. We find that it outperforms all previous approaches on six of the games and surpasses a human expert on three of them.},
@@ -115,7 +115,7 @@
 	file = {arXiv Fulltext PDF:/home/cboettig/Zotero/storage/9759TK3T/Mnih et al. - 2013 - Playing Atari with Deep Reinforcement Learning.pdf:application/pdf;arXiv.org Snapshot:/home/cboettig/Zotero/storage/927GQNHK/1312.html:text/html}
 }
 
-@article{ddpg,
+@article{DDPG,
 	title = {Continuous control with deep reinforcement learning},
 	url = {http://arxiv.org/abs/1509.02971},
 	abstract = {We adapt the ideas underlying the success of Deep Q-Learning to the continuous action domain. We present an actor-critic, model-free algorithm based on the deterministic policy gradient that can operate over continuous action spaces. Using the same learning algorithm, network architecture and hyper-parameters, our algorithm robustly solves more than 20 simulated physics tasks, including classic problems such as cartpole swing-up, dexterous manipulation, legged locomotion and car driving. Our algorithm is able to find policies whose performance is competitive with those found by a planning algorithm with full access to the dynamics of the domain and its derivatives. We further demonstrate that for many of the tasks the algorithm can learn policies end-to-end: directly from raw pixel inputs.},
@@ -130,7 +130,7 @@
 	file = {arXiv Fulltext PDF:/home/cboettig/Zotero/storage/AJNAETMB/Lillicrap et al. - 2019 - Continuous control with deep reinforcement learnin.pdf:application/pdf;arXiv.org Snapshot:/home/cboettig/Zotero/storage/SL6FXX4V/1509.html:text/html}
 }
 
-@article{a2c,
+@article{A2C,
 	title = {Asynchronous {Methods} for {Deep} {Reinforcement} {Learning}},
 	url = {http://arxiv.org/abs/1602.01783},
 	abstract = {We propose a conceptually simple and lightweight framework for deep reinforcement learning that uses asynchronous gradient descent for optimization of deep neural network controllers. We present asynchronous variants of four standard reinforcement learning algorithms and show that parallel actor-learners have a stabilizing effect on training allowing all four methods to successfully train neural network controllers. The best performing method, an asynchronous variant of actor-critic, surpasses the current state-of-the-art on the Atari domain while training for half the time on a single multi-core CPU instead of a GPU. Furthermore, we show that asynchronous actor-critic succeeds on a wide variety of continuous motor control problems as well as on a new task of navigating random 3D mazes using a visual input.},

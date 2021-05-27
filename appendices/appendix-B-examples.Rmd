@@ -114,7 +114,7 @@ seed = 24L # integer
 np$random$seed(seed)
 
 # Optionally set to "" to force CPU-evaluation if needing perfect reproducibility
-Sys.setenv("CUDA_VISIBLE_DEVICES"="")
+#Sys.setenv("CUDA_VISIBLE_DEVICES"="")
 set.seed(seed)
 ```
 
@@ -166,8 +166,9 @@ opt_policy = env$policyfn(opt)
 We can plot the resulting data.frames using standard `ggplot2` methods shown in the `R/plotting-helpers.R`, or in python using either the `plot` methods defined in `gym_fishing` or standard plotting libraries.
 
 ```{r}
-sims_df <- opt_sims %>% mutate(model = "1_optimal")
-policy_df <- opt_policy  %>% mutate(model = "1_optimal")
+algos <- c("Optimal", "A2C", "TD3", "TD3_tuned")
+sims_df <- opt_sims %>% mutate(model = factor("Optimal", algos))
+policy_df <- opt_policy  %>% mutate(model = factor("Optimal", algos))
 
 plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 ```
@@ -193,13 +194,13 @@ Training is the main computationally intensive process, which can take anywhere 
 Therefore, we save the trained agent to disk, and only execute the training method (`learn`) if no previously saved agent is found:
 
 ```{r}
-if(!file.exists("cache/a2c.zip")) {
+if(!file.exists("../python/cache/a2c.zip")) {
 
   # Train the agent for a fixed number of timesteps
   a2c$learn(total_timesteps=300000L)
   
   # Save our trained agent for future use
-  a2c$save("cache/a2c")
+  a2c$save("../python/cache/a2c")
 }
 ```
 
@@ -209,7 +210,7 @@ Having saved our trained agent to disk (`cache/a2c.zip`), we can then re-load th
 
 ```{r}
 # Simulate management under the trained agent
-a2c = sb3$A2C$load("cache/a2c")
+a2c = sb3$A2C$load("../python/cache/a2c")
 ```
 
 
@@ -270,8 +271,8 @@ a2c_policy = env$policyfn(a2c, reps = 5L)
 
 
 ```{r}
-sims_df <- a2c_sims %>% mutate(model = "A2C") %>% bind_rows(sims_df)
-policy_df <- a2c_policy  %>% mutate(model = "A2C")  %>% bind_rows(policy_df)
+sims_df <- a2c_sims %>% mutate(model = factor("A2C", algos)) %>% bind_rows(sims_df)
+policy_df <- a2c_policy  %>% mutate(model = factor("A2C", algos))  %>% bind_rows(policy_df)
 
 plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 ```
@@ -312,8 +313,8 @@ td3_policy_untuned = env$policyfn(td3_untuned, reps = 5L)
 
 
 ```{r}
-sims_df <- td3_sims_untuned %>% mutate(model = "TD3_untuned") %>% bind_rows(sims_df)
-policy_df <- td3_policy_untuned  %>% mutate(model = "TD3_untuned")  %>% bind_rows(policy_df)
+sims_df <- td3_sims_untuned %>% mutate(model = factor("TD3", algos)) %>% bind_rows(sims_df)
+policy_df <- td3_policy_untuned  %>% mutate(model = factor("TD3", algos))  %>% bind_rows(policy_df)
 
 plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 ```
@@ -361,10 +362,10 @@ td3 = sb3$TD3( 'MlpPolicy',
 We train this new TD3 agent:
 
 ```{r }
-if(!file.exists("cache/td3.zip")){
+if(!file.exists("../python/cache/td3_tuned.zip")){
   
   td3$learn(total_timesteps=300000L)
-  td3$save("cache/td3")
+  td3$save("../python/cache/td3_tuned")
   
 }
 ```
@@ -373,15 +374,15 @@ With our trained agent, we can now simulate replicate scenarios or scan across s
 
 ```{r}
 # Simulate management under the trained agent
-td3 = sb3$TD3$load("cache/td3")
+td3 = sb3$TD3$load("../python/cache/td3_tuned")
 td3_sims = env$simulate(td3, reps = 100L)
 td3_policy = env$policyfn(td3, reps = 5L)
 ```
 
  
 ```{r}
-sims_df <- td3_sims %>% mutate(model = "TD3") %>% bind_rows(sims_df)
-policy_df <- td3_policy  %>% mutate(model = "TD3")  %>% bind_rows(policy_df)
+sims_df <- td3_sims %>% mutate(model = factor("TD3_tuned", algos)) %>% bind_rows(sims_df)
+policy_df <- td3_policy  %>% mutate(model = factor("TD3_tuned", algos))  %>% bind_rows(policy_df)
 
 plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 ```
@@ -531,13 +532,10 @@ For simplicity of illustration, we will train only a TD3-based agent on this sce
 
 
 ```{r}
+# Python users see python/conservation_TD3.py
 env = gym$make("conservation-v6")
-```
 
-
-```{r}
 noise_std = 0.4805935357322933
-
 OU = sb3$common$noise$OrnsteinUhlenbeckActionNoise
 action_noise = OU(mean = np$zeros(1L),  sigma = noise_std * np$ones(1L))
 
@@ -556,12 +554,13 @@ model = sb3$TD3('MlpPolicy',
 
 ```
 
+As before, we train the agent unless a cached version of the trained agent is already available:
 
 ```{r}
-if(!file.exists("cache/td3-conservation.zip")){
+if(!file.exists("../python/cache/td3-conservation.zip")){
 
   model$learn(total_timesteps=3000000L)
-  model$save("cache/td3-conservation")
+  model$save("../python/cache/td3-conservation")
   
 }
 
@@ -572,7 +571,7 @@ if(!file.exists("cache/td3-conservation.zip")){
 # Simulate management under the trained agent
 # See https://github.com/boettiger-lab/conservation-agents/blob//conservation/TD3-v6.py
 
-model = sb3$TD3$load("cache/td3-conservation")
+model = sb3$TD3$load("../python/cache/td3-conservation")
 TD3_sims = env$simulate(model, reps = 100L)
 TD3_policy = env$policyfn(model, reps = 10L)
 ```
@@ -658,4 +657,8 @@ is_low = sims_df %>% filter(model == "steady-state") %>%
 sims_df %>% inner_join(is_low) %>%
   ggplot(aes(time, state, group=interaction(model, rep))) +
   geom_line(color = pal[1], show.legend = FALSE) + facet_wrap(~rep)
+```
+
+
+```{r}
 ```

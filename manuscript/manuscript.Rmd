@@ -309,6 +309,8 @@ scale_colour_discrete <- function(...) ggthemes::scale_colour_solarized()
 scale_fill_discrete <- function(...) ggthemes::scale_fill_solarized()
 pal <- ggthemes::solarized_pal()(6)
 txtcolor <- "#586e75"
+
+source("../R/plotting-helpers.R")
 ```
 
 ## Sustainable harvest
@@ -335,44 +337,15 @@ A step-by-step walk-through for training both agents on this environment is prov
 We compare the resulting management, policy, and reward under either RL agent to that achieved by the optimal management solution [Fig 1].
 Despite having no knowledge of the underlying model and clear differences in the resulting strategies, both RL agents learn enough to achieve nearly optimal performance.
 
-<!-- ML: I'm have some uneasiness about this figure. Is A2C tuned? I think we'd probably want to do tuning and training with a set seed so that everything is reproducible?  -->
 ```{r message=FALSE, include=FALSE}
-sims_df <- read_csv( "figs/sims_df.csv")
-policy_df <- read_csv("figs/policy_df.csv")
-reward_df <- read_csv("figs/reward_df.csv")
-
-ymin <- function(x) last(x[(ntile(x, 20)==1)])
-ymax <- function(x) last(x[(ntile(x, 20)==19)])
-
-fig_sims <- 
-sims_df %>% 
-  group_by(time, model) %>% 
-  summarise(ymin = ymin(state),
-            ymax = ymax(state),
-            state = mean(state), .groups = "drop") %>%
-  ggplot(aes(time, state, ymin = ymin, ymax = ymax, fill=model)) + 
-  geom_ribbon(alpha= 0.3) + geom_line(aes(col = model))
-
-fig_policy <- 
-  policy_df %>% ggplot(aes(state, state - action, 
-                           group=interaction(rep, model),
-                           col = model)) + 
-  geom_line(show.legend = FALSE) + 
-  coord_cartesian(xlim = c(0, 1.3), ylim=c(0,0.9)) + 
-  ylab("escapement")
+sims_df <- read_csv( "figs/sims_df.csv") %>% filter(model %in% c("Optimal", "TD3_tuned"))
+policy_df <- read_csv("figs/policy_df.csv") %>% filter(model %in% c("Optimal", "TD3_tuned"))
 
 
-fig_reward <- reward_df %>% 
-  ggplot(aes(time, mean_reward)) + 
-  geom_ribbon(aes(ymin = mean_reward - 2*sd, 
-                  ymax = mean_reward + 2*sd, fill = model),
-              alpha=0.25, show.legend = FALSE) + 
-  geom_line(aes(col = model), show.legend = FALSE) + 
-  ylab("reward")
 ```
 
 ```{r fig_fish, fig.cap="Fisheries management using neural network agents trained with RL algorithms A2C and TD3 compared to optimal management.  Top panel: mean fish population size over time across 100 replicates. Shaded region shows the 95% confidence interval over simulations.  Lower left: The optimal solution is policy of constant escapement. Below the target escapement of 0.5, no harvest occurs, while any stock above that level is immediately harvested back down (red line).  RL agents both adopt a policies that cease any harvest below this level, while allowing a somewhat higher escapement than optimal just above the optimal escapement level.  A2C policy is non-deterministic, and overharvest from very high stock sizes.  Lower Right: Mean cumulative reward over time across simulations. TD3 achieves nearly-optimal mean utility. Mean reward under A2C is lower, though the confidence interval still overlaps the mean reward of optimal management."}
-fig_sims / ( fig_policy + fig_reward)
+plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 ```
 
 Note that the A2C policy learns to shut down fishing entirely below a certain stock size, without fail.
