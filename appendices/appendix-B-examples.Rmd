@@ -20,11 +20,6 @@ authors:
     email: cboettig@berkeley.edu
 
 
-keywords:
-  - blah
-  - blee
-  - bloo
-  - these are optional and can be removed
 bibliography: ../manuscript/references.bib
 
 header-includes:
@@ -47,10 +42,9 @@ pal = ggthemes::solarized_pal()(8)
 txtcolor = "#586e75"
 ```
 
-# Building a simulation environment `gym`
 
-[@openai_gym]
-
+In this appendix, we illustrate how to apply a deep reinfocement learning framework to train previously published RL algorithms on the novel decision environments as illustrated in the main text.
+Appendix C discusses the construction of such environments in code. 
 
 # Deep Reinforcement Learning Frameworks
 
@@ -83,10 +77,11 @@ This can be particularly useful for users running ML algorithms on remote server
 
 
 Clone the repository <https://github.com/boettiger-lab/rl-intro>, e.g. using the New Project->From Version Control->Git menu in RStudio.
+Note that the RMarkdown source-code for this file can be found in the `appendices` directory of the project repository.
 From the project directory, we can then install all the necessary dependencies using `renv`, which helps ensure a reproducible environment of fixed versions of R packages and Python modules.
 
 
-```{r}
+```{r message=FALSE}
 #install.packages("renv")
 renv::restore()
 ```
@@ -105,6 +100,9 @@ sb3         = import ("stable_baselines3")
 gym         = import ("gym")
 gym_fishing = import("gym_fishing")
 gym_conservation = import("gym_conservation")
+
+# 
+source("../R/plotting-helpers.R")
 ```
 
 Numerical reproducibility can be challenging in machine learning problems, particularly when using GPU-based acceleration. In addition to setting a random seed in our Python environment, we can optionally disable GPU use to improve reproducibility by setting the `CUDA_VISIBLE_DEVICES` to a blank value.  
@@ -140,7 +138,45 @@ We begin by selecting an environment from `gym_fishing` by name, passing the opt
 env = gym$make("fishing-v1", sigma = 0.1)
 ```
 
-<!-- Kari: the role neural networks play in RL is not very well explained in the paper, more detail there would probably make this part more intuitive --> 
+
+## An optimal solution
+
+Recall that under the assumptions of the simple model used in the `fishing-v1` environment, we can determine the optimal harvest policy analytically if the model and parameters are known precisely [@Reed1979].
+The optimal strategy is a policy of 'constant escapement', designed to keep the remaining stock size (the population that 'escapes' fishing harvest) at the biomass corresponding to a maximum growth rate, i.e. at $B_{MSY} = K/2$ in this model.
+`gym_fishing` defines a collection of non-RL agents in the `models` submodule, including the a human agent that merely asks to enter their desired quota manually. 
+The `escapement` model implements the provably optimal constant escapement rule.
+A third model, `msy`, implements a policy based on "Maximum Sustainable Yield" policy [@Schaefer1954], which is actually more commonly used as a basis for management than constant escapement, despite only being optimal at the steady state under deterministic dynamics.  
+
+```{r}
+# Simulate under the optimal solution (given the model)
+opt = gym_fishing$models$escapement(env)
+```
+
+Note that the `escapement` function makes very specific assumptions about the environment that it is given.
+In particular, it assumes we can compute $B_{MSY}$ directly from the internal model of stock recruitment contained in the environment.
+In contrast, the RL methods make no such assumption of being able to access that internal model directly.
+
+
+```{r}
+opt_sims = env$simulate(opt, reps = 100L)
+opt_policy = env$policyfn(opt)
+```
+
+
+We can plot the resulting data.frames using standard `ggplot2` methods shown in the `R/plotting-helpers.R`, or in python using either the `plot` methods defined in `gym_fishing` or standard plotting libraries.
+
+```{r}
+sims_df <- opt_sims %>% mutate(model = "1_optimal")
+policy_df <- opt_policy  %>% mutate(model = "1_optimal")
+
+plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
+```
+
+## RL-based solutions
+
+We will compare this optimal solution with results from the several different RL algorithms.
+Unlike the optimal solution, the RL methods never know the underlying growth function used by the simulation (or even if such a function actually exists).
+These methods merely seek to learn a strategy for setting harvest quotas which maximizes the cumulative reward the receive from the environment.
 At the heart of each deep RL algorithm is a neural network or a collection of neural networks. The RL agent uses these networks to approximate a policy function and/or a value function. The policy function is the agent's mapping of states to actions -- i.e. the agent's strategy. Value functions attempt to evaluate the goodness of a state or state-action pair towards achieving the RL objective of maximizing cumulative rewards. 
 Confusingly, the parameters of a RL algorithm that detail the overall learning process are called _hyper-parameters_ while the parameters of a RL algorithm that are learned during training are called parameters. For example, the number of layers in a neural network is a hyper-parameter but a weight in the neural net is referred to as a parameter.
 Before training an agent, we must first specify the hyper-parameters; the algorithm's parameters are often randomly initialized.
@@ -218,7 +254,7 @@ For convenience, `gym_fishing` defines the helper routine `simulate` to perform 
 
 
 ```{r}
-a2c_sims = env$simulate(a2c, reps = 500L)
+a2c_sims = env$simulate(a2c, reps = 100L)
 ```
 
 
@@ -228,21 +264,72 @@ Some agents are non-deterministic, so we may want to use replicate draws at each
 Note that the `policyfn` method is another custom method and not part of the `gym` standard. The use of `policyfn` will not make sense for agents that consider the history of many previous states in selecting their action, such as agents which utilize recurrent neural network architectures like LSTMs [@LSTM].
 
 ```{r}
-a2c_policy = env$policyfn(a2c, reps = 50L)
+a2c_policy = env$policyfn(a2c, reps = 5L)
 ```
 
 
 
+```{r}
+sims_df <- a2c_sims %>% mutate(model = "A2C") %>% bind_rows(sims_df)
+policy_df <- a2c_policy  %>% mutate(model = "A2C")  %>% bind_rows(policy_df)
+
+plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
+```
+
 ## TD3
 
-We train a second agent based on the TD3 algorithm. 
-This illustrates some of the salient differences between the different algorithms used in reinforcement learning.
-Bear in mind that the best algorithm for any given environment will depend on the details of the environment as well
-as the length of training and the selection of hyper-parameters.
-This time, we will declare our choices for the hyper-parameters explicitly.
-Note that some of these hyper-parameters, such as the `learning_rate` and discount rate, `gamma`, are also hyper-parameters of the A2C algorithm, while others, like the `action_noise` describing how new actions are proposed, are not used in A2C.
+We train a second agent based on the TD3 algorithm.
+Recall that the Twin Delayed Deep Deterministic Policy Gradient, commonly known as TD3 [@TD3], is a generalization of Deep Deterministic Policy Gradient, or DDPG, which extends the DQN algorithm @DQN to a continuous action space using the deterministic policy gradient. 
+DDPG and DQN are also available in the stable baselines framework [@sb3].
+One of the most salient differences here is that A2C uses an Actor-Critic strategy that combines policy gradient and value iteration approaches, while TD3 is a policy gradient approach.
+
+We will start with the default hyperparameters, which correspond to those used in @TD3, where the algorithm was first introduced.
+
+```{r}
+td3_untuned = sb3$TD3('MlpPolicy', env, seed = seed)
+```
+
+
+Once again, after our agent is defined we are ready to train it:
+
+```{r }
+if(!file.exists("../python/cache/td3_untuned.zip")){
+  
+  td3_untuned$learn(total_timesteps=300000L)
+  td3_untuned$save("../python/cache/td3_untuned")
+  
+}
+```
+
+With our trained agent, we can simulate replicate scenarios or scan across states to determine the implicit policy function:
+
+```{r}
+# Simulate management under the trained agent
+td3_untuned = sb3$TD3$load("../python/cache/td3_untuned")
+td3_sims_untuned = env$simulate(td3_untuned, reps = 100L)
+td3_policy_untuned = env$policyfn(td3_untuned, reps = 5L)
+```
+
+
+```{r}
+sims_df <- td3_sims_untuned %>% mutate(model = "TD3_untuned") %>% bind_rows(sims_df)
+policy_df <- td3_policy_untuned  %>% mutate(model = "TD3_untuned")  %>% bind_rows(policy_df)
+
+plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
+```
+The untuned TD3 policy tends to overfish relative to the optimal solution, but is less variable than the A2C solution.
+While it is possible that with much more training, this TD3 algorithm could further improve, subsequent learning may be difficult.  
+Note that the reward under TD3 is nevertheless often within the margin of error of the optimal policy, which may limit future learning since further policy exploration is more likely to reduce rewards.
+Instead, we may be able to improve performance of TD3 by choosing different hyperparameters, which may allow it to imagine more possible policies or learn more effectively.
+
+
+## Tuned TD3
+
+Some of these hyper-parameters of the TD3 algorithm, such as the `learning_rate` and discount rate, `gamma`, are also hyper-parameters of the A2C algorithm. 
+Others, like the `action_noise` describing how new actions are proposed, are not used in A2C.
 Good choices for hyper-parameters can be found through a process known as "hyper-parameter tuning", which uses standard function optimization approaches to vary the choice of hyper-parameters to determine which hyper-parameters maximize the agent's performance. 
-For simplicity, we show only training with specified hyper-parameters here, example scripts for tuning the algorithm to discover these values can be found in <https://github.com/boettiger-lab/rl-toolkit>, and compare to the tuning utilities found in `stable-baselines3-zoo` [@zoo].  
+For simplicity, we show only training with specified hyper-parameters here, found by various tuning experimentation (see <https://github.com/boettiger-lab/conservation-agents>) and compare to the tuning utilities found in `stable-baselines3-zoo` [@zoo].
+
 
 ```{r}
 # train an agent (model) on one of the environments:
@@ -256,7 +343,6 @@ action_noise = sb3$common$noise$NormalActionNoise(
         sigma= noise_std * np$ones(n_actions)
         )
 
-
 td3 = sb3$TD3( 'MlpPolicy', 
                env,  
                verbose=0L, 
@@ -267,13 +353,12 @@ td3 = sb3$TD3( 'MlpPolicy',
                batch_size = 128L,
                buffer_size = 10000L,
                train_freq = 128L, 
-               n_episodes_rollout = -1, 
                gradient_steps = 128L,
                action_noise = action_noise
               )
 ```
 
-Once again, after our agent is defined we are ready to train it:
+We train this new TD3 agent:
 
 ```{r }
 if(!file.exists("cache/td3.zip")){
@@ -284,101 +369,37 @@ if(!file.exists("cache/td3.zip")){
 }
 ```
 
-With our trained agent, we can simulate replicate scenarios or scan across states to determine the implicit policy function:
+With our trained agent, we can now simulate replicate scenarios or scan across states to determine the implicit policy function:
 
 ```{r}
 # Simulate management under the trained agent
 td3 = sb3$TD3$load("cache/td3")
-td3_sims = env$simulate(td3, reps = 500L)
-td3_policy = env$policyfn(td3, reps = 50L)
+td3_sims = env$simulate(td3, reps = 100L)
+td3_policy = env$policyfn(td3, reps = 5L)
 ```
 
-
-We compare the performance of these two RL agents trained using the algorithms A2C and TD3 respectively to the known optimal policy for this particular environment.  
-Recall that under the assumptions of the simple model used in the `fishing-v1` environment, we can determine the optimal harvest policy analytically if the model and parameters are known precisely [@Reed1979].
-The optimal strategy is a policy of 'constant escapement', designed to keep the remaining stock size (the population that 'escapes' fishing harvest) at the biomass corresponding to a maximum growth rate, i.e. at $B = K/2$ in this model.
-`gym_fishing` defines a collection of non-RL agents in the `models` submodule, including the a human agent that merely asks to enter their desired quota manually. 
-The `escapement` model implements the provably optimal constant escapement rule.
-A third model, `msy`, implements a policy based on "Maximum Sustainable Yield" policy [@Schaefer1954], which is actually more commonly used as a basis for management than constant escapement, despite only being optimal at the steady state under deterministic dynamics.  
-
+ 
 ```{r}
-# Simulate under the optimal solution (given the model)
-opt = gym_fishing$models$escapement(env)
-opt_sims = env$simulate(opt, reps = 500L)
-opt_policy = env$policyfn(opt)
+sims_df <- td3_sims %>% mutate(model = "TD3") %>% bind_rows(sims_df)
+policy_df <- td3_policy  %>% mutate(model = "TD3")  %>% bind_rows(policy_df)
+
+plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 ```
 
-
-Having performed simulations under each method, we gather the results under each management strategy together into a single data frame for simulations (`sims_df`), the policy function (`policy_df`) and the cumulative reward, used to make the plots in the corresponding panels.  
+The tuned TD3 algorithm, though trained for an identical 300,000 timesteps as the untined one, settles on a policy much closer to the optimal policy.
+The tuned TD3 agent tends to underfish on average, but only slightly, and avoids the occassional sharp drops in stock size seen when A2C occassionally sets too high a havest quota.
+The tuned solution is still not optimal, but it is very close.
+Moreover, the RL algorithm has been able to learn this nearly-optimal policy with no prior knowledge about the shape or nature of the population growth function used in the environment. 
+  
 We preserve a copy of each data frames in local `.csv` text files for maximum cross-platform compatibility.
 
 ```{r}
-sims_df = bind_rows(td3_sims, a2c_sims, opt_sims, .id = "model") %>%
-  mutate(model = c("TD3", "A2C", "optimal")[as.integer(model)])
-
-policy_df = bind_rows(td3_policy, a2c_policy, opt_policy, .id = "model") %>%
-  mutate(model = c("TD3", "A2C", "optimal")[as.integer(model)])
-
-gamma = 1 #discount
-reward_df = sims_df %>% 
-  group_by(rep, model) %>%
-  mutate(cum_reward = cumsum(reward * gamma^time)) %>%
-  group_by(time, model) %>%
-  summarise(mean_reward = mean(cum_reward), 
-            sd = sd(cum_reward), .groups = "drop")
-
-
 write_csv(sims_df, "../manuscript/figs/sims_df.csv")
 write_csv(policy_df, "../manuscript/figs/policy_df.csv")
-write_csv(reward_df, "../manuscript/figs/reward_df.csv")
 ```
 
 
 <!-- Remaining is just plotting code, repeated in the main .Rmd.  Should we omit it from the appendix? -->
-Standard R methods are used to plot the results summarized across the replicates:
-
-```{r}
-ymin = function(x) last(x[(ntile(x, 20)==1)])
-ymax = function(x) last(x[(ntile(x, 20)==19)])
-
-fig_sims = 
-sims_df %>% 
-  group_by(time, model) %>% 
-  summarise(ymin = ymin(state),
-            ymax = ymax(state),
-            state = mean(state), .groups = "drop") %>%
-  ggplot(aes(time, state, ymin = ymin, ymax = ymax, fill=model)) + 
-  geom_ribbon(alpha= 0.3) + geom_line(aes(col = model))
-```
-
-
-```{r}
-fig_policy = 
-  policy_df %>% ggplot(aes(state, action, 
-                           group=interaction(rep, model),
-                           col = model)) + 
-  geom_line(show.legend = FALSE) + 
-  coord_cartesian(xlim = c(0, 1.3), ylim=c(0,0.9)) 
-```
-
-```{r}
-
-fig_reward = reward_df %>% 
-  ggplot(aes(time, mean_reward)) + 
-  geom_ribbon(aes(ymin = mean_reward - 2*sd, 
-                  ymax = mean_reward + 2*sd, fill = model),
-              alpha=0.25, show.legend = FALSE) + 
-  geom_line(aes(col = model), show.legend = FALSE) + 
-  ylab("reward")
-```
-
-## Manuscript Figure 1
-
-<!-- Not sure if it's helpful to duplicate figures from the paper in the appendix...-->
-
-```{r fig1}
-fig_sims / ( fig_policy + fig_reward)
-```
 
 
 ## Applying an RL agent to real data
@@ -530,7 +551,6 @@ model = sb3$TD3('MlpPolicy',
             "buffer_size"= 10000L,
             "train_freq"= 1000L,
             "gradient_steps"= 1000L,
-            "n_episodes_rollout"= -1L,
             "action_noise"= action_noise,
             "policy_kwargs"= list("net_arch"= c(64L,64L)))
 
@@ -586,13 +606,7 @@ sims_df = bind_rows(TD3_sims, opt_sims, .id = "model") %>%
 policy_df = bind_rows(TD3_policy, opt_policy, .id = "model") %>%
   mutate(model = c("TD3", "steady-state")[as.integer(model)])
 
-gamma = 1 #discount
-reward_df = sims_df %>% 
-  group_by(rep, model) %>%
-  mutate(cum_reward = cumsum(reward * gamma^time)) %>%
-  group_by(time, model) %>%
-  summarise(mean_reward = mean(cum_reward), 
-            sd = sd(cum_reward), .groups = "drop")
+
 
 ```
 
@@ -602,51 +616,14 @@ The resulting three data frames contain the necessary data for each of the subpl
 ```{r}
 write_csv(sims_df, "../manuscript/figs/tipping_sims_df.csv")
 write_csv(policy_df, "../manuscript/figs/tipping_policy_df.csv")
-write_csv(reward_df, "../manuscript/figs/tipping_reward_df.csv")
 ```
 
 
-<!-- Remaining is just plotting code, repeated in the main .Rmd.  Should we omit it from the appendix? -->
-
-```{r}
-# ensemble statistics
-ymin = function(x) last(x[(ntile(x, 20)==1)])
-ymax = function(x) last(x[(ntile(x, 20)==19)])
-
-fig_sims = 
-  sims_df %>%
-   group_by(time, model) %>% 
-   summarise(ymin = ymin(state),
-            ymax = ymax(state),
-            state = mean(state), .groups = "drop") %>%
-  ggplot(aes(time, state, ymin = ymin, ymax = ymax, fill=model)) + 
-   geom_ribbon(alpha= 0.3) + geom_line(aes(col = model))
-```
-
-
-```{r}
-fig_policy = 
-  policy_df %>% ggplot(aes(state, action, 
-                           group=interaction(rep, model),
-                           col = model)) + 
-  geom_line(show.legend = FALSE) 
-```
-
-```{r}
-
-fig_reward = reward_df %>% 
-  ggplot(aes(time, mean_reward)) + 
-  geom_ribbon(aes(ymin = mean_reward - 2*sd, 
-                  ymax = mean_reward + 2*sd, fill = model),
-              alpha=0.25, show.legend = FALSE) + 
-  geom_line(aes(col = model), show.legend = FALSE) + 
-  ylab("reward")
-```
 
 ### Manuscript Figure 3
 
 ```{r fig3}
-fig_sims / ( fig_policy + fig_reward)
+plot_sims(sims_df) / ( plot_policy(policy_df) + plot_policy(sims_df))
 ```
 
 
