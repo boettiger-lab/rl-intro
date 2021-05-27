@@ -515,9 +515,9 @@ Under some conditions, RL agents can prove adept at _transfer learning_, in whic
 <!-- reason 2: interpretability -->
 Deep RL agents are also difficult to interpret [@heuillet_explainability_2021].
 Deep neural networks are commonly referred to as black box models, since it is challenging to fully explain why a deep neural network produces a specific output from a given input [@castelvecchi_can_2016].
-For deep RL, this means that we cannot provide a meaningful explanation for why any agent selects an action.
+For deep RL, this means that we can rarely provide a meaningful explanation for why any agent selects an action.
 Compounded with the previously mentioned generalizability issues, the lack of explainability introduces a lot of safety concerns when attempting to apply these methods to the real world.
-When going from a simulator to the real world, the real world may introduce novel situations that a simulator-trained agent is not familiar with, and since we can't anticipate how an agent will respond to new situations, there is an inherent risk in letting RL agents make decisions in the real world. 
+When going from a simulator to the real world, the real world may introduce novel situations that a simulator-trained agent is not familiar with, and since we can not anticipate how an agent will respond to new situations, there is an inherent risk in letting RL agents make decisions in the real world. 
 
 <!-- reason 3: reward design -->
 And lastly, a fundamental issue for all applied optimization problems is using the right objective.
