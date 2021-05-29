@@ -125,14 +125,57 @@ $$
 $$
 
 where $\hat{Q}$ is a value function estimated by the critic.
-The benefit of actor-critic algorithms is that they balance the issues with bias and variance that are common with value-learning and policy gradient methods respectively [@suttonbarto].
+The benefit of actor-critic algorithms is that they can balance the issues with bias and variance that are common with value-learning and policy gradient methods respectively [@suttonbarto].
 Consequently, actor-critic algorithms have achieved many of the state of the art results in model-free deep RL [@SAC; @TD3].  
 A simple sketch of an actor critic algorithm is shown in ALGORITHM.
 
 ## Exploration 
 
 Exploration is a central component of any deep RL algorithm, and there are a variety of exploration algorithms that an agent can employ.
-As mentioned in the manuscript, the exploration vs. exploitation dilemma is an open research problem. 
+In the sections above, we procedurally mentioned that the agent must interact with the environment and then use its experiences to maximize rewards.
+Yet, how the agent explores is very important because if an agent fails to explore the state-action space well, then the agent will ultimately learn a bad policy.
+In this section, we will go over some common exploration algorithms and try to provide some practical insight. 
+
+### Epsilon-Greedy Algorithm
+
+The Epsilon-Greedy algorithm takes a very simple approach towards balancing exploration and exploitation. 
+For some $\epsilon \in (0, 1)$ and typically close to 0, an Epsilon-Greedy agent exploits the best available action with probability $1-\epsilon$ and explores a random action with probability $\epsilon$.
+While simplistic, this algorithm has been effective on a range of problems notably @mnihhumanlevelcontrol.
+
+### Boltzmann Exploration
+
+For algorithms that learn a value function, agents can select actions by sampling from a Boltzmann or Softmax distribution that is constructed over the value function.
+So if the agent is doing Q-learning, the probability for the agent to select the action, $a \in \mathcal A$, would be:
+
+$$
+P(a) = \frac{e^{\frac{Q(s_t, a)}{\tau}}}{\sum_{a'} e^{\frac{Q(s_t, a')}{\tau}}}
+$$
+where $\tau \in (0, \infty)$ is called the temperature parameter and controls how much the agent will weight high Q scores over low Q scores.
+The advantage of using Boltzmann exploration is that since the probability of selecting an action is proportional to how good the agent thinks that action is, the agent can explore the space more efficiently than with Epsilon-Greedy exploration.
+This is because an Epsilon-Greedy agent will explore all actions equally including low reward yielding actions; in contrast, with Boltzmann exploration, an agent will spend less time on these unpromising actions.
+
+### Noise-Based Exploration
+
+Injecting noise into an agent's action, observation or parameter space is another effective exploration method.
+With noise addition, there are a lot design choices that can be made.
+For instance, noise can be sampled from different distributions [@parameter_space], scaled adaptively based on the policy[@parameter_space], or the noise can be sampled according to the state that the agent observes [@gsde].
+There are a variety of reasons why one would want to use these variations of noise injection, which are well discussed in @parameter_space and @gsde.
+
+### Entropy-based Exploration
+
+An increasingly common way to achieve exploration is by adding a function of the entropy term, $H(\pi(a|s))$, to the loss function of the policy network.
+While this introduces some bias as the agent no longer exclusively maximizes cumulative rewards, entropy-based exploration has been effective in practice at improving exploration, resulting in better agent performance.
+@understandingtheimpactofentropy gives a very complete discussion on the benefits of using entropy.
+
+There is a multitude of exploration algorithms that we have not touched on, so it is important to say that the algorithms mentionned above are generally suited for dense reward or "easy-exploration" problems.
+For "hard-exploration" problems -- for instance, environments that have very few state-action pairs with significant rewards, like a maze, are seen as hard-exploration problems --, more intricate and bespoke exploration algorithms tend to outperform.
+We will not go over these algorithms for the sake of brevity but a good example of an algorithm for hard-exploration problems is @go-explore.
+
+
+
+
+
+
 
 ----
 
