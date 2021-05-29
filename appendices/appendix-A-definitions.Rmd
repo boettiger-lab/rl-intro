@@ -167,9 +167,9 @@ An increasingly common way to achieve exploration is by adding a function of the
 While this introduces some bias as the agent no longer exclusively maximizes cumulative rewards, entropy-based exploration has been effective in practice at improving exploration, resulting in better agent performance.
 @understandingtheimpactofentropy gives a very complete discussion on the benefits of using entropy.
 
-There is a multitude of exploration algorithms that we have not touched on, so it is important to say that the algorithms mentionned above are generally suited for dense reward or "easy-exploration" problems.
+There is a multitude of exploration algorithms that we have not touched on, so it is important to say that the algorithms mentioned above are generally suited for dense reward or "easy-exploration" problems.
 For "hard-exploration" problems -- for instance, environments that have very few state-action pairs with significant rewards, like a maze, are seen as hard-exploration problems --, more intricate and bespoke exploration algorithms tend to outperform.
-We will not go over these algorithms for the sake of brevity but a good example of an algorithm for hard-exploration problems is @go-explore.
+We will not go over these more advanced exploration algorithms but a good example is seen in @go-explore.
 
 
 
