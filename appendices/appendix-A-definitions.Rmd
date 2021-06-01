@@ -41,8 +41,7 @@ output:
 
 In this appendix, we will go into further detail on how deep RL algorithms work.
 The aim here is not to give full treatment of all deep RL methods -- @suttonbarto is an excellent resource for theoretical underpinnings while the white papers behind the algorithms go into greater detail on modern approaches --; instead, this section is meant to serve as an abbreviated background view on common, model-free deep RL techniques.
-We hope to convey the sense of what the different algorithm classes try to achieve and will point to specific resources for readers looking for a more complete presentation.
-We will discuss policy gradients, value-based and actor-critic critic methods which were briefly introduced in the manuscript. 
+We hope to introduce some of the important design choices that are made for model-free deep RL algorithms and will point to specific resources that give a more complete presentation.
 These sections presume some familiarity with gradient descent optimization -- see @ruder_overview_2017 for a thorough treatment.
 Throughout these sections, we'll consider the environment to be an MDP which makes for a cleaner presentation here and is also consistent with the referenced sources.
 
@@ -67,7 +66,6 @@ The intuition behind this approximation is exactly what we want: the agent will 
 In practice, however, the empirical return tends to have high variance, resulting in very noisy gradients that impedes learning [@suttonbarto].
 To avoid this issue, many policy gradient algorithms replace the empirical return with a return estimator that has lower variance [@suttonbarto].
 
-Putting the 
 A sketch of a simple policy gradient algorithm is shown in ALGORITHM.
 
 ## Value-based Methods 
@@ -109,8 +107,8 @@ $$
 $$
 
 After the Q-function neural network or Q-network has been fitted, the agent will select actions by inputting the current state into the Q network and then identifying the state-action pair with the highest estimated Q value.
-The benefit of using neural networks to approximate Q-functions is that neural networks are able to generalize Q functions over unseen state-action pairs, whereas classic methods like TD-learning are not able to generalize [@CITEmnihhumancontrol?].
-But there a host of problems with getting neural-network-based value-learning agents to work in practice; see @mnihhumancontrol and @ddqn for more insight on these issues.   
+The benefit of using neural networks to approximate Q-functions is that neural networks are able to generalize Q functions over unseen state-action pairs, whereas classic methods like TD-learning are not able to generalize [@DQN].
+But there a host of problems with getting neural-network-based value-learning agents to work in practice; see @DQN and @ddqn for more insight on these issues.   
 A notable concern with these methods is that they tend to suffer from bias which is introduced by fitting a value network to a target that incorporates an estimated value function [@ddqn]. 
 In review, a sketch of simple deep Q learning algorithm is shown in ALGORITHM.
 
@@ -132,15 +130,15 @@ A simple sketch of an actor critic algorithm is shown in ALGORITHM.
 ## Exploration 
 
 Exploration is a central component of any deep RL algorithm, and there are a variety of exploration algorithms that an agent can employ.
-In the sections above, we procedurally mentioned that the agent must interact with the environment and then use its experiences to maximize rewards.
-Yet, how the agent explores is very important because if an agent fails to explore the state-action space well, then the agent will ultimately learn a bad policy.
+In the sections above, we procedurally mentioned that the agent must select actions during training.
+Yet, how the agent selects these actions is very important because if an agent fails to explore the state-action space well, the agent will likely learn a bad policy.
 In this section, we will go over some common exploration algorithms and try to provide some practical insight. 
 
 ### Epsilon-Greedy Algorithm
 
 The Epsilon-Greedy algorithm takes a very simple approach towards balancing exploration and exploitation. 
 For some $\epsilon \in (0, 1)$ and typically close to 0, an Epsilon-Greedy agent exploits the best available action with probability $1-\epsilon$ and explores a random action with probability $\epsilon$.
-While simplistic, this algorithm has been effective on a range of problems notably @mnihhumanlevelcontrol.
+While simplistic, this algorithm has been effective on a range of problems notably @DQN.
 
 ### Boltzmann Exploration
 
@@ -148,7 +146,7 @@ For algorithms that learn a value function, agents can select actions by samplin
 So if the agent is doing Q-learning, the probability for the agent to select the action, $a \in \mathcal A$, would be:
 
 $$
-P(a) = \frac{e^{\frac{Q(s_t, a)}{\tau}}}{\sum_{a'} e^{\frac{Q(s_t, a')}{\tau}}}
+P(a) = \frac{e^{\frac{Q(s_t, a)}{\tau}}}{\underset{a'}{\sum} e^{\frac{Q(s_t, a')}{\tau}}}
 $$
 where $\tau \in (0, \infty)$ is called the temperature parameter and controls how much the agent will weight high Q scores over low Q scores.
 The advantage of using Boltzmann exploration is that since the probability of selecting an action is proportional to how good the agent thinks that action is, the agent can explore the space more efficiently than with Epsilon-Greedy exploration.
@@ -172,10 +170,34 @@ For "hard-exploration" problems -- for instance, environments that have very few
 We will not go over these more advanced exploration algorithms but a good example is seen in @go-explore.
 
 
+# Replay Buffers vs. Parallel Workers
+
+Another important algorithm design choice involves how an RL agent collects and samples past experiences.
+The main issue that arises from sampling past experiences is correlation of samples [@DQN].
+In the simple case that we have an RL agent that interacts with the environment for a few time steps and then uses this trajectory for its learning update, these samples, since they come from the same trajectory, will be strongly correlated.
+Learning from correlated samples is undesirable since this can result in agents getting stuck in local optima, which will impede learning.
+There are two commonly used solutions to this problem of correlated samples: Replay Buffers and Parallel Workers.
+If the agent is off-policy, the agent can employ a replay buffer.
+With a replay buffer, the agent will save state-action-reward transitions in the replay buffer, and during learning updates, the agent will sample transitions from the replay buffer.
+Since the replay buffer can be arbitrarily large and thus store transitions from numerous trajectories, sampling from the buffer will likely produce transitions that cover a broader region in state-action space than if the agent were to sample from one trajectory.
+On-policy agents, however, cannot use a replay buffer since these agents are not allowed to use samples from a policy different than the policy they are trying to improve -- note that in a replay buffer, it is possible to have samples from different policies.
+The solution to de-correlate samples for on-policy agents is to use parallel workers, whereby multiple workers explore the environment according to the current policy. 
+Due to stochasticity that can come from exploration and the environment, the workers will go on different trajectories in state-action space.
+The on-policy agent will collect samples across these workers in a learning step, and then repeat the process of collecting and sampling transitions with an updated policy.
+Once again, the idea behind using parallel workers is that sampling over multiple trajectories will de-correlate samples.
+In practice, using a large replay buffer, on the order of millions of transitions, or a modest number of parallel, around 4-16 for simple RL problems, is very important to achieve good agent performance for off-policy and on-policy algorithms respectively.
 
 
+# Next Steps
+
+Reinforcement learning is a huge, constantly evolving field, and we've only touched on a small sliver of RL in our study.
+In this section, we briefly introduced some of the major design decisions that are made with model-free deep RL algorithms, but there are many more decisions that are made with current state of the art algorithms.
+If you are interested in learning more about model-free deep RL, then reading papers like @SAC, @DQN and @PPO, are good places to start.
+We have also not given any space to discuss model-based or gradient-free techniques which also warrant attention -- see @mbpo and @deep_neuro for more here.
+A benefit of model-free deep RL over these other approaches is that there has been more of a general focus on model-free deep RL, so there are widely available packages like Stable Baselines and TensorFlow Agents which implement model-free deep RL; but the focus on model-free algorithm could easily change in coming years.
+Deep RL has only become established in the last decade, and with its amount of unanswered research questions, deep RL may evolve significantly in the near future.
 
 
-
+# References
 ----
 
