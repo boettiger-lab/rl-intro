@@ -40,11 +40,15 @@ output:
 
 
 In this appendix, we will go into further detail on how deep RL algorithms work.
-The aim here is not to give full treatment of all deep RL methods -- @suttonbarto is an excellent resource for theoretical underpinnings while the white papers behind the algorithms go into greater detail on modern approaches --; instead, this section is meant to serve as an abbreviated background view on common, model-free deep RL techniques.
+The aim here is not to give full treatment of all deep RL methods -- @suttonbarto is an excellent resource for theoretical underpinnings while the white papers behind the algorithms go into greater detail on modern approaches --; instead, this section is meant to serve as an abbreviated background view on model-free deep RL.
 We hope to introduce some of the important design choices that are made for model-free deep RL algorithms and will point to specific resources that give a more complete presentation.
 These sections presume some familiarity with gradient descent optimization -- see @ruder_overview_2017 for a thorough treatment.
 Throughout these sections, we'll consider the environment to be an MDP which makes for a cleaner presentation here and is also consistent with the referenced sources.
 
+# Gradient-based Model-free RL Algorithms
+
+Policy gradients, value-based and actor-critic methods are the general classes of algorithms for gradient-based model-free RL.
+In this section, we will go over these algorithm classes to convey a broad sense of what they are attempting to achieve and the trade-offs between them.
 
 ## Policy Gradients
 The most straightforward way to optimize the RL objective is through a policy search, whereby the agent continually updates a policy parameterized by $\theta$, $\pi_\theta$ -- in deep RL, this parameterized policy will be a neural network.
@@ -78,7 +82,7 @@ $$
   Q^\pi(s_t, a_t) = \mathbb{E}_{\tau \sim p_\pi(\tau \mid s_t, a_t)}\Bigg[\sum_{t' = t}^H \gamma^{t' - t} r(s_t, a_t)\Bigg].
 $$
 
-There are more value functions that can used in practice [@gaeschulman], but since Q-functions are commonly encountered, we will focus on Q-learning.
+There are more value functions that can used in practice [@schulman_high-dimensional_2018], but since Q-functions are commonly encountered, we will focus on Q-learning.
 From the above equation, we can define the Q function recursively,
 
 $$
@@ -108,8 +112,8 @@ $$
 
 After the Q-function neural network or Q-network has been fitted, the agent will select actions by inputting the current state into the Q network and then identifying the state-action pair with the highest estimated Q value.
 The benefit of using neural networks to approximate Q-functions is that neural networks are able to generalize Q functions over unseen state-action pairs, whereas classic methods like TD-learning are not able to generalize [@DQN].
-But there a host of problems with getting neural-network-based value-learning agents to work in practice; see @DQN and @ddqn for more insight on these issues.   
-A notable concern with these methods is that they tend to suffer from bias which is introduced by fitting a value network to a target that incorporates an estimated value function [@ddqn]. 
+But there a host of problems with getting neural-network-based value-learning agents to work in practice; see @DQN and @van_hasselt_deep_2015 for more insight on these issues.   
+A notable concern with these methods is that they tend to suffer from bias which is introduced by fitting a value network to a target that incorporates an estimated value function [@van_hasselt_deep_2015]. 
 In review, a sketch of simple deep Q learning algorithm is shown in ALGORITHM.
 
 ## Actor-Critic
@@ -124,23 +128,23 @@ $$
 
 where $\hat{Q}$ is a value function estimated by the critic.
 The benefit of actor-critic algorithms is that they can balance the issues with bias and variance that are common with value-learning and policy gradient methods respectively [@suttonbarto].
-Consequently, actor-critic algorithms have achieved many of the state of the art results in model-free deep RL [@SAC; @TD3].  
+Consequently, actor-critic algorithms have achieved many of the state of the art results in model-free deep RL [@sac; @TD3].  
 A simple sketch of an actor critic algorithm is shown in ALGORITHM.
 
-## Exploration 
+# Exploration 
 
 Exploration is a central component of any deep RL algorithm, and there are a variety of exploration algorithms that an agent can employ.
 In the sections above, we procedurally mentioned that the agent must select actions during training.
 Yet, how the agent selects these actions is very important because if an agent fails to explore the state-action space well, the agent will likely learn a bad policy.
 In this section, we will go over some common exploration algorithms and try to provide some practical insight. 
 
-### Epsilon-Greedy Algorithm
+## Epsilon-Greedy Algorithm
 
 The Epsilon-Greedy algorithm takes a very simple approach towards balancing exploration and exploitation. 
 For some $\epsilon \in (0, 1)$ and typically close to 0, an Epsilon-Greedy agent exploits the best available action with probability $1-\epsilon$ and explores a random action with probability $\epsilon$.
 While simplistic, this algorithm has been effective on a range of problems notably @DQN.
 
-### Boltzmann Exploration
+## Boltzmann Exploration
 
 For algorithms that learn a value function, agents can select actions by sampling from a Boltzmann or Softmax distribution that is constructed over the value function.
 So if the agent is doing Q-learning, the probability for the agent to select the action, $a \in \mathcal A$, would be:
@@ -152,18 +156,18 @@ where $\tau \in (0, \infty)$ is called the temperature parameter and controls ho
 The advantage of using Boltzmann exploration is that since the probability of selecting an action is proportional to how good the agent thinks that action is, the agent can explore the space more efficiently than with Epsilon-Greedy exploration.
 This is because an Epsilon-Greedy agent will explore all actions equally including low reward yielding actions; in contrast, with Boltzmann exploration, an agent will spend less time on these unpromising actions.
 
-### Noise-Based Exploration
+## Noise-Based Exploration
 
 Injecting noise into an agent's action, observation or parameter space is another effective exploration method.
 With noise addition, there are a lot design choices that can be made.
-For instance, noise can be sampled from different distributions [@parameter_space], scaled adaptively based on the policy[@parameter_space], or the noise can be sampled according to the state that the agent observes [@gsde].
-There are a variety of reasons why one would want to use these variations of noise injection, which are well discussed in @parameter_space and @gsde.
+For instance, noise can be sampled from different distributions [@plappert_parameter_2018], scaled adaptively based on the policy[@plappert_parameter_2018], or the noise can be sampled according to the state that the agent observes [@gsde].
+There are a variety of reasons why one would want to use these variations of noise injection, which are well discussed in @plappert_parameter_2018 and @gsde.
 
-### Entropy-based Exploration
+## Entropy-based Exploration
 
 An increasingly common way to achieve exploration is by adding a function of the entropy term, $H(\pi(a|s))$, to the loss function of the policy network.
 While this introduces some bias as the agent no longer exclusively maximizes cumulative rewards, entropy-based exploration has been effective in practice at improving exploration, resulting in better agent performance.
-@understandingtheimpactofentropy gives a very complete discussion on the benefits of using entropy.
+@ahmed_understanding_2019 gives a very complete discussion on the benefits of using entropy.
 
 There is a multitude of exploration algorithms that we have not touched on, so it is important to say that the algorithms mentioned above are generally suited for dense reward or "easy-exploration" problems.
 For "hard-exploration" problems -- for instance, environments that have very few state-action pairs with significant rewards, like a maze, are seen as hard-exploration problems --, more intricate and bespoke exploration algorithms tend to outperform.
@@ -192,8 +196,8 @@ In practice, using a large replay buffer, on the order of millions of transition
 
 Reinforcement learning is a huge, constantly evolving field, and we've only touched on a small sliver of RL in our study.
 In this section, we briefly introduced some of the major design decisions that are made with model-free deep RL algorithms, but there are many more decisions that are made with current state of the art algorithms.
-If you are interested in learning more about model-free deep RL, then reading papers like @SAC, @DQN and @PPO, are good places to start.
-We have also not given any space to discuss model-based or gradient-free techniques which also warrant attention -- see @mbpo and @deep_neuro for more here.
+If you are interested in learning more about model-free deep RL, then reading papers like @sac, @DQN and @ppo, are good places to start.
+We have also not given any space to discuss model-based or gradient-free techniques which also warrant attention -- see @mbpo and @salimans_evolution_2017 for more here.
 A benefit of model-free deep RL over these other approaches is that there has been more of a general focus on model-free deep RL, so there are widely available packages like Stable Baselines and TensorFlow Agents which implement model-free deep RL; but the focus on model-free algorithm could easily change in coming years.
 Deep RL has only become established in the last decade, and with its amount of unanswered research questions, deep RL may evolve significantly in the near future.
 
