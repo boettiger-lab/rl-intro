@@ -65,13 +65,13 @@ To date, the problems considered by RL research have largely been drawn from exa
 Complex environmental problems share many similarities to these tasks and games: the need to plan many moves ahead given a large number of possible outcomes, to account for uncertainty and to respond with contingency to the unexpected.
 RL agents typically develop their strategies by interacting with simulators, a practice that should not be unsettling to ecologists since learning from simulators is common across ecology.
 Rich, processes-based simulations such as the SORTIE model in forest management [@sortie], Ecopath with Ecosim in fisheries management [@ecopath], or climate change policy models [@dice] are already used to explore scenarios and inform ecosystem management. 
-Even simpler simulators are frequently employed throughout ecology to guide understanding and response.
+Even simpler simulators are frequently employed throughout ecology to guide understanding and response. <!-- ML: I think this sentence could be dropped -->
 Decision-theoretic approaches based on optimal control techniques can only find the best strategy in the simplest of ecological models; the so called "curse of dimensionality" makes problems with a large number of states or actions intractable by conventional methods [@Possingham2006; @Marescot2013].
 Neural-network-based RL techniques, referred to as *deep RL*, have proven particularly effective in problems involving complex, high-dimensional spaces that have previously proven intractable to classical methods.
 We believe that the application of RL methods to simulations of ecological processes will open the door to a new paradigm for tackling tough environmental change problems.
 We also believe that such a transformation could bring risks and pitfalls comparable and varied as its solutions.
 
-In this paper, we draw on examples from fisheries management, ecological tipping points, and wildfire spread to illustrate how deep RL techniques can successfully discover optimal solutions to previously solved management scenarios and discover highly effective solutions to unsolved problems.
+In this paper, we draw on examples from fisheries management, ecological tipping points, and wildfire spread to illustrate how deep RL techniques can successfully discover optimal solutions to previously solved management scenarios and discover highly effective solutions to unsolved problems. <!-- ML: If we are dropping wildfire example, we'll need to cut wildfire mentions here-->
 Our simplest example approaches the known optimal solution for a classic fisheries management problem with no prior knowledge of the underlying model.
 Our second example considers ecosystem management under slow environmental degradation: a scenario which is not amenable to classic optimization methods such as dynamic programming.
 In this case there is no existing optimal solution to compare against, but an appropriately tuned RL agent can out-perform a sensible rule-of-thumb response.
@@ -109,7 +109,7 @@ Throughout this process, the agent's behavior is codified into what is called a 
 
 ## Designing and building an environment
 
-An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an observation of its current *state* and an associated *reward* as output.
+An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an observation of the environment's current *state* and an associated *reward* as output.
 In contrast to classical approaches [@Marescot2013], there are few restrictions on what comprises a state or action. 
 States and actions may be continuous or discrete, completely or partially observed, single or multidimensional.
 The main focus of building an RL environment, however, is in the environment's transition dynamics and reward function.
@@ -119,7 +119,7 @@ For example, we can set the transitions to be deterministic or stochastic.
 We can also specify the reward function to be *sparse*, whereby a positive reward can only be received after a long sequence of actions, e.g. the end point in a maze.
 In other environments, an agent may have to learn to forgo immediate rewards (or even accept an initial negative reward) in order to maximize the net discounted reward as we illustrate in examples here.
 
-
+<!-- ML: I have some qualms about this figure; I think it can do a bit more to display what is going on. Like perhaps can put dashed arrows within a trial to show that there is continuity between episodes but not continuity across trials. We could also put a dashed box around the trials to this effect as well. In these dashed boxes, we could put smaller hyperparameter boxes to convey that different trials have distinct hyperparameters. I am also not a fan of the object used for neural networks. -->
 \begin{figure}
 \includegraphics[width=\linewidth]{fig1.pdf}
 \caption{Deep Reinforcement Learning:  An artificial intelligence \emph{agent} uses a \emph{neural network} to select an \emph{action} in response to an \emph{observation} of the \emph{environment}, receiving a \emph{reward} (or punishment) from the environment as a result.  The agent is \emph{trained} to maximize the reward through the experience of trying different actions over repeated \emph{epsiodes} of interacting with the environment.  Over the course of training, the agent adjusts parameter weights on the neural network as it learns which actions lead to the best cumulative rewards. A researcher may \emph{tune} an agent by considering iterative trials that train different agents with different \emph{hyperparameters}, such as different neural network architectures.  An agent trained with the most successful combination of hyperparameters can then be tested in an evaluation environment.}
@@ -130,8 +130,9 @@ The `gym` framework defines a standard interface and methods by which a develope
 This allows the design and application of software agents which can interact and learn in that environment without knowing anything about the environment's internal details.
 The `gym` Python module created by OpenAI also provides over 100 pre-built environments that serve as benchmark problems against which new RL algorithms can be tested.
 The `gym` framework is now recognized by all major software frameworks for writing RL algorithms (see Appendix, 'Deep RL Frameworks').
-While this library of environments span a range of difficulties from classic control problems that can be solved in closed form to complex three-dimensional robotics simulators, they include no examples of ecological or biological problems.
+While this library of environments spans a range of difficulties from classic control problems that can be solved in closed form to complex three-dimensional robotics simulators, they include no examples of ecological or biological problems.
 We use the `gym` framework to turn several existing ecological models into valid environmental simulators that can similarly be used in any RL framework.
+In Appendix C, we give detailed instruction on how an OpenAI `gym` is constructed.
 
 ## Training and tuning an agent
 
@@ -153,11 +154,12 @@ Hyperparameter tuning, however, is a necessary step in evaluating the performanc
 
 
 # Formal RL Concepts
+<!-- ML: As I read this section, I have some concerns on this coming off as overly repetitive with the parts above. -->
 
-In this brief section, we will introduce the concept of the RL environment as a POMDP; we will then use POMDP definitions to define the RL objective.
-Since all RL algorithms are either directly or indirectly maximizing the RL objective, understanding the RL objective is crucial to understanding how RL algorithms work. <!-- ML: this seems like an obvious sentence to me but am stuck on it atm so revisions welcomed-->
+In this brief section, we will introduce the concept of the RL environment as partially observable Markov decision process (POMDP); we will then use POMDP definitions to define the RL objective.
+Since all RL algorithms are either directly or indirectly maximizing the RL objective, understanding the RL objective is critical to understanding how RL algorithms work. <!-- ML: this seems like an obvious sentence to me but am stuck on it atm so revisions welcomed-->
 
-The reinforcement learning environment is typically formalized as a discrete-time partially observable Markov decision process (POMDP).
+The reinforcement learning environment is typically formalized as a discrete-time POMDP.
 A POMDP is a 7-tuple that consists of the following: 
 
 - $\mathcal{S}$: a set of states called the state space
@@ -227,13 +229,11 @@ If an agent knows the value function, then the agent can find the optimal action
 The class of algorithms that exclusively try to learn a value function are called *value-based* methods.
 In contrast, *policy gradient* algorithms exclusively learn the policy.
 And, lastly, *actor-critic* algorithms attempt to learn both a policy and value function, whereby the value function is used to inform the agent on the goodness of a selected action.
-There is a handful of advantages and disadvantages for each of these approaches that we will not get into in depth -- for more, see the appendix; yet, the main point of divergence comes from the bias-variance trade-off [@suttonbarto].
-Generally, policy gradient algorithms tend to struggle with high variance, value-based methods tends to be biased while actor-critic methods balance these two concerns [@suttonbarto; @qbias].
-<!-- ML: I think we can keep the bias-variance discussion in the appendix and cut these 2 sentences-->
+We go into greater depth on these different classes of RL algorithms in Appendix A.
 
 Neural networks become useful in RL when the environment has a large state-action space, which happens frequently with realistic decision-making problems. 
 Classic RL algorithms, like policy iteration, value iteration and TD-learning, fail when the state-action space is large, e.g. when the possible states and actions can not be represented in a tractable table [@suttonbarto].
-Yet, over the last 10 years, researchers have shown that neural network-based RL algorithms can perform well on previously unsolvable environments.
+Yet, over the last 10 years, researchers have shown that neural network-based RL algorithms can perform well on previously unsolvable environments [@DQN, @alphaGo2016].
 Neural networks have been widely useful in reinforcement learning because neural nets have the property of being general function approximators [@universalapproximators].
 Whenever there is a need for an agent to approximate some function, say a policy function or value function, neural networks can be used in this capacity.
 While there are other function approximators that can be used in RL, e.g. Gaussian processes [@grande14], neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@briefsurveydrl].
@@ -244,17 +244,17 @@ Over the course of training, RL agents will engage in trial and error learning, 
 Occasionally, the agent will need to propose exploratory actions that may result in higher rewards than previously seen. 
 Yet, the agent may also need to focus on past sequences of actions which may require marginal improvement to reach optimality.
 The fundamental issue is that it is very difficult for the agent to know when it should engage in explorative or exploitative behavior. 
-This *exploration-exploitation dilemma* is an open research problem [@berger-tal_exploration-exploitation_2014], and current deep RL algorithms take a range of approaches towards this dilemma -- in the appendix, we discuss some of the more specific exploration algorithms.
-Yet, generally, the manner in which RL algorithms explore depend on whether the algorithms are *on-policy* or *off-policy*.
+This *exploration-exploitation dilemma* is an open research problem [@berger-tal_exploration-exploitation_2014], and current deep RL algorithms take a range of approaches towards this dilemma -- in Appendix A, we discuss some of the more specific exploration algorithms.
+Yet, overall, the manner in which RL algorithms explore depend on whether the algorithms are *on-policy* or *off-policy*.
 The distinction between on and off-policy evaluation comes from what policy the agent is using to select actions during training.
-For off-policy algorithms, the agent uses a policy during training that can be different from the policy that the agent will use during evaluation; while in on-policy algorithms, the agent uses the same policy in training as the agent will use during evaluation.
-There are trade-offs to consider in using an off-policy or on-policy learner, which we will further discuss in the appendix.
+For off-policy algorithms, the agent uses a policy during training that can be different from the policy that the agent will use during evaluation; while in on-policy algorithms, the agent updates the same policy in training as the agent will use during evaluation.
+There are trade-offs to consider in using an off-policy or on-policy learner, which we will further discuss in the Appendix A.
 
 On top of the aforementioned distinctions for model-free, deep RL algorithms, there are more algorithm design choices that can be made. 
 One important point of divergence is whether the agent learns a deterministic or stochastic policy.
 Another is whether the algorithm is formulated to work on a discrete, continuous or both a discrete and continuous state and action space.
-In table 1, we provide some of the commonly used RL algorithms and delineate some of their important characteristics.
-In the appendix, we will introduce the considerations one should make in deciding whether an algorithm is well suited for a specific environment. 
+In table 1, we provide some of the commonly used RL algorithms and delineate some of their important characteristics. <!-- ML: Have we dropped the table? -->
+In Appendices A and B, we will introduce the considerations one should make in deciding whether an algorithm is well suited for a specific environment. 
 
 
 
@@ -281,7 +281,7 @@ txtcolor <- "#586e75"
 The first example focuses on the important but well-studied problem of setting harvest quotas in fisheries management.
 Determining fishing quotas is both a critical ecological issue [@Worm2006; @Worm2009; @Costello2016], and also a textbook example that has long informed the management of renewable resources within fisheries and beyond [@Clark1990].
 Given a population growth model that predicts the total biomass of a fish stock in the following year as a function of the current biomass, it is straight forward to determine what biomass corresponds to the maximum growth rate of the stock, or $B_{\textrm{MSY}}$, the biomass at Maximum Sustainable Yield (MSY) [@Schaefer1954].
-When the population growth rate is stochastic, the problem is slightly harder to solve, as the harvest quota must constantly adjust to the ups and downs of stochastic growth, but it is still possible to show the optimal strategy merely seeks to maintain the stock at $B_{\textrm{MSY}}$, adjusted for any discounting of future yields [@Reed1979].
+When the population growth rate is stochastic, the problem is slightly harder to solve, as the harvest quota must constantly adjust to the ups and downs of stochastic growth, but it is still possible to show the optimal strategy merely seeks to maintain the stock at $B_{\textrm{MSY}}$, adjusted for any discounting of future yields [@Reed1979]. <!-- ML: Will probably want to de-emphasize this given the momentum to sigma of 0 -->
 
 This provides a natural first benchmark for deep RL approaches, since we can compare the RL solution to the mathematical optimum directly.
 The problem is also of interest because the RL approach can be extended to consider ecological dynamics that either surpass the complexity possible with SDP methods, or violate assumptions of such classical approaches).
@@ -300,7 +300,7 @@ A step-by-step walk-through for training both agents on this environment is prov
 We compare the resulting management, policy, and reward under either RL agent to that achieved by the optimal management solution [Fig 2].
 Despite having no knowledge of the underlying model and clear differences in the resulting strategies, both RL agents learn enough to achieve nearly optimal performance.
 
-<!-- ML: I'm have some uneasiness about this figure. Is A2C tuned? I think we'd probably want to do tuning and training with a set seed so that everything is reproducible?  -->
+
 ```{r message=FALSE, include=FALSE}
 sims_df <- read_csv( "figs/sims_df.csv")
 policy_df <- read_csv("figs/policy_df.csv")
