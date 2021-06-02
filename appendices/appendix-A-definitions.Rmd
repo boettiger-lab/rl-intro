@@ -36,6 +36,10 @@ header-includes:
 output: 
   rticles::arxiv_article:
     keep_tex: true
+    extra_dependencies:
+      algorithm: null
+      algpseudocode: noend
+
 ---
 
 
@@ -70,7 +74,23 @@ The intuition behind this approximation is exactly what we want: the agent will 
 In practice, however, the empirical return tends to have high variance, resulting in very noisy gradients that impedes learning [@suttonbarto].
 To avoid this issue, many policy gradient algorithms replace the empirical return with a return estimator that has lower variance [@suttonbarto].
 
-A sketch of a simple policy gradient algorithm is shown in ALGORITHM.
+A sketch of a simple policy gradient algorithm is shown in Algorithm 1. 
+
+\begin{algorithm}
+\label{alg:policy_gradient}
+\caption{Vanilla On-policy Policy Gradient Algorithm}
+\begin{algorithmic}[1]
+    \State Input initial policy parameters $\theta_0$
+    \For{$k = 0, 1, 2, \dots$}
+        \State Generate a trajectory $\{s_i, a_i, r_i\}$ by following an exploration algorithm with the policy $\pi_k$ (e.g. $\epsilon$-greedy)
+        \For{$t = 0, 1, \dots, T-1$}
+            \State $G \gets \sum_{j=t}^{T} \gamma^{j-t} r_j$
+            \State $\theta_{k+1} \gets \theta_k + \alpha \gamma^t G \, \nabla \log \pi_{\theta_k}(a_t | s_t)$
+        \EndFor
+    \EndFor
+\end{algorithmic}
+\end{algorithm}
+
 
 ## Value-based Methods 
 Another way to approach the RL problem is by estimating a value function, and then using the value function to retrieve a policy. 
@@ -114,7 +134,22 @@ After the Q-function neural network or Q-network has been fitted, the agent will
 The benefit of using neural networks to approximate Q-functions is that neural networks are able to generalize Q functions over unseen state-action pairs, whereas classic methods like TD-learning are not able to generalize [@DQN].
 But there a host of problems with getting neural-network-based value-learning agents to work in practice; see @DQN and @van_hasselt_deep_2015 for more insight on these issues.   
 A notable concern with these methods is that they tend to suffer from bias which is introduced by fitting a value network to a target that incorporates an estimated value function [@van_hasselt_deep_2015]. 
-In review, a sketch of simple deep Q learning algorithm is shown in ALGORITHM.
+In review, a sketch of simple deep Q learning algorithm is shown in Algorithm 2.
+
+\begin{algorithm}
+\caption{Vanilla On-policy Q-learning Algorithm}
+\begin{algorithmic}[1]
+    \State Input initial Q-network parameters $\phi_0$
+    \For{$k = 0, 1, 2, \dots$}
+        \For{$t = 0, 1, \dots, T-1$}
+            \State Choose the action $a_t$ using $Q_{\phi_k}$ according to an exploration algorithm (e.g. $\epsilon$-greedy)
+            \State Take action $a_t$ and observe $r_{t}, s_{t+1}$
+            \State $ \mathcal{E} \gets r_t + \gamma \, \underset{a}{\text{max}} \, Q_{\phi_{k}}(s_{t+1}, a) - Q_{\phi_{k}}(s_t, a_t)$
+            \State  $\phi_{k+1} \gets \phi_{k} - \alpha \nabla_{\phi_k} \, \mathcal{E}^2$
+        \EndFor
+    \EndFor
+\end{algorithmic}
+\end{algorithm}
 
 ## Actor-Critic
 Actor-critic algorithms integrate the main components from both value-learning and policy gradient based methods.
@@ -129,7 +164,22 @@ $$
 where $\hat{Q}$ is a value function estimated by the critic.
 The benefit of actor-critic algorithms is that they can balance the issues with bias and variance that are common with value-learning and policy gradient methods respectively [@suttonbarto].
 Consequently, actor-critic algorithms have achieved many of the state of the art results in model-free deep RL [@sac; @TD3].  
-A simple sketch of an actor critic algorithm is shown in ALGORITHM.
+A simple sketch of an actor critic algorithm is shown in Algorithm 3.
+
+\begin{algorithm}
+\caption{Vanilla On-policy Actor-Critic Algorithm}
+\begin{algorithmic}[1]
+    \State Input initial policy and Q-network parameters $\theta_0, \phi_0$
+    \For{$k = 0, 1, 2, \dots$}
+        \State Generate a trajectory $\{s_i, a_i, r_i\}$ by following an exploration algorithm with the policy $\pi_k$ (e.g. $\epsilon$-greedy)
+        \For{$t = 0, 1, \dots, T-1$}
+            \State $ \mathcal{E} \gets r_t + \gamma \, \underset{a}{\text{max}} \, Q_{\phi_{k}}(s_{t+1}, a) - Q_{\phi_{k}}(s_t, a_t)$
+            \State $\phi_{k+1} \gets \phi_{k} - \alpha \nabla_{\phi_k} \, \mathcal{E}^2$
+            \State $\theta_{k+1} \gets \theta_k + \alpha \, \nabla \log \pi_{\theta_k}(a_t | s_t) Q_{\phi_k}(s_t, a_t)$
+        \EndFor
+    \EndFor
+\end{algorithmic}
+\end{algorithm}
 
 # Exploration 
 
@@ -177,18 +227,18 @@ We will not go over these more advanced exploration algorithms but a good exampl
 # Replay Buffers vs. Parallel Workers
 
 Another important algorithm design choice involves how an RL agent collects and samples past experiences.
-The main issue that arises from sampling past experiences is correlation of samples [@DQN].
+A significant issue that arises from sampling past experiences is correlation of samples [@DQN, @schaul_prioritized_2016].
 In the simple case that we have an RL agent that interacts with the environment for a few time steps and then uses this trajectory for its learning update, these samples, since they come from the same trajectory, will be strongly correlated.
-Learning from correlated samples is undesirable since this can result in agents getting stuck in local optima, which will impede learning.
+Learning from correlated samples is undesirable since this can result in agents getting stuck in local optima, which will impede learning, but there are other reasons why learning from a single trajectory causes problems -- see @schaul_prioritized_2016 and @DQN for more insight here.
 There are two commonly used solutions to this problem of correlated samples: Replay Buffers and Parallel Workers.
-If the agent is off-policy, the agent can employ a replay buffer.
+If the agent is off-policy, the agent can employ a replay buffer -- see @DQN for a now classic example for a replay buffer-based agent.
 With a replay buffer, the agent will save state-action-reward transitions in the replay buffer, and during learning updates, the agent will sample transitions from the replay buffer.
 Since the replay buffer can be arbitrarily large and thus store transitions from numerous trajectories, sampling from the buffer will likely produce transitions that cover a broader region in state-action space than if the agent were to sample from one trajectory.
-On-policy agents, however, cannot use a replay buffer since these agents are not allowed to use samples from a policy different than the policy they are trying to improve -- note that in a replay buffer, it is possible to have samples from different policies.
-The solution to de-correlate samples for on-policy agents is to use parallel workers, whereby multiple workers explore the environment according to the current policy. 
+On-policy agents, however, cannot use a replay buffer since these agents are not allowed to use samples from a policy different than the policy they are trying to improve -- replay buffers are generally large enough to hold transitions from old policies.
+The solution to de-correlate samples for on-policy agents is to use parallel workers, whereby multiple workers explore the environment according to the current policy.
 Due to stochasticity that can come from exploration and the environment, the workers will go on different trajectories in state-action space.
 The on-policy agent will collect samples across these workers in a learning step, and then repeat the process of collecting and sampling transitions with an updated policy.
-Once again, the idea behind using parallel workers is that sampling over multiple trajectories will de-correlate samples.
+The idea behind using parallel workers is that sampling over multiple trajectories will de-correlate samples -- see @a3c on more details here.
 In practice, using a large replay buffer, on the order of millions of transitions, or a modest number of parallel, around 4-16 for simple RL problems, is very important to achieve good agent performance for off-policy and on-policy algorithms respectively.
 
 
@@ -203,5 +253,6 @@ Deep RL has only become established in the last decade, and with its amount of u
 
 
 # References
+
 ----
 
