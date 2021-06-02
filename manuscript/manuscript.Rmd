@@ -491,68 +491,23 @@ Many of our most realistic ecological models exist only as numerical simulations
 
 <!-- Solving 'real' problems will be hard -->
 Successfully applying RL to complex ecological problems is no easy task.
-The flexibility of the approach makes it relatively straightforward to include realistic biology and environmental science in framing an RL problem, but training an RL agent to reach an acceptable level of performance is another task.
+The flexibility of the approach makes it relatively straightforward to include realistic biology and environmental science in framing an RL problem.
+Yet, even on relatively uncomplicated environments, training an RL agent can be more challenging than expected due to an entanglement of reasons like hyperparameter instability and poor exploration that can be very difficult to resolve [@drlthatmatters].
 As the examples we have presented illustrate, it is important to begin with simple problems, including those for which an optimal strategy is already known.
 Such examples provide important benchmarks against which to calibrate the performance, tuning and training requirements of RL,
 and can easily be extended into more complex problems once RL agents can master the basics.
-Finding acceptable policies even in relatively simple problems may prove beyond the reach of existing algorithms and available computing power.
-<!-- Marcus is working on tightening up these next few paragraphs, precisely which issues actually get highlighted TBD-->
-In seeking either to adopt or assess a deep RL-based approach to an ecological issue, we highlight three key issues that are important to bear in mind: instability, interpretability, and reward design.
+In the case that someone trains an agent to perform well on a realistic environment, there will still be a range of open questions in using this agent to inform decision-making: 
 
+- Since deep neural networks lack transparency [@castelvecchi_can_2016], can we be confident that the deep RL agent will generalize its past experience to new situations?
 
-<!-- reason 1: instability-->
-<!-- ML: I think this needs to be tightened up a bit-->
-One leading challenge for deep RL today is the problem of instability.
-RL agents trained on narrowly defined environments may perform poorly even when the environment is altered in seemingly trivial way, such as a re-scaling of parameters.
-To avoid this, researchers should seek to both train and evaluate agents against a range of environments representing different parameters or processes dynamics.
-Stable performance can be challenging even when using the same environment.
-For a range of reasons, including high variance [@cite] and the exploration vs. exploitation trade-off [@cite], model-free and model-based algorithms tend to have unstable performance on environments with non-tabular state-action spaces [cite RL that matters].
-For instance, it is not uncommon to observe vastly different behavior when an agent is initialized with different random seeds [cite ibid].
-Such unstable behavior can often be avoided by alternate selection of hyperparameters, so researchers should consider stability as well as performance during hyperparameter selection.
-The choice of RL algorithm, design of the reward function, and duration of training can also influence stability.
+- Given that there have been many examples of reward misspecification leading to undesirable behavior [@hadfield-menell_inverse_2020], what if we have selected an objective that unexpectedly causes damaging behavior?
 
-
-<!--
-Under some conditions, RL agents can prove adept at _transfer learning_, in which an agent trained in one environment performs well under a different environment.
--->
-<!-- if we're really recommending 'testing' for stability, maybe we need to demo that in the appendix-->
-
-<!-- reason 2: interpretability -->
-<!-- ML: Re our OU talk, might be worth saying that this is a barrier to adoption? If we want to ultimately use these RL agents to make important decisions, it would be hard to swallow us blindly using them without having any sense to what is going on. -->
-Interpretability is a common challenge at the adoption of most ML methods [@cite]. 
-Although there have been some attempts to increase the transparency of RL agents that use neural network as function approximators [cite], it is still very difficult to explain the behavior of RL-trained agents.
-As our examples have illustrated, it may be possible to gain intuition on an agent's behavior by visualizing the action selected against each possible state, though this becomes more difficult in large problems.
-Another challenge is that Deep RL algorithms are very sample inefficient, all though progress is being made to improve this [@cite]. <!-- ML: I think we can cut this sentence, mentionned it in passing earlier-->
--->
-
-
-<!-- reason 3: reward design -->
-<!-- ML: I'll take a pass at this paragraph in a new branch. I think it would be useful to put terms on stuff in here, like reward shaping and reward hacking which we are talking around. -->
-An issue that is central to any applied optimization problem is using the right objective.
-There have been many examples in which explicit reward design goes very wrong [cite].
-And for ecological systems, which are often very complex and impossible to fully observe, it seems that bad reward design is quite likely.
-Moreover, specifying a reward function for conservation brings up various ethical concerns -- e.g. who gets to specify the reward function and will the values of the greater community be represented in the reward function.
-RL researchers often introduce modified reward functions during training that help an agent perform better on the original objective [@cite].
-This approach is particularly common when rewards are sparse, such as in a game of Chess where the only objective that counts is whether or not you win, but during training, an RL algorithm may reward the agent for intermediate steps such as capturing a piece.
-
-<!--
-One recently proposed framework to overcome challenges with explicit reward design is called AI alignment, wherein the agent observes humans, infers the preferences of humans and then acts as to satisfy human preferences.
-There is a definite need for exploration of the ethics of using DRL for conservation.
--->
-<!-- reason 4/additional reasons, like sparse rewards -->
-<!-- ML: I don't know if this paragraph is adding that much. Since we talk about sparsity in reward design, i think we can add a sentence or 2 there that conveys the message here.-->
-Ultimately, we anticipate that getting deep RL to work well on fully detailed conservation decision-making problems will be challenging.
-Beyond typically having large state-action spaces for agents to explore, conservation problems tend to have sparse reward structures.
-E.g. rarely does an action in conservation lead to immediate rewards; instead, benefits are typically observed after actions have been performed.
-Sparse reward structures are challenging for DRL agents, because of the credit assignment problem [cite].
-To solve sparse reward environments, many researchers have employed customized algorithms to achieve better performance than standard DRL methods [cite Montezuma].
-For conservation, we anticipate that there will likely be a similar pattern, wherein bespoke RL methods will attain better performance than general methods.
 
 <!-- But never fear, hard problems have been solved before!-->
 Deep RL is still a very young field, where despite several landmark successes, potential far outstrips practice.
 Recent advances in the field have proven the potential of the approach to solve complex problems [@alphaGo2016; @alphaGoZero; @alphazero; @DQN], but typically leveraging large teams with decades of experience in ML and millions of dollars worth of computing power [@alphaGoZero].
 Successes have so far been concentrated in applications to games and robotics, not scientific and policy domains, though this is beginning to change [@protein_folding].
-Leading developers of new algorithms for deep RL benchmark the performance of their algorithms against such problems in part because simulations of games and robotic movement are readily available through open source frameworks designed to interface with RL algorithms [brockman2016], and performance can easily be compared against alternatives on public leaderboards [brockman2016].
+Leading developers of new deep RL algorithms benchmark the performance of their algorithms against such problems in part because simulations of games and robotic movement are readily available through open source frameworks designed to interface with RL algorithms [brockman2016], and performance can easily be compared against alternatives on public leaderboards [brockman2016].
 Iterative improvements to well-posed public challenges have proven immensely effective in the computer science community in tackling difficult problems, which allow many teams with diverse expertise not only to compete but to learn from each other [@netflix_prize; @imagenet].
 Advances in both computational power and algorithmic efficiency continue to reduce costs at a dramatic pace, significantly faster than Moore's law [@openai_costs].
 By working to develop similarly well-posed challenges as clear benchmarks, ecology and environmental science researchers may both be better able to replicate that collaborative, iterative success in cracking hard problems.
