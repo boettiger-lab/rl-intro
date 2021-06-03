@@ -290,7 +290,7 @@ Moreover, fisheries management is both an important global challenge in it's own
 For illustrative purposes, we consider the simplest version of the dynamic optimal harvest problem as outlined by [@Clark1973] (for the deterministic case) and [@Reed1979] (under stochastic recruitment).
 In short, the manager seeks to optimize the net present value (discounted cumulative catch) of a fishery, observing the stock size each year and setting an appropriate harvest quota in response.
 In the classical approach, the best model of the fish population dynamics must first be estimated from data, potentially with posterior distributions over parameter estimates reflecting any uncertainty.
-From this model, the optimal harvest policy -- that is, the a function which returns the optimal quota for each possible observed stock size -- can be determined either by analytic [@Reed1979] or numerical [@Marescot2013] methods, depending on the complexity of the model.
+From this model, the optimal harvest policy -- that is, the function which returns the optimal quota for each possible observed stock size -- can be determined either by analytic [@Reed1979] or numerical [@Marescot2013] methods, depending on the complexity of the model.
 In a RL approach, the model is instead replaced by a computer simulation, usually referred to as an "environment." The simplest simulation is merely an implementation of the estimated model itself.
 However, unlike an analytic or SDP solution that is derived directly from the estimated model, the RL approach makes no assumption about the precise functional form or parameter values underlying the dynamics -- it is in principle agnostic to the details of the simulation. <!-- ML: I think this sentence should be tightened up re RL, like one could use a model-based algorithm which uses an inputted model under the RL umbrella-->
 
@@ -420,14 +420,14 @@ fig_reward <- reward_df %>%
 fig_sims / ( fig_policy + fig_reward)
 ```
 
-The TD3-trained neural network agent proves far more successful in preventing chance transitions across the tipping point, consistently achieving a higher cumulative ecosystem service value across replicates than the steady-state strategy.
+The TD3-trained agent proves far more successful in preventing chance transitions across the tipping point, consistently achieving a higher cumulative ecosystem service value across replicates than the steady-state strategy.
 
 Examining the replicate management trajectories and corresponding rewards [Fig 3] reveal that the RL agent incurs significantly higher costs in the initial phases of the simulation, dipping the cumulative reward into negative territory on average and well below the reward realized by the simple steady-state strategy.
 This initial investment then begins to pay off -- by about the 200th time step the RL agent has surpassed the performance of the steady state strategy.
 The policy plot provides more intuition for the RL agent's strategy: at very high state values, the RL agent opts for no conservation action -- so far from the tipping point, no response is required.
 Near the tipping point, the RL agent steeply ramps up the conservation effort, and retains this effort even as the system falls below the critical threshold, where a sufficiently aggressive response can tip the system back into recovery.
 For a system at or very close to the zero-state, the RL agent gives up, opting for no action.
-Recall that the quadratic scaling of cost makes the rapid response of the TD3 algorithm much more costly to achieve the same net environmental improvement divided into smaller increments over a longer timeline.
+Recall that the quadratic scaling of cost makes the rapid response of the TD3 agent much more costly to achieve the same net environmental improvement divided into smaller increments over a longer timeline.
 However, our RL agent has discovered that the extra investment for a rapid response is well justified as the risk of crossing a tipping point increases.
 
 A close examination of the trajectories of individual simulations which cross the tipping point under either management strategy (see appendix B, fig S1, S2) further highlights the difference between these two approaches.
@@ -438,9 +438,8 @@ In the few replicates that experience a critical transition anyway, the RL agent
 Only 3 out of 100 replicates degrade far enough for the RL agent to give up the high cost of trying to rescue them.
 
 Such examination makes it clear how the RL agent's use of a more dynamic strategy out-preforms the steady-state strategy.
-The various kinks in the RL policy function also suggest that this solution is nevertheless surely not the optimal solution -- such features are typical of RL-based policies, where such spandral-like features from early experimentation may become baked into the long-term strategy if adjusting them has little improvement on the final reward.
+The various kinks in the RL policy function also suggest that this solution is nevertheless surely not the optimal solution -- such features are typical of RL-based policies, where such spandral-like features from early experimentation may become baked into the long-term strategy if adjusting them has little improvement on the final reward. <!-- ML: the parenthetical here I understand but I feel a little ehh on the word choice. I also don't know how to rephrase it -->
 Further tuning of hyper-parameters, increased training, alterations or alternatives to the training algorithm would likely be able to further improve upon this performance.
-<!-- ML: I think it might be confusing to introduce RNNs, maybe just say different architectures, maybe make a footnote.  CB: agree, revised above-->
 
 ## Unsolved environments: Wildfires and other examples
 
@@ -482,7 +481,7 @@ The examples presented here only scrape the surface of possible RL applications 
 The examples we have focused on are intentionally quite simple, though it is worth remembering that these very same simple models have a long history of relevance and application in both research and policy contexts.
 Despite their simplicity, the optimal strategy is not always obvious before hand, however intuitive it may appear in retrospect.
 In the case of the ecosystem tipping point scenario, the optimal strategy is unknown, and the approximate solution found by our RL implementation could almost certainly be improved upon.
-Even at it's best, an RL-trained agent can only be as good as the scenarios on which it has been trained.
+Even at it's best, an RL-trained agent can only be as good as the scenarios on which it has been trained. <!-- ML: A counterpoint here is that a model-based agent may learn a correct model that generalizes outside of the examples it has seen-->
 In these simple examples in which the simulation implements a single model, training is analogous to classical methods which take the model as given [@Marescot2013].
 But classical approaches can be difficult to generalize when the underlying model is unknown: alternative models may require a completely different approach.
 In contrast, the process of training an RL algorithm on a more complex problem is no different than the simple one: we only need access to a simulation which can generate plausible future states in response to possible actions.
@@ -496,7 +495,7 @@ Yet, even on relatively uncomplicated environments, training an RL agent can be 
 As the examples we have presented illustrate, it is important to begin with simple problems, including those for which an optimal strategy is already known.
 Such examples provide important benchmarks against which to calibrate the performance, tuning and training requirements of RL,
 and can easily be extended into more complex problems once RL agents can master the basics.
-In the case that someone trains an agent to perform well on a realistic environment, there will still be a range of open questions in using this agent to inform decision-making: 
+In the case that an agent has been trained to perform well on a realistic environment, there will still be a range of open questions in using this agent to inform decision-making: 
 
 - Since deep neural networks lack transparency [@castelvecchi_can_2016], can we be confident that the deep RL agent will generalize its past experience to new situations?
 
