@@ -444,12 +444,13 @@ Further tuning of hyper-parameters, increased training, alterations or alternati
 
 ## Unsolved environments: Wildfires and other examples
 
-One feature that most distinguishes RL from other approaches to decision theory (such as optimal control) is it's flexibility or ambition.
-While optimal control approaches typically require extensive simplifying assumptions such as discrete states or actions, deterministic dynamics or short time horizons, RL is scoped more ambitiously.
-Large, complex problems are still immensely challenging to RL, and existing RL approaches will frequently struggle to solve problems that can already be solved much more efficiently by other means.
-Nevertheless, deep RL approaches using neural network architectures have proven successful on problems that no amount of computational power would put into reach of purely conventional methods.
-Our previous examples have focused on relatively simple examples that can also be addressed at least approximately by conventional methods, and also permit RL-based solutions to be found relatively efficiently on commodity hardware.
-To better illustrate the generality of RL approach and more typical complexity of conservation problems, we now introduce a third example for which we have not yet found an effective policy using RL or classical methods.
+One feature that most distinguishes deep RL from other approaches to decision theory (such as optimal control) is its flexibility and scope.
+While optimal control approaches typically require extensive simplifying assumptions such as discrete states or actions, deterministic dynamics or short time horizons, deep RL is scoped more ambitiously.
+Large, complex problems are still challenging to RL, and existing RL approaches can easily struggle to solve problems that can already be solved much more efficiently by other means.
+Nevertheless, deep RL approaches have proven successful on problems that classical approaches could not solve despite immense computational resources -- e.g. deep RL  [@DQN, @alphago].
+Our previous examples have focused on relatively simple problems that can also be addressed at least approximately by conventional methods, and also permit RL-based solutions to be found relatively efficiently on commodity hardware.
+Yet, we also have developed 
+
 
 <!-- Marcus add ~ paragraph discussion of the fire gym, citing motivating examples, basic overview of the state space, action space and reward and a screenshot of the simulation as a figure? -->
 
