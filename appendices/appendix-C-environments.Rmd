@@ -31,14 +31,14 @@ output: rticles::arxiv_article
 
 # Defining an Environment
 
-In Deep Reinforcement Learning (RL), and _environment_ is a mathematical model, computer simulation, or real world situation with which the agent interacts.
+In Deep Reinforcement Learning (DRL), an _environment_ is a mathematical model, computer simulation, or real world situation with which the agent interacts.
 Defining an _environment_  requires 5 components: 
 
 1. Describe the states defining the environment
 2. Describe the possible actions available to the agent
-3. Update it's internal _state_ in response to the _action_ of the _agent_
+3. Update the environment's internal _state_ in response to the _action_ of the _agent_
 4. Provide the agent with an _observation_ of the new state 
-5. Provide the agent with a _reward_ based on the its state and the agent's action.
+5. Provide the agent with a _reward_ based on the environment's state and the agent's action.
 
 Mathematically, these actions can be expressed as functions: a _step function_ $f$ providing the new state, $s_{t+1}$ given the current state $s_t$ and the agent's most recent action $a_t$: 
 
@@ -52,7 +52,7 @@ and a reward $r_t$ given by a utility function $U$ of the current state and acti
 
 \[ r_t = U(s_t, a_t) \]
 
-This corresponds to the formal definition of a Partially Observed Markov Decision Process (POMDP), see main text and Appendix A.
+This corresponds to the formal definition of a Partially Observed Markov Decision Process (POMDP), see main text.
 
 
 
