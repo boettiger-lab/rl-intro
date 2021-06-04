@@ -441,12 +441,12 @@ Further tuning of hyper-parameters, increased training, alterations or alternati
 
 ## Unsolved environments: Wildfires and other examples
 
-One feature that most distinguishes deep RL from other approaches to decision theory (such as optimal control) is its flexibility and scope.
-While optimal control approaches typically require extensive simplifying assumptions such as discrete states or actions, deterministic dynamics or short time horizons, deep RL is scoped more ambitiously.
-Large, complex problems are still challenging to RL, and existing RL approaches can easily struggle to solve problems that can already be solved much more efficiently by other means.
-Nevertheless, deep RL approaches have proven successful on problems that classical approaches could not solve despite immense computational resources -- e.g. deep RL  [@DQN, @alphago].
-Our previous examples have focused on relatively simple problems that can also be addressed at least approximately by conventional methods, and also permit RL-based solutions to be found relatively efficiently on commodity hardware.
-Yet, we also have developed 
+The feature that most distinguishes deep RL from other approaches to decision theory (such as optimal control) is its scope.
+While optimal control approaches typically require extensive simplifying assumptions such as discrete states or actions, deterministic dynamics or short time horizons, deep RL can work on a much broader range of problems.
+Deep RL algorithms have proven successful on a range of problems that classical approaches could not solve despite immense computational resources -- e.g. deep RL can solve control problems with image-based observations that would be intractable with classical methods [@DQN]--; yet, getting deep RL to work in practice can be unexpectedly challenging and computationally intensive.
+Our previous examples have thus focused on relatively simple problems that can be addressed by conventional methods, and also permit RL-based solutions to be found relatively efficiently on commodity hardware.
+We have developed more conservation-based RL environments that range in difficulty to solve; an active list of these environments can be found at <https://boettiger-lab.github.io/conservation-gym/>.
+
 
 
 <!-- Marcus add ~ paragraph discussion of the fire gym, citing motivating examples, basic overview of the state space, action space and reward and a screenshot of the simulation as a figure? -->
