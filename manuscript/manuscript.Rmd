@@ -274,7 +274,7 @@ pal <- ggthemes::solarized_pal()(6)
 txtcolor <- "#586e75"
 ```
 
-## Sustainable harvest
+## Sustainable harvest \label{sec:fishery}
 
 The first example focuses on the important but well-studied problem of setting harvest quotas in fisheries management.
 Determining fishing quotas is both a critical ecological issue [@Worm2006; @Worm2009; @Costello2016], and also a textbook example that has long informed the management of renewable resources within fisheries and beyond [@Clark1990].
@@ -352,7 +352,7 @@ Likewise it is more difficult for TD3 to learn the appropriate harvest level at 
 Just as intuition would suggest, it is possible to devise alternative training schemes which may do a better job sampling the simulation dynamics at high stock levels.
 Training these agents in a variety of alternative contexts can improve there ability to generalize to other scenarios.
 
-## Ecological Tipping Points
+## Ecological Tipping Points \label{sec:tipping}
 
 Our second example focuses on a case for which we do not already have an existing, provably optimal policy to compare against.
 We consider the generic problem of an ecosystem facing slowly deteriorating environmental conditions which move the dynamics closer towards a tipping point [Fig 2].
@@ -441,11 +441,13 @@ Further tuning of hyper-parameters, increased training, alterations or alternati
 
 ## Additional Environments
 
-Deep RL algorithms have proven successful on a range of problems that classical approaches could not solve despite immense computational resources -- e.g. deep RL can solve control problems with image-based observations that would be intractable with classical methods [@DQN]--; yet, getting deep RL to work in practice can be unexpectedly challenging and computationally intensive.
-Our previous examples have thus focused on relatively simple problems that can be addressed by conventional methods, and also permit RL-based solutions to be found relatively efficiently on commodity hardware.
-We have developed more OpenAI `gym`s, which deal with a range of ecological control problems and pose a wider spectrum of difficulty; an active list of these gyms can be found at <https://boettiger-lab.github.io/conservation-gym/>.
-Examples of these additional gyms include a wildfire gym and an epidemic gym.
-Further, with the fishing and conservation environments we've detailed in this study, we've defined supplementary fishing and conservation environments that implement a variety of models that present more difficult control problems.
+Ecology holds many open problems for deep RL.  
+It is straight-forward to extend the simple environments presented here to reflect greater biological complexity, or to consider a host of more realistic decision scenarios.
+We provide an initial library of example environments at <https://boettiger-lab.github.io/conservation-gym>.
+Some environments in this library include a wildfire `gym` that poses the problem on wildfire suppression with a cellular automata model, an epidemic `gym` that examines timing of interventions to curb disease spread, as well as more complex variations of the fishing and conservation environments presented above.  
+
+
+
 
 
 # Discussion
