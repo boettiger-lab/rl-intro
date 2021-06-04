@@ -443,7 +443,7 @@ Further tuning of hyper-parameters, increased training, alterations or alternati
 
 Deep RL algorithms have proven successful on a range of problems that classical approaches could not solve despite immense computational resources -- e.g. deep RL can solve control problems with image-based observations that would be intractable with classical methods [@DQN]--; yet, getting deep RL to work in practice can be unexpectedly challenging and computationally intensive.
 Our previous examples have thus focused on relatively simple problems that can be addressed by conventional methods, and also permit RL-based solutions to be found relatively efficiently on commodity hardware.
-We have developed more OpenAI `gym`'s, which deal with a range of ecological control problems and pose a wider spectrum of difficulty; an active list of these gyms can be found at <https://boettiger-lab.github.io/conservation-gym/>.
+We have developed more OpenAI `gym`s, which deal with a range of ecological control problems and pose a wider spectrum of difficulty; an active list of these gyms can be found at <https://boettiger-lab.github.io/conservation-gym/>.
 Examples of these additional gyms include a wildfire gym and an epidemic gym.
 Further, with the fishing and conservation environments we've detailed in this study, we've defined supplementary fishing and conservation environments that implement a variety of models that present more difficult control problems.
 
