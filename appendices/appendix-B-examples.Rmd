@@ -36,6 +36,18 @@ output:
     keep_tex: true
 ---
 
+# Overview
+
+In this appendix, we provide examples with annotated code illustrating how to use recent deep RL algorithms
+to train RL agents to make decisions in two distinct ecological management scenarios: setting a harvest quota in a fishery, and managing conservation effort in the face of ecological tipping points.
+The approach illustrated here should be sufficient to reproduce the results presented in the main text,
+and should serve as an effective starting point for researchers seeking to apply deep RL to these simulation environments, 
+to other simulation environments we have built and continue to develop, or to their own environments.
+(Appendix C details the process of defining one's own `gym` environment from an ecological model). 
+This overview is neither a complete introduction to deep RL or a comprehensive analysis of RL solutions to these environments.
+
+
+
 ```{r knitr, include = FALSE}
 knitr::opts_chunk$set(echo=TRUE, message = FALSE, warning = FALSE,
                       fig.width = 7, fig.height = 4, cache = FALSE)
@@ -47,14 +59,28 @@ pal = ggthemes::solarized_pal()(8)
 txtcolor = "#586e75"
 ```
 
-# Building a simulation environment `gym`
 
-[@openai_gym]
+# Deep Reinforcement Learning in R
+
+Although all the necessary tooling for deep RL is most extensively implemented in Python, the R language is more familiar to most ecologists.
+Fortunately, modern bindings such as the `reticulate` package [@reticulate] make it straightforward to use these tools without ever leaving the R interface.
+In this appendix, we detail this "pure R" approach, as well as a "pure Python" approach.
+
+In the R based-approach, R functions take responsibility from the user for translating commands into Python code before it is executed, an approach commonly referred to as meta-programming.
+This still requires a local Python installation, which can be installed directly from R using the command `install_miniconda()` from the `reticulate` package in R.
+Alternately, users may prefer running the analysis inside a docker container.  
+The Rocker Project [@rocker] provides pre-built docker containers which include the necessary R and Python environments, as well as CUDA libraries required to take advantage of GPU-based acceleration on suitable architectures.
+This can be particularly useful for users running ML algorithms on remote servers.
+
+By using a cache of pre-trained agents distributed with this appendix, it should be possible to efficiently reproduce the results shown here on any recent laptop with the versions of software indicated.
+Reproducing the training of RL agents is more computationally intensive, and a more powerful multi-core CPU or CUDA-enabled GPU is recommended.
+Note that hardware differences are also a source of instability in the reproduciblity of RL training (see main text and Appendix A).
 
 
 # Deep Reinforcement Learning Frameworks
 
-At the time of writing, several major frameworks exist which provide convenient access to baseline algorithms commonly used in deep reinforcement learning.
+Rather than implement deep RL algorithms from scratch, we illustrate the use of one of the leading software frameworks for research and application of deep RL methods.
+At the time of writing, several major frameworks exist which provide reference implementations of the leading deep RL algorithms (see table 1 and Appendix A).
 While we do not seek to provide a comprehensive review of available frameworks, some familiarity with current frameworks can be helpful.
 Like many machine learning libraries, these frameworks are themselves each built around one of two popular machine learning libraries, PyTorch [@torch] or Tensorflow [@tensorflow], and all are based in Python.
 Existing frameworks we evaluated include Keras-RL [@keras-rl], Tensorflow Agents [@tensorflow-agents],  OpenAI Spinning Up [@spinningup] OpenAI Baselines, Stable-Baselines2 [@sb2], and Stable-Baselines3 [@sb3]. 
@@ -69,21 +95,10 @@ The examples here all use the Stable-Baselines3 framework, though researchers in
 Grand challenge problems will likely require significant development beyond the current algorithms and capabilities available in existing frameworks.
 
 
-# Deep Reinforcement Learning in R
-
-Although all the necessary tooling for RL is implemented in Python, the R language is more familiar to most ecologists.
-Fortunately, modern bindings such as the `reticulate` package [@reticulate] make it straightforward to use these tools without ever leaving the R interface.
-In this appendix, we detail this "pure R" approach, as well as a "pure Python" approach.
-
-In the R based-approach, R functions take responsibility from the user for translating commands into Python code before it is executed, an approach commonly referred to as meta-programming.
-This still requires a local Python installation, which can be installed directly from R using the command `install_miniconda()` from the `reticulate` package in R.
-Alternately, users may prefer running the analysis inside a docker container.  
-The Rocker Project [@rocker] provides pre-built docker containers which include the necessary R and Python environments, as well as CUDA libraries required to take advantage of GPU-based acceleration on suitable architectures.
-This can be particularly useful for users running ML algorithms on remote servers, as configuring R, Python, and CUDA environments appropriately can be challenging.  
-
+# Getting started
 
 Clone the repository <https://github.com/boettiger-lab/rl-intro>, e.g. using the New Project->From Version Control->Git menu in RStudio.
-From the project directory, we can then install all the necessary dependencies using `renv`, which helps ensure a reproducible environment of fixed versions of R packages and Python modules.
+From the project directory, we can then install all the necessary dependencies using `renv`, which helps ensure a reproducible environment of fixed versions of R packages and Python modules.  (Python users can install the dependencies listed in the repository's `requirements.txt` and run the corresponding python scripts found in the `python/` subidrectory instead).
 
 
 ```{r}
@@ -133,23 +148,23 @@ With few exceptions, the R code shown here can be re-written as python code by d
 
 ## Sustainable Harvest Quotas
 
-We begin by selecting an environment from `gym_fishing` by name, passing the optional parameter `sigma` to initialize the environment with multiplicative Gaussian environmental noise of sd of `0.1`.  
+We begin by selecting an environment from `gym_fishing`.  While we use default parameter values for this example, note that is possible to pass alternative parameterizations using additional optional arguments.
 
 ```{r }
 ## initialize the environment
-env = gym$make("fishing-v1", sigma = 0.1)
+env = gym$make("fishing-v1")
 ```
 
 <!-- Kari: the role neural networks play in RL is not very well explained in the paper, more detail there would probably make this part more intuitive --> 
 At the heart of each deep RL algorithm is a neural network or a collection of neural networks. The RL agent uses these networks to approximate a policy function and/or a value function. The policy function is the agent's mapping of states to actions -- i.e. the agent's strategy. Value functions attempt to evaluate the goodness of a state or state-action pair towards achieving the RL objective of maximizing cumulative rewards. 
 Confusingly, the parameters of a RL algorithm that detail the overall learning process are called _hyper-parameters_ while the parameters of a RL algorithm that are learned during training are called parameters. For example, the number of layers in a neural network is a hyper-parameter but a weight in the neural net is referred to as a parameter.
 Before training an agent, we must first specify the hyper-parameters; the algorithm's parameters are often randomly initialized.
-Each algorithm may have different hyper-parameters. `stable-baselines3` provides default values for all hyper-parameters based on the original papers that introduced the corresponding algorithms,
-for instance, the A2C algorithm originally described in @A2C.
-Here, we train an agent using the A2C algorithm using default hyper-parameter settings with a multi-layer perceptron policy and value network composed of two 64-neuron layers.
+Each algorithm may have different hyper-parameters. `stable-baselines3` provides default values for all hyper-parameters based on the original papers that introduced the corresponding algorithms.
+For example, here we will try the Proximal Policy Optimization (PPO), originally described in @PPO.
+Here, we train an agent using the PPO algorithm using default hyper-parameter settings with a multi-layer perceptron ('MlpPolicy') policy network and value network composed of two 64-neuron layers.
 
 ```{r}
-a2c = sb3$A2C('MlpPolicy', env, verbose=0L, seed = seed) # L indicates a (Long) integer, not floating point
+ppo = sb3$PPO('MlpPolicy', env, seed = seed) 
 ```
 
 
@@ -157,13 +172,13 @@ Training is the main computationally intensive process, which can take anywhere 
 Therefore, we save the trained agent to disk, and only execute the training method (`learn`) if no previously saved agent is found:
 
 ```{r}
-if(!file.exists("cache/a2c.zip")) {
+if(!file.exists("../python/cache/ppo.zip")) {
 
   # Train the agent for a fixed number of timesteps
-  a2c$learn(total_timesteps=300000L)
+  ppo$learn(total_timesteps=300000L)
   
   # Save our trained agent for future use
-  a2c$save("cache/a2c")
+  ppo$save("cache/ppo")
 }
 ```
 
@@ -173,7 +188,7 @@ Having saved our trained agent to disk (`cache/a2c.zip`), we can then re-load th
 
 ```{r}
 # Simulate management under the trained agent
-a2c = sb3$A2C$load("cache/a2c")
+ppo = sb3$PPO$load("cache/ppo")
 ```
 
 
@@ -205,7 +220,7 @@ Because these methods return additional information as well, a little extra sub-
 ```{r}
 for(i in 1:10){
   
-  out = a2c$predict(state)
+  out = ppo$predict(state, deterministic=TRUE)
   action = out[[1]]
   result = env$step(action)
   state = result[[1]]
@@ -230,6 +245,11 @@ Note that the `policyfn` method is another custom method and not part of the `gy
 ```{r}
 a2c_policy = env$policyfn(a2c, reps = 50L)
 ```
+
+
+## Improving performance by tuning:
+
+
 
 
 
