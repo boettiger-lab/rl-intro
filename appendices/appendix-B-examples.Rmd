@@ -451,7 +451,7 @@ state = env$get_state( x0 )
 for(i in 2:Tmax){
   
   # RL-recommended harvest action:
-  out = agent$predict(state, determinstic=TRUE)
+  out = agent$predict(state, deterministic=TRUE)
   action = out[[1]]
   
   # Record state and resulting action
