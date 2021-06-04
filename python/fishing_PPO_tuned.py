@@ -2,7 +2,7 @@ import numpy as np
 import stable_baselines3 as sb3
 from stable_baselines3.common.env_util import make_vec_env
 from torch import nn as nn
-
+import os
 import gym
 import gym_fishing
 
@@ -32,8 +32,9 @@ hyper = {
 # Create an agent
 agent = sb3.PPO("MlpPolicy", env, seed=seed, **hyper)
 # Train the agent
-agent.learn(total_timesteps=300000)
-agent.save("cache/PPO_tuned")
+if not os.path.exists("cache/PPO_tuned.zip"):
+    agent.learn(total_timesteps=300000)
+    agent.save("cache/PPO_tuned")
 
 # Evaluate the trained agent
 env = gym.make("fishing-v1")
