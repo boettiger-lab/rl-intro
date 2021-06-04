@@ -14,14 +14,14 @@ agent = sb3.PPO("MlpPolicy", env,seed=seed)
 
 # Train the agent
 agent.learn(total_timesteps=300000)
-agent.save("cache/PPO_untuned")
+agent.save("cache/ppo_untuned")
 
 # Evaluate the trained agent
-agent = sb3.PPO.load("cache/PPO_untuned")
+agent = sb3.PPO.load("cache/ppo_untuned")
 agent_sims = env.simulate(agent, reps=100)
 agent_policy = env.policyfn(agent, reps=5)
 
 # Plot results
-env.plot(agent_sims, "results/fishing_PPO_untuned.png")
-env.plot_policy(agent_policy, "results/fishing_PPO_untuned_policy.png")
+env.plot(agent_sims, "results/fishing_ppo_untuned.png")
+env.plot_policy(agent_policy, "results/fishing_ppo_untuned_policy.png")
 

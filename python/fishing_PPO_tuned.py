@@ -24,7 +24,6 @@ hyper = {
     "max_grad_norm": 0.7,
     "vf_coef": 0.4863551514846155,
      "policy_kwargs": {
-        "net_arch": [64, 64],
         "activation_fn": nn.ReLU,
     }
 }
@@ -32,17 +31,17 @@ hyper = {
 # Create an agent
 agent = sb3.PPO("MlpPolicy", env, seed=seed, **hyper)
 # Train the agent
-if not os.path.exists("cache/PPO_tuned.zip"):
+if not os.path.exists("cache/ppo_tuned.zip"):
     agent.learn(total_timesteps=300000)
-    agent.save("cache/PPO_tuned")
+    agent.save("cache/ppo_tuned")
 
 # Evaluate the trained agent
 env = gym.make("fishing-v1")
 
-agent = sb3.PPO.load("cache/PPO_tuned")
+agent = sb3.PPO.load("cache/ppo_tuned")
 agent_sims = env.simulate(agent, reps=100)
 agent_policy = env.policyfn(agent, reps=5)
 
 # Plot results
-env.plot(agent_sims, "results/fishing_PPO_tuned.png")
-env.plot_policy(agent_policy, "results/fishing_PPO_tuned_policy.png")
+env.plot(agent_sims, "results/fishing_ppo_tuned.png")
+env.plot_policy(agent_policy, "results/fishing_ppo_tuned_policy.png")

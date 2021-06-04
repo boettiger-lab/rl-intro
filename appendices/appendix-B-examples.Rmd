@@ -343,8 +343,9 @@ ppo_tuned = sb3$PPO("MlpPolicy",
                     "gae_lambda" = 0.92,
                     "max_grad_norm" = 0.7,
                     "vf_coef" = 0.4863551514846155,
+                    "use_sde" = TRUE,
                     "policy_kwargs" = list(
-                      "net_arch" = c(64L, 64L),
+                      "net_arch" = list(list(pi=c(64L, 64L), vf=c(64L, 64L))),
                       "activation_fn" = torch$nn$ReLU
                      )
                    )
@@ -451,7 +452,7 @@ state = env$get_state( x0 )
 for(i in 2:Tmax){
   
   # RL-recommended harvest action:
-  out = agent$predict(state, deterministic=TRUE)
+  out = agent$predict(state, deterministic = TRUE)
   action = out[[1]]
   
   # Record state and resulting action
