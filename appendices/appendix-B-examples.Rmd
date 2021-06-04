@@ -155,7 +155,7 @@ We begin by selecting an environment from `gym_fishing`.  While we use default p
 
 ```{r }
 ## initialize the environment
-env = gym$make("fishing-v1")
+env = gym$make("fishing-v1", sigma=0.1)
 ```
 
 
@@ -186,10 +186,12 @@ opt_policy = env$policyfn(opt)
 We can plot the resulting data.frames using standard `ggplot2` methods shown in the `R/plotting-helpers.R`, or in python using either the `plot` methods defined in `gym_fishing` or standard plotting libraries.
 
 ```{r}
-algos <- c("Optimal", "PPO", "PPO_tuned")
+# add a column indicating the model
+algos <- c("Optimal", "A2C")
 sims_df <- opt_sims %>% mutate(model = factor("Optimal", algos))
 policy_df <- opt_policy  %>% mutate(model = factor("Optimal", algos))
 
+# plot results as separate panels
 plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 ```
 
@@ -202,11 +204,13 @@ At the heart of each deep RL algorithm is a neural network or a collection of ne
 Confusingly, the parameters of a RL algorithm that detail the overall learning process are called _hyper-parameters_ while the parameters of a RL algorithm that are learned during training are called parameters. For example, the number of layers in a neural network is a hyper-parameter but a weight in the neural net is referred to as a parameter.
 Before training an agent, we must first specify the hyper-parameters; the algorithm's parameters are often randomly initialized.
 Each algorithm may have different hyper-parameters. `stable-baselines3` provides default values for all hyper-parameters based on the original papers that introduced the corresponding algorithms.
-For example, here we will try the Proximal Policy Optimization (PPO), originally described in @PPO.
-Here, we train an agent using the PPO algorithm using default hyper-parameter settings with a multi-layer perceptron ('MlpPolicy') policy network and value network composed of two 64-neuron layers.
+For example, here we will try the A2C actor-critic algorithm, an extension of the A3C algorithm originally described in @A2C.
+We train an agent using the A2C algorithm using default hyper-parameter settings (which correspond to those used in @A2C),
+using a multi-layer perceptron ('MlpPolicy') using the default architecture for the policy network and value network composed of two 64-neuron layers.
+
 
 ```{r}
-ppo = sb3$PPO('MlpPolicy', env, seed = seed) 
+a2c = sb3$A2C('MlpPolicy', env, seed = seed) 
 ```
 
 
@@ -214,13 +218,13 @@ Training is the main computationally intensive process, which can take anywhere 
 Therefore, we save the trained agent to disk, and only execute the training method (`learn`) if no previously saved agent is found:
 
 ```{r}
-if(!file.exists("../python/cache/ppo.zip")) {
+if(!file.exists("../python/cache/a2c.zip")) {
 
   # Train the agent for a fixed number of timesteps
-  ppo$learn(total_timesteps=300000L)
+  a2c$learn(total_timesteps=300000L)
   
   # Save our trained agent for future use
-  ppo$save("../python/cache/ppo")
+  a2c$save("../python/cache/a2c")
 
 }
 ```
@@ -228,12 +232,12 @@ if(!file.exists("../python/cache/ppo.zip")) {
 
 Note that while default hyper-parameters provide a useful starting place (particularly when the environment has been suitably normalized, a best-practice we discuss above), better performance can almost always be achieved by _tuning_ the hyper-parameter selection.
 This is discussed further below.
-Having saved our trained agent to disk (`cache/ppo.zip`), we can then re-load this agent for evaluation or to continue training.
+Having saved our trained agent to disk (`cache/a2c.zip`), we can then re-load this agent for evaluation or to continue training.
 Note that a copy of the trained agents are included in the corresponding GitHub repository.
 
 ```{r}
 # Simulate management under the trained agent
-ppo = sb3$PPO$load("../python/cache/ppo")
+a2c = sb3$A2C$load("../python/cache/a2c")
 ```
 
 
@@ -258,13 +262,14 @@ state
 
 
 With an initial state in hand, we are ready to simulate management using our agent.
-The iteration is simple: we use the agent to predict what action we should take given the current state. Then, we take said action and examine the result to determine the future state. 
+The iteration is simple: we use the agent to predict what action we should take given the current state. 
+Then, we take said action and examine the result to determine the future state. 
 Because these methods return additional information as well, a little extra sub-setting is required in R:
 
 ```{r}
 for(i in 1:10){
   
-  out = ppo$predict(state, deterministic=TRUE)
+  out = a2c$predict(state, deterministic=TRUE)
   action = out[[1]]
   result = env$step(action)
   state = result[[1]]
@@ -277,7 +282,7 @@ For convenience, `gym_fishing` defines the helper routine `simulate` to perform 
 
 
 ```{r}
-ppo_sims = env$simulate(ppo, reps = 100L)
+a2c_sims = env$simulate(a2c, reps = 100L)
 ```
 
 
@@ -288,116 +293,45 @@ Note that the `policyfn` method is another custom method and not part of the `gy
 The use of `policyfn` will not make sense for agents that consider the history of many previous states in selecting their action, such as agents which utilize recurrent neural network architectures like LSTMs [@LSTM].
 
 ```{r}
-ppo_policy = env$policyfn(ppo, reps = 5L)
+a2c_policy = env$policyfn(a2c, reps = 5L)
 ```
 
 
 ```{r}
 # stack result simulations with those above and plot:
-sims_df <- ppo_sims %>% 
-  mutate(model = factor("PPO", algos)) %>% 
+sims_df <- a2c_sims %>% 
+  mutate(model = factor("A2C", algos)) %>% 
   bind_rows(sims_df)
-policy_df <- ppo_policy  %>% 
-  mutate(model = factor("PPO", algos))  %>% 
-  bind_rows(policy_df)
-
-plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
-```
-
-Note that the un-tuned version of PPO has found a viable policy which slowly increases its total reward over the course of the simulation,
-but nevertheless is substantially sub-optimal in its performance.
-Under the management of this agent, stock sizes average much higher than $B_{MSY}$ level of the optimal solution.
-The stock sizes also fluctuate as the agent constantly adjusts the harvest quota in response to the previous level.
-
-
-
-## Improving performance by tuning:
-
-Good choices for hyper-parameters can be found through a process known as "hyper-parameter tuning", which uses standard function optimization approaches to vary the choice of hyper-parameters to determine which hyper-parameters maximize the agent's performance.
-In practice, tuning may attempt to set only a subset of parameters through an optimal search algorithm, while others are chosen manually.
-Because each iteration in tuning must retrain the algorithm over thousands or millions of episodes, tuning can easily become very computationally intensive.
-For simplicity, here we illustrate how to train PPO using custom hyperparameters.
-The PPO algorithm supports training on a vectorized environment, in which the algorithm learns by interacting with `n` independent copies of the environment simultaneously.
-The choice of `n` can itself be considered another hyperparameter.
-Additional choices for many of the hyperparameters used by the PPO model are specified as additional optional arguments.
-In this case, the parameter choices shown were already derived through tuning (see <https://github.com/boettiger-lab/conservation-agents>, or the standard reference examples presented in `stable-baselines3-zoo` [@zoo]).
-More generally, these choices could represent any alternative trial of possible hyperparameters.
-
-
-```{r}
-vec_env = sb3$common$env_util$make_vec_env("fishing-v1", n_envs=4L, seed=seed)
-
-
-# Create a fishing environment
-# Create an agent
-ppo_tuned = sb3$PPO("MlpPolicy",
-                    "env" = vec_env, 
-                    "seed" = seed,
-                    "batch_size" = 64L,
-                    "n_steps" = 32L,
-                    "gamma" = 0.9999,
-                    "learning_rate" = 0.00037996229760279524,
-                    "ent_coef" = 2.392750198613048e-08,
-                    "clip_range" = 0.3,
-                    "n_epochs" = 10L,
-                    "gae_lambda" = 0.92,
-                    "max_grad_norm" = 0.7,
-                    "vf_coef" = 0.4863551514846155,
-                    "use_sde" = TRUE,
-                    "policy_kwargs" = list(
-                      "net_arch" = list(list(pi=c(64L, 64L), vf=c(64L, 64L))),
-                      "activation_fn" = torch$nn$ReLU
-                     )
-                   )
-
-```
-
-We train this new PPO-based agent for 300,000 steps, as before:
-
-```{r }
-if(!file.exists("../python/cache/ppo_tuned.zip")){
-  
-  ppo_tuned$learn(total_timesteps=300000L)
-  ppo_tuned$save("../python/cache/ppo_tuned")
-  
-}
-```
-
-With our trained agent, we can now simulate replicate scenarios or scan across states to determine the implicit policy function:
-
-```{r}
-# Simulate management under the trained agent
-ppo_tuned = sb3$PPO$load("../python/cache/ppo_tuned")
-ppo_tuned_sims = env$simulate(ppo_tuned, reps = 100L)
-ppo_tuned_policy = env$policyfn(ppo_tuned, reps = 5L)
-```
-
- 
-```{r}
-# stack result simulations with those above and plot:
-sims_df <- ppo_tuned_sims %>% 
-  mutate(model = factor("PPO_tuned", algos)) %>% 
-  bind_rows(sims_df)
-policy_df <- ppo_tuned_policy  %>% 
-  mutate(model = factor("PPO_tuned", algos))  %>% 
+policy_df <- a2c_policy  %>% 
+  mutate(model = factor("A2C", algos))  %>% 
   bind_rows(policy_df)
 
 plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 ```
 
 
-The tuned solution is still not optimal, but it is very close.
-Moreover, the RL algorithm has been able to learn this nearly-optimal policy with no prior knowledge about the shape or nature of the population growth function used in the environment. 
-  
-We preserve a copy of each data frames in local `.csv` text files for maximum cross-platform compatibility.
+After an initial over-harvest (top panel), A2C achieves nearly optimal performance as measured by reward over time, (bottom right), or compared to the steady-state management solution.
+The policy function (bottom left) explains this behavior.
+The RL agent has a nearly optimal policy for stock sizes between zero and just above the $B_{MSY}$ target.
+At higher stocks, the agent has a tendency to over-harvest.
 
-```{r}
+
+
+
+In this simple example, A2C is able to achieve nearly-optimal performance (as defined by the reward conditions) without additional tuning.
+It is worth noting that this is not true of all RL algorithms.
+For example, the PPO algorithm [@A2C] is a somewhat more computationally intensive alternative that combines strategies from A2C and another algorithm, TRPO [@PPO].
+Nevertheless, using default hyper-parameters, PPO does considerably less well (not shown).
+For harder problems, it is often necessary to consider a range of algorithms, and tune the hyper-parameters extensively before training will be able to discover an acceptable solution.
+We illustrate this briefly in our second example gym. 
+
+
+
+```{r include=FALSE}
+# Store data.frames for manuscript plotting
 write_csv(sims_df, "../manuscript/figs/sims_df.csv")
 write_csv(policy_df, "../manuscript/figs/policy_df.csv")
 ```
-
-
-<!-- Remaining is just plotting code, repeated in the main .Rmd.  Should we omit it from the appendix? -->
 
 
 ## Applying an RL agent to real data
@@ -410,10 +344,13 @@ We will use the agent we have just trained using the `gym_fishing` simulator abo
 
 ```{r}
 # Simulate management under the trained agent
+# parameters based on statistical best model estimate, see Memarzadeh & Boettiger 2019
+# or Appendix D
 env = gym$make("fishing-v1", r = 1.0379274,	K = 1.197693, sigma = 0.1121662)
-agent = sb3$PPO$load("../python/cache/ppo_tuned")
+agent = sb3$A2C$load("../python/cache/a2c_untuned")
 
 ```
+
 
 
 
@@ -424,22 +361,20 @@ x0 = hake %>%
   pull(scaled_biomass)
 Tmax = 15
 years =1986:2000
-
-state = action = numeric(Tmax)
-state[1] = x0
-action[1] = NA
-
+agent_state = agent_action = numeric(Tmax)
+agent_state[1] = x0
+agent_action[1] = NA
 ```
 
 
-Our hindcast considers the scenario of managing catch quotas using the RL agent, beginning in 1986. 
+Our hindcast considers the scenario of managing catch quotas using TD3, beginning in 1986. 
 We compare both the anticipated harvest and resulting stock biomass to the historically recorded harvest and biomass.
-This shows that quotas set by the RL agent would have been lower than historical values throughout the late 80s and early 90s, which
+This shows that quotas set by TD3 would have been lower than historical values throughout the late 80s and early 90s, which
 saw a sharp decline in estimated biomass of the Argentine Hake.
-For the same or higher estimated stock sizes from the historical record, we see that the RL agent would recommend a lower quota.
-We also see that under the RL agent the stock recovers sufficiently to predict higher quotas by the second half of the 90s than were
+For the same or higher estimated stock sizes from the historical record, we see that TD3 would recommend a lower quota.
+We also see that under TD3 the stock recovers sufficiently to predict higher quotas by the second half of the 90s than were
 being set in the now-depleted stock.  
-Whether the RL agent quotas would have truly been sufficient to permit recovery in stock sizes shown in the simulation clearly depends on the accuracy of the underlying simulation.
+Whether the TD3 quotas would have truly been sufficient to permit recovery in stock sizes shown in the simulation clearly depends on the accuracy of the underlying simulation.
 However, the fact that TD3 would set a lower quota than the historical management given the same or even higher estimate of stock size is independent of the Hake simulation.
 Combined with the observed historical declines, this provides some evidence that the RL agent could have decreased or avoided the over-harvesting in this case. 
 
@@ -448,16 +383,15 @@ Combined with the observed historical declines, this provides some evidence that
 env$reset()
 ## represent the initial state size in the 'rescaled' state space.
 state = env$get_state( x0 )
-
 for(i in 2:Tmax){
   
   # RL-recommended harvest action:
-  out = agent$predict(state, deterministic = TRUE)
+  out = agent$predict(state)
   action = out[[1]]
   
   # Record state and resulting action
-  state[i] = env$get_fish_population(state)
-  action[i] = env$get_quota(action)
+  agent_state[i] = env$get_fish_population(state)
+  agent_action[i] = env$get_quota(action)
   
   # Implement RL-recommended harvest. 
   result = env$step(action)
@@ -465,14 +399,12 @@ for(i in 2:Tmax){
   
   #state = env$get_state(hake$scaled_biomass[i+1])
 }
-
 df = bind_rows(
-  tibble(year = years, state = state, action = action, model = "(tuned) PPO"),
+  tibble(year = years, state = agent_state, action = agent_action, model = "RL"),
   tibble(year = years, state = hake$scaled_biomass, action = hake$scaled_catch, model = "historical"))
-
 df %>% ggplot(aes(year, state, col=model)) + geom_line() + geom_point(aes(year, action, col=model))
-
 ```
+
 
 
 
