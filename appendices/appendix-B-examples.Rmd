@@ -226,8 +226,10 @@ if(!file.exists("../python/cache/ppo.zip")) {
 ```
 
 
-Note that while default hyper-parameters provide a useful starting place (particularly when the environment has been suitably normalized, a best-practice we discuss above), better performance can almost always be achieved by _tuning_ the hyper-parameter selection. This is discussed further below. 
-Having saved our trained agent to disk (`cache/ppo.zip`), we can then re-load this agent for evaluation or to continue training.  Note that a copy of the trained agents are included in the corresponding GitHub repository.
+Note that while default hyper-parameters provide a useful starting place (particularly when the environment has been suitably normalized, a best-practice we discuss above), better performance can almost always be achieved by _tuning_ the hyper-parameter selection.
+This is discussed further below.
+Having saved our trained agent to disk (`cache/ppo.zip`), we can then re-load this agent for evaluation or to continue training.
+Note that a copy of the trained agents are included in the corresponding GitHub repository.
 
 ```{r}
 # Simulate management under the trained agent
@@ -311,29 +313,36 @@ The stock sizes also fluctuate as the agent constantly adjusts the harvest quota
 
 ## Improving performance by tuning:
 
-Good choices for hyper-parameters can be found through a process known as "hyper-parameter tuning", which uses standard function optimization approaches to vary the choice of hyper-parameters to determine which hyper-parameters maximize the agent's performance. 
-For simplicity, we show only training with specified hyper-parameters here, found by various tuning experimentation (see <https://github.com/boettiger-lab/conservation-agents>) or the standard reference examples presented in `stable-baselines3-zoo` [@zoo].
+Good choices for hyper-parameters can be found through a process known as "hyper-parameter tuning", which uses standard function optimization approaches to vary the choice of hyper-parameters to determine which hyper-parameters maximize the agent's performance.
+In practice, tuning may attempt to set only a subset of parameters through an optimal search algorithm, while others are chosen manually.
+Because each iteration in tuning must retrain the algorithm over thousands or millions of episodes, tuning can easily become very computationally intensive.
+For simplicity, here we illustrate how to train PPO using custom hyperparameters.
+The PPO algorithm supports training on a vectorized environment, in which the algorithm learns by interacting with `n` independent copies of the environment simultaneously.
+The choice of `n` can itself be considered another hyperparameter.
+Additional choices for many of the hyperparameters used by the PPO model are specified as additional optional arguments.
+In this case, the parameter choices shown were already derived through tuning (see <https://github.com/boettiger-lab/conservation-agents>, or the standard reference examples presented in `stable-baselines3-zoo` [@zoo]).
+More generally, these choices could represent any alternative trial of possible hyperparameters.
 
 
 ```{r}
-env = sb3$common$env_util$make_vec_env("fishing-v1", n_envs=4L, seed=seed)
+vec_env = sb3$common$env_util$make_vec_env("fishing-v1", n_envs=4L, seed=seed)
 
 
 # Create a fishing environment
 # Create an agent
 ppo_tuned = sb3$PPO("MlpPolicy",
-                    "env" = env, 
+                    "env" = vec_env, 
                     "seed" = seed,
                     "batch_size" = 64L,
                     "n_steps" = 32L,
                     "gamma" = 0.9999,
-                    "learning_rate" = 0.00038,
-                    "ent_coef" = 0.0,
+                    "learning_rate" = 0.00037996229760279524,
+                    "ent_coef" = 2.392750198613048e-08,
                     "clip_range" = 0.3,
                     "n_epochs" = 10L,
                     "gae_lambda" = 0.92,
                     "max_grad_norm" = 0.7,
-                    "vf_coef" = 0.486355,
+                    "vf_coef" = 0.4863551514846155,
                     "policy_kwargs" = list(
                       "net_arch" = c(64L, 64L),
                       "activation_fn" = torch$nn$ReLU
@@ -342,7 +351,7 @@ ppo_tuned = sb3$PPO("MlpPolicy",
 
 ```
 
-We train this new PPO-based agent as before:
+We train this new PPO-based agent for 300,000 steps, as before:
 
 ```{r }
 if(!file.exists("../python/cache/ppo_tuned.zip")){

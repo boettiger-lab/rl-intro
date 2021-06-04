@@ -16,18 +16,19 @@ hyper = {
     "batch_size": 64,
     "n_steps": 32,
     "gamma": 0.9999,
-    "learning_rate": 0.00038,
-    "ent_coef": 0.0,
+    "learning_rate": 0.00037996229760279524,
+    "ent_coef": 2.392750198613048e-08,
     "clip_range": 0.3,
     "n_epochs": 10,
     "gae_lambda": 0.92,
     "max_grad_norm": 0.7,
-    "vf_coef": 0.486355,
+    "vf_coef": 0.4863551514846155,
      "policy_kwargs": {
         "net_arch": [64, 64],
         "activation_fn": nn.ReLU,
     }
 }
+
 # Create an agent
 agent = sb3.PPO("MlpPolicy", env, seed=seed, **hyper)
 # Train the agent
