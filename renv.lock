@@ -8,11 +8,6 @@
       }
     ]
   },
-  "Python": {
-    "Version": "3.8.5",
-    "Type": "virtualenv",
-    "Name": null
-  },
   "Packages": {
     "BH": {
       "Package": "BH",
@@ -133,12 +128,26 @@
       "Repository": "RSPM",
       "Hash": "ebaa97ac99cc2daf04e77eecc7b781d7"
     },
+    "coda": {
+      "Package": "coda",
+      "Version": "0.19-4",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "24b6d006b8b2343876cf230687546932"
+    },
     "colorspace": {
       "Package": "colorspace",
       "Version": "2.0-1",
       "Source": "Repository",
       "Repository": "RSPM",
       "Hash": "6cab523af06ac301e7a40c5529d45882"
+    },
+    "contentid": {
+      "Package": "contentid",
+      "Version": "0.0.10",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "7665666929e19e9d3a82be1017c22089"
     },
     "cpp11": {
       "Package": "cpp11",
@@ -212,10 +221,10 @@
     },
     "fansi": {
       "Package": "fansi",
-      "Version": "0.5.0",
+      "Version": "0.4.2",
       "Source": "Repository",
       "Repository": "RSPM",
-      "Hash": "d447b40982c576a72b779f0a3b3da227"
+      "Hash": "fea074fb67fe4c25d47ad09087da847d"
     },
     "farver": {
       "Package": "farver",
@@ -336,6 +345,13 @@
       "Repository": "RSPM",
       "Hash": "99df65cfef20e525ed38c3d2577f7190"
     },
+    "igraph": {
+      "Package": "igraph",
+      "Version": "1.2.6",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "7b1f856410253d56ea67ad808f7cdff6"
+    },
     "isoband": {
       "Package": "isoband",
       "Version": "0.2.4",
@@ -426,6 +442,13 @@
       "Source": "Repository",
       "Repository": "RSPM",
       "Hash": "6dfe8bf774944bd5595785e3229d8771"
+    },
+    "nimble": {
+      "Package": "nimble",
+      "Version": "0.11.1",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "7ecad5baa7573b0086ea2db051288ac8"
     },
     "nlme": {
       "Package": "nlme",
@@ -541,10 +564,10 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "0.12.3",
+      "Version": "0.13.2",
       "Source": "Repository",
       "Repository": "RSPM",
-      "Hash": "b5510c50c7f31d453c385c7b460af2b9"
+      "Hash": "079cb1f03ff972b30401ed05623cbe92"
     },
     "reprex": {
       "Package": "reprex",
@@ -721,5 +744,9 @@
       "Repository": "RSPM",
       "Hash": "2826c5d9efb0a88f657c7a679c7106db"
     }
+  },
+  "Python": {
+    "Version": "3.8.5",
+    "Type": "virtualenv"
   }
 }
