@@ -442,7 +442,6 @@ Further tuning of hyper-parameters, increased training, alterations or alternati
 ## Unsolved environments: Wildfires and other examples
 
 The feature that most distinguishes deep RL from other approaches to decision theory (such as optimal control) is its scope.
-While optimal control approaches typically require extensive simplifying assumptions such as discrete states or actions, deterministic dynamics or short time horizons, deep RL can work on a much broader range of problems.
 Deep RL algorithms have proven successful on a range of problems that classical approaches could not solve despite immense computational resources -- e.g. deep RL can solve control problems with image-based observations that would be intractable with classical methods [@DQN]--; yet, getting deep RL to work in practice can be unexpectedly challenging and computationally intensive.
 Our previous examples have thus focused on relatively simple problems that can be addressed by conventional methods, and also permit RL-based solutions to be found relatively efficiently on commodity hardware.
 We have developed more conservation-based RL environments, some of which pose much more challenging control problems; an active list of these environments can be found at <https://boettiger-lab.github.io/conservation-gym/>.
