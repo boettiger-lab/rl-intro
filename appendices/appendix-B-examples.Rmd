@@ -118,8 +118,8 @@ library(reticulate)
 sb3      = import("stable_baselines3")
 torch    = import("torch")
 gym      = import("gym")
-gym_fish = import("gym_fishing")
-gym_cons = import("gym_conservation")
+gym_fishing = import("gym_fishing")
+gym_conservation = import("gym_conservation")
 
 
 source("../R/plotting-helpers.R")
@@ -431,14 +431,14 @@ action[1] = NA
 ```
 
 
-Our hindcast considers the scenario of managing catch quotas using TD3, beginning in 1986. 
+Our hindcast considers the scenario of managing catch quotas using the RL agent, beginning in 1986. 
 We compare both the anticipated harvest and resulting stock biomass to the historically recorded harvest and biomass.
-This shows that quotas set by TD3 would have been lower than historical values throughout the late 80s and early 90s, which
+This shows that quotas set by the RL agent would have been lower than historical values throughout the late 80s and early 90s, which
 saw a sharp decline in estimated biomass of the Argentine Hake.
-For the same or higher estimated stock sizes from the historical record, we see that TD3 would recommend a lower quota.
-We also see that under TD3 the stock recovers sufficiently to predict higher quotas by the second half of the 90s than were
+For the same or higher estimated stock sizes from the historical record, we see that the RL agent would recommend a lower quota.
+We also see that under the RL agent the stock recovers sufficiently to predict higher quotas by the second half of the 90s than were
 being set in the now-depleted stock.  
-Whether the TD3 quotas would have truly been sufficient to permit recovery in stock sizes shown in the simulation clearly depends on the accuracy of the underlying simulation.
+Whether the RL agent quotas would have truly been sufficient to permit recovery in stock sizes shown in the simulation clearly depends on the accuracy of the underlying simulation.
 However, the fact that TD3 would set a lower quota than the historical management given the same or even higher estimate of stock size is independent of the Hake simulation.
 Combined with the observed historical declines, this provides some evidence that the RL agent could have decreased or avoided the over-harvesting in this case. 
 
