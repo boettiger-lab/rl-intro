@@ -25,7 +25,7 @@ hyper = {
     "vf_coef": 0.7417182197443206,
     "policy_kwargs": {
         "ortho_init": False,
-        "net_arch": [64, 64],
+        "net_arch": [64, 64], #use separate networks?
         "activation_fn": nn.ReLU,
     }
 }
