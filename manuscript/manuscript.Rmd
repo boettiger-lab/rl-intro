@@ -439,7 +439,7 @@ Such examination makes it clear how the RL agent's use of a more dynamic strateg
 The various kinks in the RL policy function also suggest that this solution is nevertheless surely not the optimal solution -- such features are typical of RL-based policies, where such spandral-like features from early experimentation may become baked into the long-term strategy if adjusting them has little improvement on the final reward. <!-- ML: the parenthetical here I understand but I feel a little ehh on the word choice. I also don't know how to rephrase it -->
 Further tuning of hyper-parameters, increased training, alterations or alternatives to the training algorithm would likely be able to further improve upon this performance.
 
-## Additional environments
+## Additional Environments
 
 Deep RL algorithms have proven successful on a range of problems that classical approaches could not solve despite immense computational resources -- e.g. deep RL can solve control problems with image-based observations that would be intractable with classical methods [@DQN]--; yet, getting deep RL to work in practice can be unexpectedly challenging and computationally intensive.
 Our previous examples have thus focused on relatively simple problems that can be addressed by conventional methods, and also permit RL-based solutions to be found relatively efficiently on commodity hardware.
