@@ -75,7 +75,7 @@ Although all the necessary tooling for RL is implemented in Python, the R langua
 Fortunately, modern bindings such as the `reticulate` package [@reticulate] make it straightforward to use these tools without ever leaving the R interface.
 In this appendix, we detail this "pure R" approach, as well as a "pure Python" approach.
 
-In the R based-approach, R functions take responsibility from the user for translating commands into Python code before it is executed, an approach commonly referred to as meta-programming.
+In the R-based approach, R functions take responsibility from the user for translating commands into Python code before it is executed, an approach commonly referred to as meta-programming.
 This still requires a local Python installation, which can be installed directly from R using the command `install_miniconda()` from the `reticulate` package in R.
 Alternately, users may prefer running the analysis inside a docker container.  
 The Rocker Project [@rocker] provides pre-built docker containers which include the necessary R and Python environments, as well as CUDA libraries required to take advantage of GPU-based acceleration on suitable architectures.
@@ -201,7 +201,7 @@ state
 With an initial state in hand, we are ready to simulate management using our agent.
 The iteration is simple: we use the agent to predict what action we should take given the current state. Then, we take said action and examine the result to determine the future state. 
 Because these methods return additional information as well, a little extra sub-setting is required in R:
-
+<!-- ML: Given recent excursions, we'll probably want to put a deterministic=True flag in here and following sections; also potentially problematic here if the agent crashes the population and restarts. -->
 ```{r}
 for(i in 1:10){
   
@@ -224,7 +224,7 @@ a2c_sims = env$simulate(a2c, reps = 500L)
 
 Because the agent typically attempts to retain the fish population near a specific value, simulations with well-trained agents will usually not explore the full range of possible states.
 To get a better idea of how the agent behaves across the full state space, it is common to examine the policy function: to do this, we'll plot the action taken at every possible state.
-Some agents are non-deterministic, so we may want to use replicate draws at each state to get a better picture of the agent's behavior.
+Some agents are non-deterministic, so we may want to use replicate draws at each state to get a better picture of the agent's behavior. <!-- ML: This might be interesting -->
 Note that the `policyfn` method is another custom method and not part of the `gym` standard. The use of `policyfn` will not make sense for agents that consider the history of many previous states in selecting their action, such as agents which utilize recurrent neural network architectures like LSTMs [@LSTM].
 
 ```{r}
