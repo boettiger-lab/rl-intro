@@ -1,14 +1,12 @@
-import numpy as np
 import stable_baselines3 as sb3
 from stable_baselines3.common.env_util import make_vec_env
 from torch import nn as nn
-
+import os
 import gym
 import gym_fishing
 
 seed = 24
-np.random.seed(seed)
-env = make_vec_env("fishing-v1", n_envs=8, seed=seed, env_kwargs={"sigma": 0.})
+env = make_vec_env("fishing-v1", n_envs=4, seed=seed, env_kwargs={"sigma": 0.})
 
 # Create a fishing environment
 hyper = {
@@ -36,7 +34,7 @@ if not os.path.exists("cache/ppo_tuned.zip"):
     agent.save("cache/ppo_tuned")
 
 # Evaluate the trained agent
-env = gym.make("fishing-v1", sigma=0.1)
+env = gym.make("fishing-v1", sigma=0.)
 
 agent = sb3.PPO.load("cache/ppo_tuned")
 agent_sims = env.simulate(agent, reps=100)

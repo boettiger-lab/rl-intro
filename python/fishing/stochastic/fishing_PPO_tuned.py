@@ -6,9 +6,7 @@ from torch import nn as nn
 import gym
 import gym_fishing
 
-seed = 24
-np.random.seed(seed)
-env = make_vec_env("fishing-v1", n_envs=8, seed=seed, env_kwargs={"sigma": 0.1})
+env = make_vec_env("fishing-v1", n_envs=4, seed=24, env_kwargs={"sigma": 0.1})
 
 # Create a fishing environment
 hyper = {
@@ -28,7 +26,7 @@ hyper = {
     }
 }
 # Create an agent
-agent = sb3.PPO("MlpPolicy", env, seed=seed, **hyper)
+agent = sb3.PPO("MlpPolicy", env, seed=24, **hyper)
 # Train the agent
 agent.learn(total_timesteps=300000)
 agent.save("cache/PPO_tuned")

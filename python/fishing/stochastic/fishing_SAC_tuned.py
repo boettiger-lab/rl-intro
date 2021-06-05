@@ -20,7 +20,7 @@ hyper = {
     "policy_kwargs": {"log_std_init": 0.680754, "net_arch": [400, 300]},
 }
 
-agent = sb3.SAC("MlpPolicy", env, seed=seed, **hyper)
+agent = sb3.SAC("MlpPolicy", env, seed=24, **hyper)
 
 # Train the agent
 if not os.path.exists("cache/sac_tuned.zip"):
