@@ -1,12 +1,17 @@
 {
   "R": {
-    "Version": "4.1.0",
+    "Version": "4.0.3",
     "Repositories": [
       {
         "Name": "CRAN",
         "URL": "https://packagemanager.rstudio.com/all/latest"
       }
     ]
+  },
+  "Python": {
+    "Version": "3.8.5",
+    "Type": "virtualenv",
+    "Name": null
   },
   "Packages": {
     "BH": {
@@ -25,16 +30,16 @@
     },
     "MASS": {
       "Package": "MASS",
-      "Version": "7.3-54",
+      "Version": "7.3-53",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "0e59129db205112e3963904db67fd0dc"
+      "Hash": "d1bc1c8e9c0ace57ec9ffea01021d45f"
     },
     "Matrix": {
       "Package": "Matrix",
       "Version": "1.3-3",
       "Source": "Repository",
-      "Repository": "CRAN",
+      "Repository": "RSPM",
       "Hash": "df57c82e79600601287edfdcef92c2d6"
     },
     "R6": {
@@ -144,10 +149,10 @@
     },
     "contentid": {
       "Package": "contentid",
-      "Version": "0.0.10",
+      "Version": "0.0.9",
       "Source": "Repository",
       "Repository": "RSPM",
-      "Hash": "7665666929e19e9d3a82be1017c22089"
+      "Hash": "4eb9aef95c6caa3bc4610462f8881c8c"
     },
     "cpp11": {
       "Package": "cpp11",
@@ -221,10 +226,10 @@
     },
     "fansi": {
       "Package": "fansi",
-      "Version": "0.4.2",
+      "Version": "0.5.0",
       "Source": "Repository",
       "Repository": "RSPM",
-      "Hash": "fea074fb67fe4c25d47ad09087da847d"
+      "Hash": "d447b40982c576a72b779f0a3b3da227"
     },
     "farver": {
       "Package": "farver",
@@ -384,7 +389,7 @@
       "Package": "lattice",
       "Version": "0.20-44",
       "Source": "Repository",
-      "Repository": "CRAN",
+      "Repository": "RSPM",
       "Hash": "f36bf1a849d9106dc2af72e501f9de41"
     },
     "lifecycle": {
@@ -417,10 +422,10 @@
     },
     "mgcv": {
       "Package": "mgcv",
-      "Version": "1.8-35",
+      "Version": "1.8-33",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "89fd8b2ad4a6cb4979b78cf2a77ab503"
+      "Hash": "eb7b6439bc6d812eed2cddba5edc6be3"
     },
     "mime": {
       "Package": "mime",
@@ -452,10 +457,10 @@
     },
     "nlme": {
       "Package": "nlme",
-      "Version": "3.1-152",
+      "Version": "3.1-149",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "35de1ce639f20b5e10f7f46260730c65"
+      "Hash": "7c24ab3a1e3afe50388eb2d893aab255"
     },
     "openssl": {
       "Package": "openssl",
@@ -484,13 +489,6 @@
       "Source": "Repository",
       "Repository": "RSPM",
       "Hash": "01f28d4278f15c76cddbea05899c5d6f"
-    },
-    "png": {
-      "Package": "png",
-      "Version": "0.1-7",
-      "Source": "Repository",
-      "Repository": "RSPM",
-      "Hash": "03b7076c234cb3331288919983326c55"
     },
     "prettyunits": {
       "Package": "prettyunits",
@@ -578,10 +576,10 @@
     },
     "reticulate": {
       "Package": "reticulate",
-      "Version": "1.20",
+      "Version": "1.18",
       "Source": "Repository",
       "Repository": "RSPM",
-      "Hash": "30ab0ea8c8d3dd16a3fa06903449bbfb"
+      "Hash": "fbd35cac6ae7554d0e4f440bca1adf3a"
     },
     "rlang": {
       "Package": "rlang",
@@ -744,9 +742,5 @@
       "Repository": "RSPM",
       "Hash": "2826c5d9efb0a88f657c7a679c7106db"
     }
-  },
-  "Python": {
-    "Version": "3.8.5",
-    "Type": "virtualenv"
   }
 }

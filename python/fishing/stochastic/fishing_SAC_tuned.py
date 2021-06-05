@@ -23,7 +23,7 @@ hyper = {
 agent = sb3.SAC("MlpPolicy", env, seed=seed, **hyper)
 
 # Train the agent
-if not os.path.exists("cache/sac_tuned,zip"):
+if not os.path.exists("cache/sac_tuned.zip"):
   agent.learn(total_timesteps=300000)
   agent.save("cache/sac_tuned")
 

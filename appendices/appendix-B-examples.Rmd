@@ -71,7 +71,7 @@ By using a cache of pre-trained agents distributed with this appendix, it should
 Reproducing the training of RL agents is more computationally intensive, and a more powerful multi-core CPU or CUDA-enabled GPU is recommended.
 Note that hardware differences are also a source of instability in the reproduciblity of RL training (see main text and Appendix A).
 
-In this appendix, we illustrate how to apply a deep reinfocement learning framework to train previously published RL algorithms on the novel decision environments as illustrated in the main text.
+In this appendix, we illustrate how to apply a deep reinforcement learning framework to train previously published RL algorithms on the novel decision environments as illustrated in the main text.
 Appendix C discusses the construction of such environments in code. 
 
 # Deep Reinforcement Learning Frameworks
