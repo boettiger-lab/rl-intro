@@ -245,14 +245,17 @@ In practice, using a large replay buffer, on the order of millions of transition
 # Next Steps
 
 Reinforcement learning is a huge, constantly evolving field, and we've only touched on a small sliver of RL in our study.
-In this section, we briefly introduced some of the major design decisions that are made with model-free deep RL algorithms, but there are many more decisions that are made with current state of the art algorithms.
-If you are interested in learning more about model-free deep RL, then reading papers like @sac, @DQN and @ppo, are good places to start.
+In this appendix, we briefly introduced some of the major design decisions that are made with model-free deep RL algorithms, but there are many more decisions that are made with current state of the art algorithms.
+In table ..., we present some commonly used deep RL algorithms.
+Readers that are interested in learning more about the current state of deep RL should read the papers referenced in table ...; @DQN, @sac and @PPO are good places to start. 
 We have also not given any space to discuss model-based or gradient-free techniques which also warrant attention -- see @mbpo and @salimans_evolution_2017 for more here.
-A benefit of model-free deep RL over these other approaches is that there has been more of a general focus on model-free deep RL, so there are widely available packages like Stable Baselines and TensorFlow Agents which implement model-free deep RL; but the focus on model-free algorithm could easily change in coming years.
-Deep RL has only become established in the last decade, and with its amount of unanswered research questions, deep RL may evolve significantly in the near future.
+A benefit of model-free deep RL over these other approaches is that there has been more of a general focus on model-free deep RL, so there are widely available packages like Stable Baselines and TensorFlow Agents which implement model-free deep RL agents.
+It is important to keep in mind though that deep RL has only become established in the last decade, and with the large amount of open research questions, deep RL may evolve significantly in the near future.
 
-
+\begin{figure}
+\includegraphics[width=\linewidth]{algorithm_table.pdf}
+\caption{Common Deep RL Algorithms. }
+\end{figure}
 # References
 
-----
 
