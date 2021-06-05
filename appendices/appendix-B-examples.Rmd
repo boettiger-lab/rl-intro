@@ -187,7 +187,7 @@ We can plot the resulting data.frames using standard `ggplot2` methods shown in 
 
 ```{r}
 # add a column indicating the model
-algos <- c("Optimal", "A2C")
+algos <- c("Optimal", "SAC")
 sims_df <- opt_sims %>% mutate(model = factor("Optimal", algos))
 policy_df <- opt_policy  %>% mutate(model = factor("Optimal", algos))
 
@@ -204,13 +204,12 @@ At the heart of each deep RL algorithm is a neural network or a collection of ne
 Confusingly, the parameters of a RL algorithm that detail the overall learning process are called _hyper-parameters_ while the parameters of a RL algorithm that are learned during training are called parameters. For example, the number of layers in a neural network is a hyper-parameter but a weight in the neural net is referred to as a parameter.
 Before training an agent, we must first specify the hyper-parameters; the algorithm's parameters are often randomly initialized.
 Each algorithm may have different hyper-parameters. `stable-baselines3` provides default values for all hyper-parameters based on the original papers that introduced the corresponding algorithms.
-For example, here we will try the A2C actor-critic algorithm, an extension of the A3C algorithm originally described in @A2C.
-We train an agent using the A2C algorithm using default hyper-parameter settings (which correspond to those used in @A2C),
-using a multi-layer perceptron ('MlpPolicy') using the default architecture for the policy network and value network composed of two 64-neuron layers.
+For example, here we will try the Soft Actor-Critic algorithm, SAC, training with the default hyperparameters originally posed in @SAC.  We use SAC to train an agent that has a multi-layer perceptron ('MlpPolicy') neural network, with the default architecture of two 64-neuron layers.
 
 
 ```{r}
-a2c = sb3$A2C('MlpPolicy', env, seed = seed) 
+env = gym$make("fishing-v1", sigma=0.1)
+agent = sb3$SAC('MlpPolicy', env, seed = seed) 
 ```
 
 
@@ -218,13 +217,13 @@ Training is the main computationally intensive process, which can take anywhere 
 Therefore, we save the trained agent to disk, and only execute the training method (`learn`) if no previously saved agent is found:
 
 ```{r}
-if(!file.exists("../python/cache/a2c.zip")) {
+if(!file.exists("../python/cache/sac.zip")) {
 
   # Train the agent for a fixed number of timesteps
-  a2c$learn(total_timesteps=300000L)
+  agent$learn(total_timesteps=300000L)
   
   # Save our trained agent for future use
-  a2c$save("../python/cache/a2c")
+  agent$save("../python/cache/sac")
 
 }
 ```
@@ -232,12 +231,12 @@ if(!file.exists("../python/cache/a2c.zip")) {
 
 Note that while default hyper-parameters provide a useful starting place (particularly when the environment has been suitably normalized, a best-practice we discuss above), better performance can almost always be achieved by _tuning_ the hyper-parameter selection.
 This is discussed further below.
-Having saved our trained agent to disk (`cache/a2c.zip`), we can then re-load this agent for evaluation or to continue training.
+Having saved our trained agent to disk (`cache/sac.zip`), we can then re-load this agent for evaluation or to continue training.
 Note that a copy of the trained agents are included in the corresponding GitHub repository.
 
 ```{r}
-# Simulate management under the trained agent
-a2c = sb3$A2C$load("../python/cache/a2c")
+# load the trained agent from cache
+agent = sb3$SAC$load("../python/cache/sac")
 ```
 
 
@@ -269,7 +268,7 @@ Because these methods return additional information as well, a little extra sub-
 ```{r}
 for(i in 1:10){
   
-  out = a2c$predict(state, deterministic=TRUE)
+  out = agent$predict(state, deterministic=TRUE)
   action = out[[1]]
   result = env$step(action)
   state = result[[1]]
@@ -282,7 +281,7 @@ For convenience, `gym_fishing` defines the helper routine `simulate` to perform 
 
 
 ```{r}
-a2c_sims = env$simulate(a2c, reps = 100L)
+agent_sims = env$simulate(agent, reps = 100L)
 ```
 
 
@@ -293,24 +292,24 @@ Note that the `policyfn` method is another custom method and not part of the `gy
 The use of `policyfn` will not make sense for agents that consider the history of many previous states in selecting their action, such as agents which utilize recurrent neural network architectures like LSTMs [@LSTM].
 
 ```{r}
-a2c_policy = env$policyfn(a2c, reps = 5L)
+agent_policy = env$policyfn(agent, reps = 5L)
 ```
 
 
 ```{r}
 # stack result simulations with those above and plot:
-sims_df <- a2c_sims %>% 
-  mutate(model = factor("A2C", algos)) %>% 
+sims_df <- agent_sims %>% 
+  mutate(model = factor("SAC", algos)) %>% 
   bind_rows(sims_df)
-policy_df <- a2c_policy  %>% 
-  mutate(model = factor("A2C", algos))  %>% 
+policy_df <- agent_policy  %>% 
+  mutate(model = factor("SAC", algos))  %>% 
   bind_rows(policy_df)
 
 plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 ```
 
 
-After an initial over-harvest (top panel), A2C achieves nearly optimal performance as measured by reward over time, (bottom right), or compared to the steady-state management solution.
+After an initial over-harvest (top panel), SAC achieves nearly optimal performance as measured by reward over time, (bottom right), or compared to the steady-state management solution.
 The policy function (bottom left) explains this behavior.
 The RL agent has a nearly optimal policy for stock sizes between zero and just above the $B_{MSY}$ target.
 At higher stocks, the agent has a tendency to over-harvest.
@@ -318,12 +317,11 @@ At higher stocks, the agent has a tendency to over-harvest.
 
 
 
-In this simple example, A2C is able to achieve nearly-optimal performance (as defined by the reward conditions) without additional tuning.
-It is worth noting that this is not true of all RL algorithms.
-For example, the PPO algorithm [@A2C] is a somewhat more computationally intensive alternative that combines strategies from A2C and another algorithm, TRPO [@PPO].
-Nevertheless, using default hyper-parameters, PPO does considerably less well (not shown).
-For harder problems, it is often necessary to consider a range of algorithms, and tune the hyper-parameters extensively before training will be able to discover an acceptable solution.
-We illustrate this briefly in our second example gym. 
+In this simple example, SAC is able to achieve nearly-optimal performance (as defined by the reward conditions) without tuning, simply by using hyperparameters originally chosen for different RL tasks.
+As noted in appendix C, careful design of the environment, such as rescaling of state and action space, can also improve the ability of a Deep RL algorithm to find an acceptable policy without altering the substance of the challenge.
+Even so, our agent still had extensive time to train on this specific environment, a total of 300,000 timesteps or 3000 training episodes.
+Sufficient tuning of the hyperparameters to this environment may be able result in better performance than we have seen here.
+For more difficult problems, it may be impossible to find an acceptable policy without first tuning candidate approaches to select the best hyperparameters for the environment.
 
 
 
@@ -340,22 +338,25 @@ write_csv(policy_df, "../manuscript/figs/policy_df.csv")
 We use historical data from Argentine Hake to illustrate how an RL agent might be applied in practice.
 
 Historical biomass and catch data for Argentine Hake can be found in the R.A. Myers Legacy Stock Assessment Database [@ramlegacy].
+Here, we load a local copy of the stock assessment for the Argentine Hake from 1986 to 2000.
+
+```{r}
+hake = read_csv("../data/hake.csv")
+```
+
 We will use the agent we have just trained using the `gym_fishing` simulator above, 
 
 ```{r}
 # Simulate management under the trained agent
 # parameters based on statistical best model estimate, see Memarzadeh & Boettiger 2019
 # or Appendix D
-env = gym$make("fishing-v1", r = 1.0379274,	K = 1.197693, sigma = 0.1121662)
-agent = sb3$A2C$load("../python/cache/a2c_untuned")
+agent = sb3$SAC$load("../python/cache/sac")
 
 ```
 
 
 
-
 ```{r}
-hake = read_csv("../data/hake.csv")
 x0 = hake %>%
  filter(year == min(year)) %>%
   pull(scaled_biomass)
@@ -367,37 +368,36 @@ agent_action[1] = NA
 ```
 
 
-Our hindcast considers the scenario of managing catch quotas using TD3, beginning in 1986. 
+Our hindcast considers the scenario of managing catch quotas using the RL agent, beginning in 1986. 
 We compare both the anticipated harvest and resulting stock biomass to the historically recorded harvest and biomass.
-This shows that quotas set by TD3 would have been lower than historical values throughout the late 80s and early 90s, which
+This shows that quotas set by the RL agent would have been lower than historical values throughout the late 80s and early 90s, which
 saw a sharp decline in estimated biomass of the Argentine Hake.
-For the same or higher estimated stock sizes from the historical record, we see that TD3 would recommend a lower quota.
-We also see that under TD3 the stock recovers sufficiently to predict higher quotas by the second half of the 90s than were
+For the same or higher estimated stock sizes from the historical record, we see that the RL agent would recommend a lower quota.
+We also see that under the RL agent the stock recovers sufficiently to predict higher quotas by the second half of the 90s than were
 being set in the now-depleted stock.  
-Whether the TD3 quotas would have truly been sufficient to permit recovery in stock sizes shown in the simulation clearly depends on the accuracy of the underlying simulation.
-However, the fact that TD3 would set a lower quota than the historical management given the same or even higher estimate of stock size is independent of the Hake simulation.
+Whether the the RL agent quotas would have truly been sufficient to permit recovery in stock sizes shown in the simulation clearly depends on the accuracy of the underlying simulation.
+However, the fact that the RL agent would set a lower quota than the historical management given the same or even higher estimate of stock size is independent of the Hake simulation.
 Combined with the observed historical declines, this provides some evidence that the RL agent could have decreased or avoided the over-harvesting in this case. 
 
 
 ```{r}
-env$reset()
-## represent the initial state size in the 'rescaled' state space.
+# Env is used only for helper methods to translate between original units and transformed space
+env = gym$make("fishing-v1")
+## Now we can represent the initial stock size in the 'rescaled' state space.
 state = env$get_state( x0 )
+
 for(i in 2:Tmax){
   
-  # RL-recommended harvest action:
+  # The RL agent recommends a Quota based on current state
   out = agent$predict(state)
   action = out[[1]]
   
-  # Record state and resulting action
+  # We record state and proposed quota (in the original units)
   agent_state[i] = env$get_fish_population(state)
   agent_action[i] = env$get_quota(action)
   
-  # Implement RL-recommended harvest. 
-  result = env$step(action)
-  state = result[[1]]
-  
-  #state = env$get_state(hake$scaled_biomass[i+1])
+  # Use historical data to determine the next state
+  state = env$get_state(hake$scaled_biomass[i+1])
 }
 df = bind_rows(
   tibble(year = years, state = agent_state, action = agent_action, model = "RL"),
