@@ -247,14 +247,14 @@ A significant issue that arises from sampling past experiences is correlation of
 In the simple case that we have an RL agent that interacts with the environment for a few time steps and then uses this trajectory for its learning update, these samples, since they come from the same trajectory, will be strongly correlated.
 Learning from correlated samples is undesirable since this can result in agents getting stuck in local optima, which will impede learning, but there are other reasons why learning from a single trajectory causes problems -- see @schaul_prioritized_2016 and @DQN for more insight here.
 There are two commonly used solutions to this problem of correlated samples: Replay Buffers and Parallel Workers.
-If the agent is off-policy, the agent can employ a replay buffer -- see @DQN for a now classic example for a replay buffer-based agent.
+If the agent is off-policy, the agent can employ a replay buffer -- see @DQN for an example of a replay buffer-based agent.
 With a replay buffer, the agent will save state-action-reward transitions in the replay buffer, and during learning updates, the agent will sample transitions from the replay buffer.
 Since the replay buffer can be arbitrarily large and thus store transitions from numerous trajectories, sampling from the buffer will result in decorrelated samples.
 On-policy agents, however, cannot use a replay buffer since these agents are not allowed to use samples from a policy different than the policy they are trying to improve -- note replay buffers are generally large enough to hold transitions from old policies.
 The solution to de-correlate samples for on-policy agents is to use parallel workers, whereby multiple workers explore the environment according to the current policy.
 Due to stochasticity that can come from exploration and the environment, the workers will go on different trajectories in state-action space.
 The agent will collect samples across these workers in a learning step, perform its learning step and then repeat the process of collecting and sampling transitions with an updated policy.
-The idea behind using parallel workers is that sampling over multiple trajectories de-correlate samples -- see @a3c on more details here.
+The idea behind using parallel workers is that sampling over multiple trajectories de-correlates samples -- see @a3c on more details here.
 In practice, using a large replay buffer, on the order of millions of transitions, or a modest number of parallel, around 4-16 for simple RL problems, is very important to achieve good agent performance for off-policy and on-policy algorithms respectively.
 
 
@@ -269,7 +269,7 @@ See @mbpo for a recent example of a model-based deep RL algorithm and @salimans_
 A benefit of model-free deep RL over these other methods is that there has been more of a general focus on model-free deep RL, so there are widely available software packages like Stable Baselines and TensorFlow Agents which implement model-free deep RL agents.
 However, it is important to keep in mind though that deep RL has only become established in the last decade, and with the large amount of open research questions, deep RL may evolve significantly in the near future.
 
-\begin{table}
+\begin{table}[H]
 \resizebox{\textwidth}{!}{\begin{tabular}{l l l l l}
 \hline
 Algorithm & Description                                                       & Model       & Policy     & Method \\
