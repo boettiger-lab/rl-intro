@@ -68,7 +68,7 @@ In policy gradient methods, the RL agent performs gradient ascent on the expecte
 At each gradient step, the following update is performed,
 
 $$
-  \theta_{t+1} = \theta_t + \alpha \nabla_\theta J(\pi_\theta).
+  \theta_{t+1} = \theta_t + \alpha \nabla_\theta J(\pi_\theta) .
 $$
 
 Supposing that the agent has interacted with the environment and has collected some trajectories denoted by, $\tau_i$, we can employ the policy gradient theorem -- see @suttonbarto for the proof of the policy gradient theorem -- to estimate $\nabla J(\pi_\theta)$ as:
@@ -81,11 +81,11 @@ The intuition behind this approximation is exactly what we want: the agent will 
 In practice, however, the empirical return tends to have high variance, resulting in very noisy gradients that impede learning [@suttonbarto].
 To avoid this issue, many policy gradient algorithms replace the empirical return with a return estimator that has lower variance [@suttonbarto].
 
-A sketch of a simple policy gradient algorithm is shown in Algorithm 1^[The algorithm sketches showed throughout this study are not practical for a variety of reasons including high bias estimators, high variance estimators and correlated samples. The algorithm examples are instead intended to convey how the general steps of the different algorithm classes are integrated by the agents.]. 
+A sketch of a simple policy gradient algorithm is shown in Algorithm 1^[The algorithm sketches showed throughout this study are not practical for a variety of reasons including high bias estimators, high variance estimators and correlated samples. The algorithm examples are instead intended to convey how the general steps of the different algorithm classes come together.]. 
 
 \begin{algorithm}
 \label{alg:policy_gradient}
-\caption{Vanilla On-policy Policy Gradient Algorithm}
+\caption{Generic On-policy Policy Gradient Algorithm}
 \begin{algorithmic}[1]
     \State Input initial policy parameters $\theta_0$
     \For{$k = 0, 1, 2, \dots$}
@@ -112,14 +112,14 @@ There are more value functions that can used in practice [@schulman_high-dimensi
 From the above equation, we can also define the Q function recursively,
 
 $$
-  Q^\pi(s_t, a_t) = r (s_t, a_t) + \gamma  \, \mathbb{E}_{s_{t+1} \sim T(s_{t+1} | s_t, a_t), \, a_{t+1} \sim \pi(a_{t+1}| s_{t+1})}\big[ Q^\pi(s_{t+1}, a_{t+1})\big]
+  Q^\pi(s_t, a_t) = r (s_t, a_t) + \gamma  \, \mathbb{E}_{s_{t+1} \sim T(s_{t+1} | s_t, a_t), \, a_{t+1} \sim \pi(a_{t+1}| s_{t+1})}\big[ Q^\pi(s_{t+1}, a_{t+1})\big].
 $$
 
 The motivation behind Q-learning is that if we know the Q function under certain conditions -- e.g. that the state-action space is discrete and that all state-action pairs are visited ad infinitum [@suttonbarto 131; @Qproof] --, then we can easily find the optimal action at any state by selecting the action with the highest Q-value: $a_t^* = \underset{a_t}{\text{argmax}} \, Q (s_t, a_t)$.
-Using this optimal policy, we can write an equation for the optimal Q-function from the previous definition,
+Using this optimal policy, we can write an equation for the optimal Q-function from the recursive definition,
 
 $$
-  Q^*(s_t, a_t) = r (s_t, a_t) + \gamma  \, \mathbb{E}_{s_{t+1} \sim T(s_{t+1} | s_t, a_t)}\big[ \underset{a_{t+1}}{\text{max}} \,\,Q^*(s_{t+1}, a_{t+1})\big]
+  Q^*(s_t, a_t) = r (s_t, a_t) + \gamma  \, \mathbb{E}_{s_{t+1} \sim T(s_{t+1} | s_t, a_t)}\big[ \underset{a_{t+1}}{\text{max}} \,\,Q^*(s_{t+1}, a_{t+1})\big].
 $$
 
 The objective for deep Q-learning is to find an approximate Q-function that satisfies the above equation, where we represent our approximate Q-function, $Q_\phi$, with a neural network that has the parameters of $\phi$.
@@ -133,7 +133,7 @@ The goal is to find a $Q_\phi$ that sets the TD error to zero across all state-a
 The general process to achieve this objective is to sample trajectories from the environment, evaluate the TD Error across different state-action-reward transitions -- with samples indexed by $i$ --, and then perform the following gradient descent on the parameters of the Q-function neural network:
 
 $$
-  \phi_{t+1} = \phi_t - \alpha \nabla_\phi \, \sum_i \mathcal{E}_i^2 
+  \phi_{t+1} = \phi_t - \alpha \nabla_\phi \, \sum_i \mathcal{E}_i^2 .
 $$
 
 After the Q-function neural network or Q-network has been fitted, the agent will select actions by inputting the current state into the Q network and then identifying the state-action pair with the highest approximated Q value.
@@ -143,7 +143,7 @@ A notable concern with these methods is that they tend to suffer from bias which
 In review, a sketch of simple deep Q learning algorithm is shown in Algorithm 2.
 
 \begin{algorithm}
-\caption{Vanilla On-policy Q-learning Algorithm}
+\caption{Generic On-policy Q-learning Algorithm}
 \begin{algorithmic}[1]
     \State Input initial Q-network parameters $\phi_0$
     \For{$k = 0, 1, 2, \dots$}
@@ -173,7 +173,7 @@ Consequently, actor-critic algorithms have achieved many of the state of the art
 A simple sketch of an actor critic algorithm is shown in Algorithm 3.
 
 \begin{algorithm}
-\caption{Vanilla On-policy Actor-Critic Algorithm}
+\caption{Generic On-policy Actor-Critic Algorithm}
 \begin{algorithmic}[1]
     \State Input initial policy and Q-network parameters $\theta_0, \phi_0$
     \For{$k = 0, 1, 2, \dots$}
@@ -212,40 +212,37 @@ P(a) = \frac{e^{\frac{Q(s_t, a)}{\tau}}}{\underset{a'}{\sum} e^{\frac{Q(s_t, a')
 $$
 where $\tau \in (0, \infty)$ is called the temperature parameter and controls how much the agent will weight high Q scores over low Q scores.
 The advantage of using Boltzmann exploration is that since the probability of selecting an action is proportional to how good the agent thinks that action is, the agent can explore the space more efficiently than with Epsilon-Greedy exploration.
-This is because an Epsilon-Greedy agent will explore all actions equally including low reward yielding actions; in contrast, with Boltzmann exploration, an agent will spend less time on these unpromising actions.
+An Epsilon-Greedy agent will explore all actions equally including low reward yielding actions; in contrast, with Boltzmann exploration, an agent will spend less time on these unpromising actions.
 
 ## Noise-Based Exploration
 
-Injecting noise into an agent's action, observation or parameter space is another effective exploration method.
-With noise addition, there are a lot design choices that can be made.
+Injecting noise into an agent's action, observation or parameter space is another simple yet effective exploration method.
+With noise addition, there are a number of design choices that can be made.
 For instance, noise can be sampled from different distributions [@plappert_parameter_2018], scaled adaptively based on the policy[@plappert_parameter_2018], or the noise can be sampled according to the state that the agent observes [@gsde].
-There are a variety of reasons why one would want to use these variations of noise injection, which are well discussed in @plappert_parameter_2018 and @gsde.
+There are a variety of reasons why one would want to use each of these variations; these reasons are well discussed in @plappert_parameter_2018 and @gsde.
 
 ## Entropy-based Exploration
 
 An increasingly common way to achieve exploration is by adding a function of the entropy term, $H(\pi(a|s))$, to the loss function of the policy network.
-While this introduces some bias as the agent no longer exclusively maximizes cumulative rewards, entropy-based exploration has been effective in practice at improving exploration, resulting in better agent performance.
-@ahmed_understanding_2019 gives a very complete discussion on the benefits of using entropy.
+By adding this term, the agent has an incentive to learn a policy that balances reward-seeking and explorative behavior. 
+While this introduces some bias as the agent no longer exclusively maximizes cumulative rewards, agents that use entropy-based exploration have achieved state of the art results [@sac].
+For more, @ahmed_understanding_2019 gives a thorough discussion on the benefits of using entropy.
 
 ## More Advanced Exploration Methods
 
-There is a multitude of exploration algorithms that we have not touched on, so it is important to say that the algorithms mentioned above are generally suited for dense reward or "easy-exploration" problems.
+There is a multitude of exploration algorithms that we have not touched on. 
+It is important to note that the algorithms mentioned above are generally suited for dense reward or "easy-exploration" problems.
 For "hard-exploration" problems -- for instance, environments that have very few state-action pairs with significant rewards, like a maze, are seen as hard-exploration problems --, more intricate and bespoke exploration algorithms tend to outperform.
-The issue for "hard-exploration" problems is that the agent needs to explore the state-action space efficiently, and simple exploration algorithms like epsilon-greedy will waste compute by revisiting bad actions.
+The issue for "hard-exploration" problems is that the agent needs to explore the state-action space efficiently, and simple exploration algorithms will waste compute by revisiting bad actions.
 Two common approaches to hard exploration problems are memory-based and curiosity-driven techniques.
 For the sake of brevity, we will not go into further detail on these approaches but will provide some promising recent work.
 Look at @go-explore and @nevergiveup for recent applications of memory-based exploration.
 See @largescalecuriosity and @bellemare2016 for recent studies of curiosity-driven methods.   
 
 
-
-
-
-
-
 # Replay Buffers vs. Parallel Workers
 
-Another important algorithm design choice involves how an RL agent collects and samples past experiences.
+Another critical algorithm design choice involves how an RL agent collects and samples past experiences.
 A significant issue that arises from sampling past experiences is correlation of samples [@DQN, @schaul_prioritized_2016].
 In the simple case that we have an RL agent that interacts with the environment for a few time steps and then uses this trajectory for its learning update, these samples, since they come from the same trajectory, will be strongly correlated.
 Learning from correlated samples is undesirable since this can result in agents getting stuck in local optima, which will impede learning, but there are other reasons why learning from a single trajectory causes problems -- see @schaul_prioritized_2016 and @DQN for more insight here.
@@ -264,13 +261,15 @@ In practice, using a large replay buffer, on the order of millions of transition
 # Next Steps
 
 Reinforcement learning is a huge, constantly evolving field, and we've only touched on a small sliver of RL in our study.
-In this appendix, we briefly introduced some of the major design decisions that are made with model-free deep RL algorithms, but there are many more decisions that are made with current state of the art algorithms.
-In table ..., we present some commonly used deep RL algorithms.
-Readers that are interested in learning more about the current state of deep RL should read the papers referenced in table ...; @DQN, @sac and @ppo are good places to start. 
-Yet, we have not given any space to discuss model-based or gradient-free techniques which also warrant attention -- see @mbpo and @salimans_evolution_2017 for more here.
-A benefit of model-free deep RL over these other approaches is that there has been more of a general focus recently on model-free deep RL, so there are widely available software packages like Stable Baselines and TensorFlow Agents which implement model-free deep RL agents.
-It is important to keep in mind though that deep RL has only become established in the last decade, and with the large amount of open research questions, deep RL may evolve significantly in the near future.
+In this appendix, we briefly introduced some of the major design decisions that are made with model-free deep RL algorithms, but there are many more decisions that are made with state of the art model-free agents.
+In Table 1, we collect some of the more commonly used deep RL algorithms.
+Readers who are interested in learning more about the current state of deep RL should read the literature referenced in Table 1; @DQN, @sac and @ppo are good places to start. 
+It is important to note that while we have focused on gradient-based, model-free methods, there has also been promising recent development with model-based and gradient-free techniques.
+See @mbpo for a recent example of a model-based deep RL algorithm and @salimans_evolution_2017 as a recent example of a gradient-free approach.
+A benefit of model-free deep RL over these other methods is that there has been more of a general focus on model-free deep RL, so there are widely available software packages like Stable Baselines and TensorFlow Agents which implement model-free deep RL agents.
+However, it is important to keep in mind though that deep RL has only become established in the last decade, and with the large amount of open research questions, deep RL may evolve significantly in the near future.
 
+\begin{table}
 \resizebox{\textwidth}{!}{\begin{tabular}{l l l l l}
 \hline
 Algorithm & Description                                                       & Model       & Policy     & Method \\
@@ -287,6 +286,8 @@ TD3       & Twin Delayed DDPG  (Fujimoto, Hoof, and Meger 2018)               & 
 SAC       & Soft Actor Critic   (Haarnoja et al. 2018)                        & Model-free  & Off-policy & Actor-critic\\
 IMPALA    & Importance Weighted Actor Learner (Espeholt et al. 2018)          & Model-free  & Off-policy & Actor-critic\\
 \end{tabular}}
+\caption{Survey of common deep RL algorithms. }
+\end{table}
 
 
 # References
