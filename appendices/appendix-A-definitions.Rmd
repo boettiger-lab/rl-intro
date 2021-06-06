@@ -29,6 +29,9 @@ keywords:
   - Fisheries
 bibliography: ../manuscript/references.bib
 
+nocite: |
+    @A2C, @trpo, @ddpg, @TD3, @impala
+
 header-includes:
   - \usepackage{amsmath}
   - \usepackage{amssymb}
@@ -47,19 +50,20 @@ output:
 
 
 In this appendix, we will go into further detail on how deep RL algorithms work.
-The aim here is not to give full treatment of all deep RL methods -- @suttonbarto is an excellent resource for theoretical underpinnings while the white papers behind the algorithms go into greater detail on modern approaches --; instead, this section is meant to serve as an abbreviated background view on model-free deep RL.
-We hope to introduce some of the important design choices that are made for model-free deep RL algorithms and will point to specific resources that give a more complete presentation.
+The aim here is not to give full treatment of all deep RL methods; instead, this section is meant to serve as an abbreviated background view on model-free deep RL.
+We will introduce some of the important design choices that are made for model-free deep RL algorithms and will point to specific resources that give a more complete presentation.
 These sections presume some familiarity with gradient descent optimization -- see @ruder_overview_2017 for a thorough treatment.
-Throughout these sections, we'll consider the environment to be an MDP which makes for a cleaner presentation here and is also consistent with the referenced sources.
+Throughout these sections, we'll consider the environment to be an MDP which makes for a cleaner presentation and is also consistent with the referenced sources.
 
 # Gradient-based Model-free RL Algorithms
 
 Policy gradients, value-based and actor-critic methods are the general classes of algorithms for gradient-based model-free RL.
-In this section, we will go over these algorithm classes to convey a broad sense of what they are attempting to achieve and the trade-offs between them.
+In this section, we will go over these algorithm classes to convey a sense of what they are attempting to achieve and the trade-offs between them.
 
 ## Policy Gradients
-The most straightforward way to optimize the RL objective is through a policy search, whereby the agent continually updates a policy parameterized by $\theta$, $\pi_\theta$ -- in deep RL, this parameterized policy will be a neural network.
-There are both gradient-free and gradient-based policy search methods that have been successful in practice [@salimans_evolution_2017]; but for the sake of brevity, we will focus on gradient-based methods, which are more commonly encountered. 
+The most straightforward way to optimize the RL objective is through a policy search, whereby the agent continually updates its policy to maximize rewards.
+In deep RL, the agent's policy, $\pi$, is parameterized by a neural network.
+The parameters of the policy neural network are commonly denoted by $\theta$.
 In policy gradient methods, algorithms are performing gradient ascent on the expected return, $J(\pi_\theta)$, to find the optimal policy parameters.
 At each gradient step, the following update is performed,
 
@@ -74,7 +78,7 @@ $$
 $$
 
 The intuition behind this approximation is exactly what we want: the agent will increase the probability of repeating the actions for the inputted states proportional to the size of the return.
-In practice, however, the empirical return tends to have high variance, resulting in very noisy gradients that impedes learning [@suttonbarto].
+In practice, however, the empirical return tends to have high variance, resulting in very noisy gradients that impede learning [@suttonbarto].
 To avoid this issue, many policy gradient algorithms replace the empirical return with a return estimator that has lower variance [@suttonbarto].
 
 A sketch of a simple policy gradient algorithm is shown in Algorithm 1. 
@@ -98,7 +102,7 @@ A sketch of a simple policy gradient algorithm is shown in Algorithm 1.
 ## Value-based Methods 
 Another way to approach the RL problem is by estimating a value function, and then using the value function to retrieve a policy. 
 Value functions attempt to quantify the goodness of being in a state or taking an action from a state.
-Given that the objective of RL is to maximize the cumulative expected reward, "goodness" refers to how high of a cumulative reward the agent can expect to receive.
+Given that the objective of RL is to maximize the cumulative reward, "goodness" refers to how high of a cumulative reward the agent can expect to receive.
 For example, the state-action-value or Q function finds the expected return from a state-action pair under a policy, $\pi$,
 
 $$
@@ -106,14 +110,14 @@ $$
 $$
 
 There are more value functions that can used in practice [@schulman_high-dimensional_2018], but since Q-functions are commonly encountered, we will focus on Q-learning.
-From the above equation, we can define the Q function recursively,
+From the above equation, we can also define the Q function recursively,
 
 $$
   Q^\pi(s_t, a_t) = r (s_t, a_t) + \gamma  \, \mathbb{E}_{s_{t+1} \sim T(s_{t+1} | s_t, a_t), \, a_{t+1} \sim \pi(a_{t+1}| s_{t+1})}\big[ Q^\pi(s_{t+1}, a_{t+1})\big]
 $$
 
 The motivation behind Q-learning is that if we know the Q function under certain conditions -- e.g. that the state-action space is discrete and that all state-action pairs are visited ad infinitum [@suttonbarto 131; @Qproof] --, then we can easily find the optimal action at any state by selecting the action with the highest Q-value: $a_t^* = \underset{a_t}{\text{argmax}} \, Q (s_t, a_t)$.
-Using this optimal policy, we can write an equation for the optimal Q-function from the previous definitions,
+Using this optimal policy, we can write an equation for the optimal Q-function from the previous definition,
 
 $$
   Q^*(s_t, a_t) = r (s_t, a_t) + \gamma  \, \mathbb{E}_{s_{t+1} \sim T(s_{t+1} | s_t, a_t)}\big[ \underset{a_{t+1}}{\text{max}} \,\,Q^*(s_{t+1}, a_{t+1})\big]
@@ -133,8 +137,8 @@ $$
   \phi_{t+1} = \phi_t - \alpha \nabla_\phi \, \sum_i \mathcal{E}_i^2 
 $$
 
-After the Q-function neural network or Q-network has been fitted, the agent will select actions by inputting the current state into the Q network and then identifying the state-action pair with the highest estimated Q value.
-The benefit of using neural networks to approximate Q-functions is that neural networks are able to generalize Q functions over unseen state-action pairs, whereas classic methods like TD-learning are not able to generalize [@DQN].
+After the Q-function neural network or Q-network has been fitted, the agent will select actions by inputting the current state into the Q network and then identifying the state-action pair with the highest approximated Q value.
+The benefit of using neural networks to approximate Q-functions is that neural networks are able to generalize Q functions to unseen state-action pairs, whereas classic methods like TD-learning are not able to generalize [@DQN].
 But there a host of problems with getting neural-network-based value-learning agents to work in practice; see @DQN and @van_hasselt_deep_2015 for more insight on these issues.   
 A notable concern with these methods is that they tend to suffer from bias which is introduced by fitting a value network to a target that incorporates an estimated value function [@van_hasselt_deep_2015]. 
 In review, a sketch of simple deep Q learning algorithm is shown in Algorithm 2.
@@ -188,8 +192,10 @@ A simple sketch of an actor critic algorithm is shown in Algorithm 3.
 
 Exploration is a central component of any deep RL algorithm, and there are a variety of exploration algorithms that an agent can employ.
 In the sections above, we procedurally mentioned that the agent must select actions during training.
-Yet, how the agent selects these actions is very important because if an agent fails to explore the state-action space well, the agent will likely learn a bad policy.
-In this section, we will go over some common exploration algorithms and try to provide some practical insight. 
+Yet, how the agent selects these actions is very important because if an agent explores the state-action space poorly, the agent will learn a sub-optimal policy.
+As mentioned in the manuscript, the dilemma in training is that it is difficult for the agent to know when to balance exploration of new actions and exploitation of past behavior.
+For RL problems with small state-action spaces, e.g. space-action spaces that can be represented in a table, simple exploration algorithms will converge to the optimal policy, but with large or infinite state-action spaces, there are no convergence guarantees.
+In the sections below, we will present some of the more commonly encountered exploration algorithms and then point to some more advanced methods.
 
 ## Epsilon-Greedy Algorithm
 
@@ -222,9 +228,20 @@ An increasingly common way to achieve exploration is by adding a function of the
 While this introduces some bias as the agent no longer exclusively maximizes cumulative rewards, entropy-based exploration has been effective in practice at improving exploration, resulting in better agent performance.
 @ahmed_understanding_2019 gives a very complete discussion on the benefits of using entropy.
 
+## More Advanced Exploration Methods
+
 There is a multitude of exploration algorithms that we have not touched on, so it is important to say that the algorithms mentioned above are generally suited for dense reward or "easy-exploration" problems.
 For "hard-exploration" problems -- for instance, environments that have very few state-action pairs with significant rewards, like a maze, are seen as hard-exploration problems --, more intricate and bespoke exploration algorithms tend to outperform.
-We will not go over these more advanced exploration algorithms but a good example is seen in @go-explore.
+The issue for "hard-exploration" problems is that the agent needs to explore the state-action space efficiently, and simple exploration algorithms like epsilon-greedy will waste compute by revisiting bad actions.
+Two common approaches to hard exploration problems are memory-based and curiosity-driven techniques.
+For the sake of brevity, we will not go into further detail on these approaches but will provide some promising recent work.
+Look at @go-explore and @nevergiveup for recent applications of memory-based exploration.
+See @largescalecuriosity and @bellemare2016 for recent studies of curiosity-driven methods.   
+
+
+
+
+
 
 
 # Replay Buffers vs. Parallel Workers
@@ -236,12 +253,12 @@ Learning from correlated samples is undesirable since this can result in agents 
 There are two commonly used solutions to this problem of correlated samples: Replay Buffers and Parallel Workers.
 If the agent is off-policy, the agent can employ a replay buffer -- see @DQN for a now classic example for a replay buffer-based agent.
 With a replay buffer, the agent will save state-action-reward transitions in the replay buffer, and during learning updates, the agent will sample transitions from the replay buffer.
-Since the replay buffer can be arbitrarily large and thus store transitions from numerous trajectories, sampling from the buffer will likely produce transitions that cover a broader region in state-action space than if the agent were to sample from one trajectory.
-On-policy agents, however, cannot use a replay buffer since these agents are not allowed to use samples from a policy different than the policy they are trying to improve -- replay buffers are generally large enough to hold transitions from old policies.
+Since the replay buffer can be arbitrarily large and thus store transitions from numerous trajectories, sampling from the buffer will result in decorrelated samples.
+On-policy agents, however, cannot use a replay buffer since these agents are not allowed to use samples from a policy different than the policy they are trying to improve -- note replay buffers are generally large enough to hold transitions from old policies.
 The solution to de-correlate samples for on-policy agents is to use parallel workers, whereby multiple workers explore the environment according to the current policy.
 Due to stochasticity that can come from exploration and the environment, the workers will go on different trajectories in state-action space.
-The on-policy agent will collect samples across these workers in a learning step, and then repeat the process of collecting and sampling transitions with an updated policy.
-The idea behind using parallel workers is that sampling over multiple trajectories will de-correlate samples -- see @a3c on more details here.
+The agent will collect samples across these workers in a learning step, perform its learning step and then repeat the process of collecting and sampling transitions with an updated policy.
+The idea behind using parallel workers is that sampling over multiple trajectories de-correlate samples -- see @a3c on more details here.
 In practice, using a large replay buffer, on the order of millions of transitions, or a modest number of parallel, around 4-16 for simple RL problems, is very important to achieve good agent performance for off-policy and on-policy algorithms respectively.
 
 
@@ -250,40 +267,29 @@ In practice, using a large replay buffer, on the order of millions of transition
 Reinforcement learning is a huge, constantly evolving field, and we've only touched on a small sliver of RL in our study.
 In this appendix, we briefly introduced some of the major design decisions that are made with model-free deep RL algorithms, but there are many more decisions that are made with current state of the art algorithms.
 In table ..., we present some commonly used deep RL algorithms.
-Readers that are interested in learning more about the current state of deep RL should read the papers referenced in table ...; @DQN, @sac and @PPO are good places to start. 
-We have also not given any space to discuss model-based or gradient-free techniques which also warrant attention -- see @mbpo and @salimans_evolution_2017 for more here.
-A benefit of model-free deep RL over these other approaches is that there has been more of a general focus on model-free deep RL, so there are widely available packages like Stable Baselines and TensorFlow Agents which implement model-free deep RL agents.
+Readers that are interested in learning more about the current state of deep RL should read the papers referenced in table ...; @DQN, @sac and @ppo are good places to start. 
+Yet, we have not given any space to discuss model-based or gradient-free techniques which also warrant attention -- see @mbpo and @salimans_evolution_2017 for more here.
+A benefit of model-free deep RL over these other approaches is that there has been more of a general focus recently on model-free deep RL, so there are widely available software packages like Stable Baselines and TensorFlow Agents which implement model-free deep RL agents.
 It is important to keep in mind though that deep RL has only become established in the last decade, and with the large amount of open research questions, deep RL may evolve significantly in the near future.
 
-\begin{tabular}{c|c|c|c|c}
+\resizebox{\textwidth}{!}{\begin{tabular}{l l l l l}
 \hline
-Algorithm & Description                                     & Model       & Policy     & Method \\
+Algorithm & Description                                                       & Model       & Policy     & Method \\
 \hline
-\rowcolor{lightgray}
-MBPO      & Model-based Policy Optimization \cite{mbpo}    & Model-based & On-policy  & Policy Gradient \\
-MCTS      & Monte Carlo Tree Search \cite{suttonbarto}     & Model-based & Either     & Any\\
-\rowcolor{lightgray}
-A2C       & Advantage Actor Critic  \cite{A2C}             & Model-free  & On-policy  & Actor-critic\\
-A3C       & Asynchronous A2C  \cite{a3c}                   & Model-free  & On-policy  & Actor-critic\\
-\rowcolor{lightgray}
-TRPO      & Trust Region Policy Optimization  \cite{trpo}  & Model-free  & On-policy  & Policy Gradient\\
-PPO       & Proximal Policy Optimization  \cite{ppo}       & Model-free  & On-policy  & Actor-critic\\
-\rowcolor{lightgray}
-DQN       & Deep Q Networks  \cite{DQN}                    & Model-free  & Off-policy & Value-Based\\
-DDPG      & Deep Deterministic Policy Gradient  \cite{ddpg}& Model-free  & Off-policy & Actor-critic\\
-\rowcolor{lightgray}
-TD3       & Twin Delayed DDPG  \cite{TD3}                  & Model-free  & Off-policy & Actor-critic\\
-SAC       & Soft Actor Critic  \cite{sac}                  & Model-free  & Off-policy & Actor-critic\\
-\rowcolor{lightgray}
-IMPALA    & Importance Weighted Actor Learner \cite{impala}& Model-free  & Off-policy & Actor-critic\\
-\end{tabular}
+MBPO      & Model-based Policy Optimization (Janner et al. 2019)              & Model-based & On-policy  & Policy Gradient \\
+MCTS      & Monte Carlo Tree Search (Sutton and Barto 2018)                   & Model-based & Either     & Any\\
+A2C       & Advantage Actor Critic  (Mnih et al. 2016)                        & Model-free  & On-policy  & Actor-critic\\
+A3C       & Asynchronous A2C  (Babaeizadeh et al. 2017)                       & Model-free  & On-policy  & Actor-critic\\
+TRPO      & Trust Region Policy Optimization  (Schulman, Levine,et al. 2017)  & Model-free  & On-policy  & Policy Gradient\\
+PPO       & Proximal Policy Optimization  (Schulman, Wolski, et al. 2017)     & Model-free  & On-policy  & Actor-critic\\
+DQN       & Deep Q Networks   (Mnih et al. 2015)                              & Model-free  & Off-policy & Value-Based\\
+DDPG      & Deep Deterministic Policy Gradient   (Lillicrap et al. 2019)      & Model-free  & Off-policy & Actor-critic\\
+TD3       & Twin Delayed DDPG  (Fujimoto, Hoof, and Meger 2018)               & Model-free  & Off-policy & Actor-critic\\
+SAC       & Soft Actor Critic   (Haarnoja et al. 2018)                        & Model-free  & Off-policy & Actor-critic\\
+IMPALA    & Importance Weighted Actor Learner (Espeholt et al. 2018)          & Model-free  & Off-policy & Actor-critic\\
+\end{tabular}}
 
 
-
-<!-- \begin{figure} -->
-<!-- \includegraphics[width=\linewidth]{algorithm_table.pdf} -->
-<!-- \caption{Common Deep RL Algorithms. } -->
-<!-- \end{figure} -->
 # References
 
 
