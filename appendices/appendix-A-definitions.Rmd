@@ -64,7 +64,7 @@ In this section, we will go over these algorithm classes to convey a sense of wh
 The most straightforward way to optimize the RL objective is through a policy search, whereby the agent continually updates its policy to maximize rewards.
 In deep RL, the agent's policy, $\pi$, is parameterized by a neural network.
 The parameters of the policy neural network are commonly denoted by $\theta$.
-In policy gradient methods, algorithms are performing gradient ascent on the expected return, $J(\pi_\theta)$, to find the optimal policy parameters.
+In policy gradient methods, the RL agent performs gradient ascent on the expected return, $J(\pi_\theta)$, to find the optimal policy parameters.
 At each gradient step, the following update is performed,
 
 $$
@@ -81,7 +81,7 @@ The intuition behind this approximation is exactly what we want: the agent will 
 In practice, however, the empirical return tends to have high variance, resulting in very noisy gradients that impede learning [@suttonbarto].
 To avoid this issue, many policy gradient algorithms replace the empirical return with a return estimator that has lower variance [@suttonbarto].
 
-A sketch of a simple policy gradient algorithm is shown in Algorithm 1. 
+A sketch of a simple policy gradient algorithm is shown in Algorithm 1^[The algorithm sketches showed throughout this study are not practical for a variety of reasons including high bias estimators, high variance estimators and correlated samples. The algorithm examples are instead intended to convey how the general steps of the different algorithm classes are integrated by the agents.]. 
 
 \begin{algorithm}
 \label{alg:policy_gradient}
@@ -97,7 +97,6 @@ A sketch of a simple policy gradient algorithm is shown in Algorithm 1.
     \EndFor
 \end{algorithmic}
 \end{algorithm}
-
 
 ## Value-based Methods 
 Another way to approach the RL problem is by estimating a value function, and then using the value function to retrieve a policy. 
