@@ -19,7 +19,7 @@ plot_policy <- function(policy_df)
                            group=interaction(rep, model),
                            col = model)) +
   geom_line(show.legend = FALSE) +
-  coord_cartesian(xlim = c(0, 1.3), ylim=c(0,0.9))
+  coord_cartesian(xlim = c(0, 1.2))
 
 plot_reward <- function(sims_df, gamma = 1)
   sims_df %>%

@@ -26,9 +26,7 @@ header-includes:
   - \usepackage{amsmath}
   - \usepackage{amssymb}
 
-output: 
-  rticles::arxiv_article:
-    keep_tex: true
+output: rticles::arxiv_article
 ---
 
 # Overview
@@ -41,24 +39,6 @@ to other simulation environments we have built and continue to develop, or to th
 (Appendix C details the process of defining one's own `gym` environment from an ecological model). 
 This overview is neither a complete introduction to deep RL or a comprehensive analysis of RL solutions to these environments.
 
-
-
-```{r knitr, include = FALSE}
-knitr::opts_chunk$set(echo=TRUE, message = FALSE, warning = FALSE,
-                      fig.width = 7, fig.height = 4, cache = FALSE)
-ggplot2::theme_set(ggplot2::theme_bw())
-
-scale_colour_discrete = function(...) ggthemes::scale_colour_solarized()
-scale_fill_discrete = function(...) ggthemes::scale_fill_solarized()
-pal = ggthemes::solarized_pal()(8)
-txtcolor = "#586e75"
-
-
-colors <- set_names(c(pal[c(1,3,5,8)], txtcolor),
-                    c("Optimal", "TD3", "TD3_tuned", "RL", "historical"))
-scale_colour_discrete <- function(...) scale_colour_manual(..., values=colors)
-scale_fill_discrete <- function(...) scale_fill_manual(..., values=colors)
-```
 
 
 # Deep Reinforcement Learning in R
@@ -130,6 +110,27 @@ gym_conservation = import("gym_conservation")
 
 source("../R/plotting-helpers.R")
 ```
+
+
+
+```{r knitr, include = FALSE}
+# This chunk controls plot aesthetics only, and can be omitted with no material change
+knitr::opts_chunk$set(echo=TRUE, message = FALSE, warning = FALSE,
+                      fig.width = 7, fig.height = 4, cache = FALSE)
+ggplot2::theme_set(ggplot2::theme_bw())
+
+scale_colour_discrete = function(...) ggthemes::scale_colour_solarized()
+scale_fill_discrete = function(...) ggthemes::scale_fill_solarized()
+pal = ggthemes::solarized_pal()(8)
+txtcolor = "#586e75"
+
+colors <- set_names(c(pal[c(1,3,8,2)], txtcolor, pal[6]),
+                    c("Optimal", "TD3", "TD3_tuned", "RL", "historical", "steady-state"))
+scale_colour_discrete <- function(...) scale_colour_manual(..., values=colors)
+scale_fill_discrete <- function(...) scale_fill_manual(..., values=colors)
+```
+
+
 
 Numerical reproducibility can be challenging in machine learning problems, particularly when using GPU-based acceleration. In addition to setting a random seed in our Python environment, we can optionally disable GPU use to improve reproducibility by setting the `CUDA_VISIBLE_DEVICES` to a blank value.  
 
@@ -211,8 +212,11 @@ At the heart of each deep RL algorithm is a neural network or a collection of ne
 Confusingly, the parameters of a RL algorithm that detail the overall learning process are called _hyper-parameters_ while the parameters of a RL algorithm that are learned during training are called parameters. For example, the number of layers in a neural network is a hyper-parameter but a weight in the neural net is referred to as a parameter.
 Before training an agent, we must first specify the hyper-parameters; the algorithm's parameters are often randomly initialized.
 Each algorithm may have different hyper-parameters. `stable-baselines3` provides default values for all hyper-parameters based on the original papers that introduced the corresponding algorithms.
-<!-- For example, here we will try the Actor-Critic algorithm A2C, training with the default hyperparameters originally posed in @A2C.-->
-We use this algorithm to train an agent that has a multi-layer perceptron ('MlpPolicy') neural network, with the default architecture of two 64-neuron layers.
+
+
+For example, here we will use the Twin Delayed DDPG method (TD3) described in @TD3.
+This algorithm is a successor of Deep Deterministic Policy Gradient (DDPG) method [@DDPG], itself a policy-gradient-modification that extends the original Deep Q-Network (DQN) algorithm [@DQN] to continuous action spaces.
+We use this algorithm to train an agent that has a multi-layer perceptron (`MlpPolicy`) neural network, with the default architecture of two 64-neuron layers.
 
 
 ```{r}
@@ -378,11 +382,6 @@ policy_df <- td3_policy  %>%
   bind_rows(policy_df)
 
 
-
-colors <- set_names(c(pal[c(1,3,8,2)], txtcolor),
-                    c("Optimal", "TD3", "TD3_tuned", "RL", "historical"))
-scale_colour_discrete <- function(...) scale_colour_manual(..., values=colors)
-scale_fill_discrete <- function(...) scale_fill_manual(..., values=colors)
 plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 ```
 
@@ -425,7 +424,7 @@ Recall that the `gym_fishing` environment includes helper function `get_state()`
 ```{r}
 # Initial states
 x0 = hake[[1, "scaled_biomass"]]
-agent_state = agent_action = numeric(Tmax)
+agent_state = agent_action = numeric(15)
 agent_state[1] = x0
 agent_action[1] = NA
 
@@ -564,12 +563,9 @@ if(!file.exists("../python/cache/td3-conservation.zip")){
 
 
 ```{r}
-# Simulate management under the trained agent
-# See https://github.com/boettiger-lab/conservation-agents/blob//conservation/TD3-v6.py
-
 model = sb3$TD3$load("../python/cache/td3-conservation")
-TD3_sims = env$simulate(model, reps = 100L)
-TD3_policy = env$policyfn(model, reps = 10L)
+TD3_sims = env$simulate(model, reps = 100L) %>% mutate(model = "TD3_tuned")
+TD3_policy = env$policyfn(model, reps = 1L)  %>% mutate(model = "TD3_tuned")
 ```
 
 
@@ -587,21 +583,16 @@ This is implemented using the `fixed_action` method provided in our `gym_conserv
 K = 1.5
 alpha = 0.001
 opt = gym_conservation$models$fixed_action(env, fixed_action = alpha * 100 * 2 * K )
-opt_sims = env$simulate(opt, reps = 100L)
-opt_policy = env$policyfn(opt)
+opt_sims = env$simulate(opt, reps = 100L) %>% mutate(model="steady-state")
+opt_policy = env$policyfn(opt) %>% mutate(model="steady-state")
 ```
 
 
 We gather together the results under the RL agent and steady-state policy as before,
 
 ```{r}
-sims_df = bind_rows(TD3_sims, opt_sims, .id = "model") %>%
-  mutate(model = c("TD3", "steady-state")[as.integer(model)])
-
-policy_df = bind_rows(TD3_policy, opt_policy, .id = "model") %>%
-  mutate(model = c("TD3", "steady-state")[as.integer(model)])
-
-
+sims_df = bind_rows(TD3_sims, opt_sims)
+policy_df = bind_rows(TD3_policy, opt_policy)
 
 ```
 
@@ -615,9 +606,11 @@ write_csv(policy_df, "../manuscript/figs/tipping_policy_df.csv")
 
 
 ```{r fig3}
-plot_sims(sims_df) / ( plot_policy(policy_df) + plot_policy(sims_df))
+plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 ```
 
+
+## Rescues: individual simulation trajectories
 
 Because it is difficult to get a feel for the dynamics of individual replicate simulations from ensemble statistics, we select a few example trajectories to examine directly. 
 Of the 100 replicate simulations, we pick 4 examples that dip below a state value of 0.2 for over 15 consecutive timesteps, indicating a transition into the lower basin of attraction. 
@@ -630,15 +623,15 @@ Comparing the dynamics under the rule of thumb steady-state strategy to that of 
 
 ## First 4 of the TD3 reps falling below .2 for more than 15 steps
 is_low = sims_df %>% 
-  filter(model == "TD3") %>% 
+  filter(model == "TD3_tuned") %>% 
   group_by(rep, model) %>% 
   summarize(low = sum(state < .2) > 10) %>% 
   filter(low) %>% head(6)
 
 ## First 4 such cases:
 sims_df %>% inner_join(is_low) %>%
-  ggplot(aes(time, state,  group=interaction(model, rep))) +
-  geom_line(color = pal[3], show.legend = FALSE) + facet_wrap(~rep)
+  ggplot(aes(time, state,  col=model, group=interaction(model, rep))) +
+  geom_line(show.legend = FALSE) + facet_wrap(~rep)
 ```
 
 
@@ -648,10 +641,15 @@ is_low = sims_df %>% filter(model == "steady-state") %>%
   group_by(rep, model) %>% summarize(low = sum(state < .2) > 10) %>% 
   filter(low) %>% head(6)
 sims_df %>% inner_join(is_low) %>%
-  ggplot(aes(time, state, group=interaction(model, rep))) +
-  geom_line(color = pal[1], show.legend = FALSE) + facet_wrap(~rep)
+  ggplot(aes(time, state, col=model, group=interaction(model, rep))) +
+  geom_line(show.legend = FALSE) + facet_wrap(~rep)
 ```
 
 
 ```{r}
 ```
+
+
+\pagebreak
+
+# References

@@ -1,0 +1,110 @@
+---
+title: "Appendix D: Accessing Empirical Data for Management Comparison"
+authors:
+  - name: Marcus Lapeyrolerie
+    department: Department of Environmental Science, Policy, and Management
+    affiliation: University of California, Berkeley
+    location: Berkeley, California
+  - name: Melissa Chapman
+    department: Department of Environmental Science, Policy, and Management
+    affiliation: University of California, Berkeley
+    location: Berkeley, California
+  - name: Kari Norman
+    department: Department of Environmental Science, Policy, and Management
+    affiliation: University of California, Berkeley
+    location: Berkeley, California
+  - name: Carl Boettiger
+    department: Department of Environmental Science, Policy, and Management
+    affiliation: University of California, Berkeley
+    location: Berkeley, California
+    email: cboettig@berkeley.edu
+
+
+bibliography: ../manuscript/references.bib
+
+header-includes:
+  - \usepackage{amsmath}
+  - \usepackage{amssymb}
+
+output: rticles::arxiv_article
+---
+
+
+This appendix provides reproducible code used to access and clean data from the R.A. Myers Legacy Stock Assessment Database used in for empirical comparison in the hindcasts shown in the main text.
+
+```{r knitr, include = FALSE}
+knitr::opts_chunk$set(echo=TRUE, message = FALSE, warning = FALSE,
+                      fig.width = 7, fig.height = 4, cache = TRUE)
+ggplot2::theme_set(ggplot2::theme_bw())
+
+scale_colour_discrete <- function(...) ggthemes::scale_colour_solarized()
+scale_fill_discrete <- function(...) ggthemes::scale_fill_solarized()
+pal <- ggthemes::solarized_pal()(8)
+txtcolor <- "#586e75"
+```
+
+```{r setup, cache = FALSE, message=FALSE}
+# R dependencies
+library(tidyverse)
+library(patchwork)
+library(reticulate)
+
+## Python dependencies loaded via R
+sb3         <- import ("stable_baselines3")
+gym         <- import ("gym")
+gym_fishing <- import("gym_fishing")
+```
+
+
+Access data from the RAM Legacy Stock Assessment Database. (2020). Version v4.491 [Data set]. Zenodo. http://doi.org/10.5281/zenodo.3676088.
+Note that DOIs resolve only to HTML landing pages.  
+For programmatic access to the data, we resolve content by it's content hash instead:
+
+```{r}
+library(contentid)
+ramzip <- resolve("hash://md5/fac27d8b7876df29afaeadcd7f5a3b77")
+unzip(ramzip, exdir = "ramlegacy")
+load("ramlegacy/RAMLDB v4.491/DB Files With Assessment Data/R Data/DBdata[asmt][v4.491].RData")
+```
+
+Relevant data is stored across several tables, following relational database practices.  
+Before analysis we join these tables by shared primary key:
+
+```{r}
+ramlegacy <- 
+  timeseries_values_views %>%
+  select(stockid, stocklong, year, SSB, TC) %>%
+  left_join(stock) %>%
+  left_join(area) %>%
+  select(stockid, scientificname, 
+         commonname, areaname, country, year, 
+         SSB, TC) %>%
+  left_join(timeseries_units_views %>%
+              rename(TC_units = TC, SSB_units = SSB)) %>%
+  select(scientificname, commonname, 
+         stockid, areaname, country, year, 
+         SSB, TC, SSB_units, TC_units)
+```
+
+
+Let's filter out missing data, non-matching units, and obvious reporting errors (catch exceeding total spawning biomass), then we re-scale each series into the 0,1 by appropriate choice of units.
+We store the processed data locally for future use.
+
+```{r}
+stock_ids <- c("ARGHAKENARG")
+
+fish <- ramlegacy %>% 
+  filter(stockid %in% stock_ids) %>% 
+  filter(!is.na(SSB), !is.na(TC)) %>%
+  filter(SSB_units == "MT", TC_units=="MT") %>% 
+  filter(SSB > TC) %>%
+  select(-SSB_units, -TC_units) %>% 
+  group_by(stockid) %>%
+  mutate(scaled_catch = TC / max(SSB),
+         scaled_biomass = SSB / max(SSB)) 
+
+hake <- fish  %>% filter(commonname=="Argentine hake")
+write_csv(hake, "../data/hake.csv")
+```
+
+
