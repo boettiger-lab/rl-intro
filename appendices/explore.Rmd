@@ -1,0 +1,118 @@
+---
+output: pdf_document
+---
+
+```{r setup, cache = FALSE, message=FALSE, include=FALSE}
+# R dependencies
+library(tidyverse)
+library(patchwork)
+library(reticulate)
+
+## Python dependencies loaded via R
+sb3      = import("stable_baselines3")
+torch    = import("torch")
+gym      = import("gym")
+gym_fishing = import("gym_fishing")
+gym_conservation = import("gym_conservation")
+
+
+source("../R/plotting-helpers.R")
+ggplot2::theme_set(ggplot2::theme_bw())
+scale_colour_discrete = function(...) ggthemes::scale_colour_solarized()
+scale_fill_discrete = function(...) ggthemes::scale_fill_solarized()
+
+knitr::opts_chunk$set(echo=FALSE)
+```
+
+```{r}
+
+sims_all <- function(cache, env) {
+
+  names(cache) <- gsub("_\\w*tuned\\.zip", "", basename(cache))
+  algos <- stringr::str_to_upper(names(cache))
+  
+  names(algos) <- algos
+  sims_df <- map_dfr(algos, function(algo){
+    i <- which(algo==algos)
+    agent <- sb3[[algo]]$load(cache[[i]])
+    env$simulate(agent, 100L)
+  }, .id = "model")
+  
+  opt <- gym_fishing$models$escapement(env)
+  opt_sims <- env$simulate(opt, reps = 100L)%>% mutate(model="optimal")
+  bind_rows(opt_sims, sims_df) 
+}
+
+policyfns <- function(cache, env) {
+  
+  names(cache) <- gsub("_\\w*tuned\\.zip", "", basename(cache))
+  algos <- stringr::str_to_upper(names(cache))
+  names(algos) <- algos
+  policy_df <- map_dfr(algos, function(algo){
+    i <- which(algo==algos)
+    agent <- sb3[[algo]]$load(cache[[i]])
+    env$policyfn(agent, 1L)
+  }, .id = "model")
+  
+  opt <- gym_fishing$models$escapement(env)
+  opt_policy <- env$policyfn(opt)%>% mutate(model="optimal")
+  bind_rows(opt_policy, policy_df) 
+}
+
+
+#  policy_df = env$policyfn(agent) %>% mutate(model="RL") %>% bind_rows(opt_policy)
+```
+
+
+
+
+# Deterministic Environment, Untuned agents
+
+```{r}
+env = gym$make("fishing-v1", sigma = 0)
+untuned_det <- fs::dir_ls("../python/fishing/determinstic/cache/", regexp = ".*_untuned\\.zip")
+
+
+df <- sims_all(untuned_det, env)
+pf <- policyfns(untuned_det, env)
+plot_sims(df) / (plot_policy(pf) + plot_reward(df))
+```
+
+# Stochastic Environment, Untuned Agents
+
+```{r}
+env = gym$make("fishing-v1", sigma = 0.1)
+cache <- fs::dir_ls("../python/fishing/stochastic/cache/", regexp = ".*_untuned\\.zip")
+
+
+df <- sims_all(cache, env)
+pf <- policyfns(cache, env)
+plot_sims(df) / (plot_policy(pf) + plot_reward(df))
+```
+
+
+# Deterministic Environment, Tuned Agents
+
+```{r}
+env = gym$make("fishing-v1", sigma = 0)
+tuned_det <- fs::dir_ls("../python/fishing/determinstic/cache/", regexp = ".*_tuned\\.zip")
+
+df <- sims_all(tuned_det, env)
+pf <- policyfns(tuned_det, env)
+plot_sims(df) / (plot_policy(pf) + plot_reward(df))
+```
+
+# Stochastic Environment, Tuned Agents
+
+
+```{r}
+env = gym$make("fishing-v1", sigma = 0.1)
+tuned_stoch <- fs::dir_ls("../python/fishing/stochastic/cache/", regexp = ".*_tuned\\.zip")
+
+df <- sims_all(tuned_stoch, env)
+pf <- policyfns(tuned_stoch, env)
+plot_sims(df) / (plot_policy(pf) + plot_reward(df))
+```
+
+
+
