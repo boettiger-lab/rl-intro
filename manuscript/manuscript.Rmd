@@ -470,17 +470,15 @@ The model-free RL agent needs to make no such a priori hypothesis about a partic
 Model-free approaches have proven successful at learning effective policies even when the underlying model may be difficult or impossible to learn [@Pong2020], as long as simulations of possible mechanisms are available.
 
 <!-- Real problems are harder than these examples -->
-<!-- ML: I feel like this paragraph could be condensed with the one above -->
-<!-- CB: I think "model free is great" and "real problems are harder than these examples" are two distinct messages though and at least one would get lost in mashing them together.  Perhaps the message doesn't come across in the current version.  Does look like this paragraph is similar in overall message to the next one though, maybe could be combined with that?  -->
 The examples presented here only scrape the surface of possible RL applications to conservation problems.
 The examples we have focused on are intentionally quite simple, though it is worth remembering that these very same simple models have a long history of relevance and application in both research and policy contexts.
 Despite their simplicity, the optimal strategy is not always obvious before hand, however intuitive it may appear in retrospect.
 In the case of the ecosystem tipping point scenario, the optimal strategy is unknown, and the approximate solution found by our RL implementation could almost certainly be improved upon.
-Even at it's best, an RL-trained agent can only be as good as the scenarios on which it has been trained. <!-- ML: A counterpoint here is that a model-based agent may learn a correct model that generalizes outside of the examples it has seen-->
+Even at it's best, an RL-trained agent can only be as good as the scenarios on which it has been trained. <!-- ML: I think we could delete this sentence and not lose anything. Another issue here is that the sentence implies that RL is not able to optimize the tipping point example becasue of not seeing the right state-action pairs ehh. -->
 In these simple examples in which the simulation implements a single model, training is analogous to classical methods which take the model as given [@Marescot2013].
 But classical approaches can be difficult to generalize when the underlying model is unknown: alternative models may require a completely different approach.
-In contrast, the process of training an RL algorithm on a more complex problem is no different than the simple one: we only need access to a simulation which can generate plausible future states in response to possible actions.
-Many of our most realistic ecological models exist only as numerical simulations of lower-level dynamics, such as the individual-based models used in the management of forests and wildfire [@sortie; @wildfire], disease [@covid], marine ecosystems [@ecopath], or global climate change [@dice].
+In contrast, the process of training an RL algorithm on a more complex problem is no different than training on a simple one: we only need access to a simulation which can generate plausible future states in response to possible actions.
+Many of our most realistic ecological models exist only as numerical simulations of lower-level dynamics, such as the individual-based models used in the management of forests and wildfire [@sortie; @wildfire], disease [@covid], marine ecosystems [@ecopath], or global climate change [@dice]. <!-- ML: The second half of this paragraph doesn't quite drive home what I think is the intended point which is that RL can do well with model uncertainty and complexity. -->
 
 
 <!-- Solving 'real' problems will be hard -->
@@ -488,9 +486,9 @@ Successfully applying RL to complex ecological problems is no easy task.
 The flexibility of the approach makes it relatively straightforward to include realistic biology and environmental science in framing an RL problem.
 Yet, even on relatively uncomplicated environments, training an RL agent can be more challenging than expected due to an entanglement of reasons like hyperparameter instability and poor exploration that can be very difficult to resolve [@drlthatmatters].
 As the examples we have presented illustrate, it is important to begin with simple problems, including those for which an optimal strategy is already known.
-Such examples provide important benchmarks against which to calibrate the performance, tuning and training requirements of RL,
-and can easily be extended into more complex problems once RL agents can master the basics.
-In the case that an agent has been trained to perform well on a realistic environment, there will still be a range of open questions in using this agent to inform decision-making: 
+Such examples provide important benchmarks to calibrate the performance, tuning and training requirements of RL.
+Once RL agents have mastered the basics, these examples can be easily extended into more complex problems by changing the environment.
+Yet, even in the case that an agent performs well on a realistic problem, there will still be a range of open questions in using deep RL to inform decision-making: 
 
 - Since deep neural networks lack transparency [@castelvecchi_can_2016], can we be confident that the deep RL agent will generalize its past experience to new situations?
 
@@ -503,8 +501,8 @@ Recent advances in the field have proven the potential of the approach to solve 
 Successes have so far been concentrated in applications to games and robotics, not scientific and policy domains, though this is beginning to change [@protein_folding].
 Leading developers of new deep RL algorithms benchmark the performance of their algorithms against such problems in part because simulations of games and robotic movement are readily available through open source frameworks designed to interface with RL algorithms [brockman2016], and performance can easily be compared against alternatives on public leaderboards [brockman2016].
 Iterative improvements to well-posed public challenges have proven immensely effective in the computer science community in tackling difficult problems, which allow many teams with diverse expertise not only to compete but to learn from each other [@netflix_prize; @imagenet].
-Advances in both computational power and algorithmic efficiency continue to reduce costs at a dramatic pace, significantly faster than Moore's law [@openai_costs].
-By working to develop similarly well-posed challenges as clear benchmarks, ecology and environmental science researchers may both be better able to replicate that collaborative, iterative success in cracking hard problems.
+Advances in both computational power and algorithmic efficiency continue to reduce costs at a dramatic pace, significantly faster than Moore's law [@openai_costs]. <!-- ML: I think we can let go of this sentence and not lose the point; I think we touch on it a bit in the last sentence of the first paragraph here also -->
+By working to develop similarly well-posed challenges as clear benchmarks, ecology and environmental science researchers may be better able to replicate that collaborative, iterative success in cracking hard problems.
 Such benchmarks may further improve collaboration across disciplines as well, attracting the attention of AI expertise to these key issues facing our planet.
 If RL opens the door to greater role for artificial intelligence and engagement of technology firms in the machinery that determines environmental policy, this raises new concerns as well as new opportunities.  
 
