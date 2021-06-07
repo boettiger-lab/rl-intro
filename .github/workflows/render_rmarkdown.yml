@@ -3,7 +3,7 @@ on: [push]
 jobs:
   my_job:
     runs-on: ubuntu-latest
-    container: rocker/ml-verse
+    container: rocker/ml-verse:4.1.0-cuda11.1
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies

@@ -125,7 +125,7 @@ pal = ggthemes::solarized_pal()(8)
 txtcolor = "#586e75"
 
 colors <- set_names(c(pal[c(1,3,8,2)], txtcolor, pal[6]),
-                    c("Optimal", "TD3", "TD3_tuned", "RL", "historical", "steady-state"))
+                    c("Optimal", "TD3_untuned", "TD3", "RL", "historical", "steady-state"))
 scale_colour_discrete <- function(...) scale_colour_manual(..., values=colors)
 scale_fill_discrete <- function(...) scale_fill_manual(..., values=colors)
 ```
@@ -311,10 +311,10 @@ agent_policy = env$policyfn(agent, reps = 5L)
 ```{r}
 # stack result simulations with those above and plot:
 sims_df <- agent_sims %>% 
-  mutate(model = "TD3") %>% 
+  mutate(model = "TD3_untuned") %>% 
   bind_rows(sims_df)
 policy_df <- agent_policy  %>% 
-  mutate(model = "TD3")  %>% 
+  mutate(model = "TD3_untuned")  %>% 
   bind_rows(policy_df)
 
 plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
@@ -375,10 +375,10 @@ td3_policy = env$policyfn(td3)
 ```{r}
 # stack result simulations with those above and plot:
 sims_df <- td3_sims %>% 
-  mutate(model = "TD3_tuned") %>% 
+  mutate(model = "TD3") %>% 
   bind_rows(sims_df)
 policy_df <- td3_policy  %>% 
-  mutate(model = "TD3_tuned")  %>% 
+  mutate(model = "TD3")  %>% 
   bind_rows(policy_df)
 
 
@@ -451,17 +451,21 @@ Plot the results:
 
 ```{r}
 years =1986:2000
-df = bind_rows(
-  tibble(year = years, harvest = agent_action, model = "TD3_tuned"),
+harvest = bind_rows(
+  tibble(year = years, harvest = agent_action, model = "TD3"),
   tibble(year = years, harvest = hake$scaled_catch, model = "historical")
 )
 stock <-  tibble(year = years, biomass = hake$scaled_biomass, model = "historical")
+
+
+write_csv(harvest, "../manuscript/figs/historical_harvest.csv")
+write_csv(stock, "../manuscript/figs/historical_stock.csv")
 
 top_panel <- ggplot(stock, aes(year, biomass, col=model)) + geom_line(lty=2) + 
   theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank())
-bottom_panel <- ggplot(df, aes(year, harvest, col=model)) + 
+bottom_panel <- ggplot(harvest, aes(year, harvest, col=model)) + 
   geom_line() + geom_point()
 
 top_panel / bottom_panel
@@ -564,8 +568,8 @@ if(!file.exists("../python/cache/td3-conservation.zip")){
 
 ```{r}
 model = sb3$TD3$load("../python/cache/td3-conservation")
-TD3_sims = env$simulate(model, reps = 100L) %>% mutate(model = "TD3_tuned")
-TD3_policy = env$policyfn(model, reps = 1L)  %>% mutate(model = "TD3_tuned")
+TD3_sims = env$simulate(model, reps = 100L) %>% mutate(model = "TD3")
+TD3_policy = env$policyfn(model, reps = 1L)  %>% mutate(model = "TD3")
 ```
 
 
@@ -623,7 +627,7 @@ Comparing the dynamics under the rule of thumb steady-state strategy to that of 
 
 ## First 4 of the TD3 reps falling below .2 for more than 15 steps
 is_low = sims_df %>% 
-  filter(model == "TD3_tuned") %>% 
+  filter(model == "TD3") %>% 
   group_by(rep, model) %>% 
   summarize(low = sum(state < .2) > 10) %>% 
   filter(low) %>% head(6)
