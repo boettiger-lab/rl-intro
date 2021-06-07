@@ -494,6 +494,7 @@ Yet, even in the case that an agent performs well on a realistic problem, there 
 
 - Given that there have been many examples of reward misspecification leading to undesirable behavior [@hadfield-menell_inverse_2020], what if we have selected an objective that unexpectedly causes damaging behavior?
 
+- Will using deep RL create power assymetries between those developing the RL agents and those that rely on the natural resources at stake? 
 
 <!-- But never fear, hard problems have been solved before!-->
 Deep RL is still a very young field, where despite several landmark successes, potential far outstrips practice.
@@ -501,10 +502,12 @@ Recent advances in the field have proven the potential of the approach to solve 
 Successes have so far been concentrated in applications to games and robotics, not scientific and policy domains, though this is beginning to change [@protein_folding].
 Leading developers of new deep RL algorithms benchmark the performance of their algorithms against such problems in part because simulations of games and robotic movement are readily available through open source frameworks designed to interface with RL algorithms [brockman2016], and performance can easily be compared against alternatives on public leaderboards [brockman2016].
 Iterative improvements to well-posed public challenges have proven immensely effective in the computer science community in tackling difficult problems, which allow many teams with diverse expertise not only to compete but to learn from each other [@netflix_prize; @imagenet].
-Advances in both computational power and algorithmic efficiency continue to reduce costs at a dramatic pace, significantly faster than Moore's law [@openai_costs]. <!-- ML: I think we can let go of this sentence and not lose the point; I think we touch on it a bit in the last sentence of the first paragraph here also -->
 By working to develop similarly well-posed challenges as clear benchmarks, ecology and environmental science researchers may be better able to replicate that collaborative, iterative success in cracking hard problems.
-Such benchmarks may further improve collaboration across disciplines as well, attracting the attention of AI expertise to these key issues facing our planet.
-If RL opens the door to greater role for artificial intelligence and engagement of technology firms in the machinery that determines environmental policy, this raises new concerns as well as new opportunities.  
+Such benchmarks may further improve collaboration across disciplines as well, attracting the attention of AI expertise to key issues facing our planet.
+It is clear that the scientific community needs to develop more powerful methods for our current environmental crises. 
+For decision-making in conservation, deep reinforcement learning has the potential to be a paradigm-shifting tool.
+
+
 
 
 <!-- transition from big promise to perils -- Millie's section on risks here -->
@@ -512,14 +515,14 @@ If RL opens the door to greater role for artificial intelligence and engagement 
 <!-- from end of Carl's discussion edits: Such benchmarks may further improve collaboration across disciplines as well, attracting the attention of AI expertise to these key issues facing our planet. -->
 <!-- If RL opens the door to greater role for artificial intelligence and engagement of technology firms in the machinery that determines environmental policy, this raises new concerns as well as new opportunities.   -->
 
-The increasingly influential role of AI in sectors as diverse as policing, finance, and employment has raised concern about the ethics, biases, and power entrenched in both decision-making algorithms and their outputs [@kalluri2020]. 
-As algorithms play a greater role in environmental and conservation policy, will similar issues arise?
-While this question has garnered  recent interest in the academic literature [@wearn2019; @adams2019; @scoville2021], the use of decision making algorithms in environmental contexts is still relatively isolated and in it's early stages.
-Examples of AI applications, and corresponding concerns, have largely been confined to the context of enforcing environmental laws (i.e. algorithms which predict wildlife poaching events [@adams2019] or identify illegal fishing behavior [@mcdonald2021; @swartz2021]). 
-However, more diverse applications of AI algorithms - such as applications which contribute to meeting sustainable development goals [@vinuesa2020] or designing  protected area networks - raise additional concerns of entrenching power asymmetries between those reliant on natural resources and those designing algorithms and their objectives.
-These issues of power become particularly acute when private industry holds the keys to propriety algorithms or environmental data, and generally operate without the same community engagement obligations of public agencies. 
-In these cases, good intentions might not be sufficient to ensure equitable outcomes. 
-Interdisciplinary collaborations with experts in algorithmic governance and ethics will be important ensure that applications of AI to ecological challenges promotes equity in both the procedural process of developing objective functions and the distribution of benefits that result from decisions.
+<!-- The increasingly influential role of AI in sectors as diverse as policing, finance, and employment has raised concern about the ethics, biases, and power entrenched in both decision-making algorithms and their outputs [@kalluri2020].  -->
+<!-- As algorithms play a greater role in environmental and conservation policy, will similar issues arise? -->
+<!-- While this question has garnered  recent interest in the academic literature [@wearn2019; @adams2019; @scoville2021], the use of decision making algorithms in environmental contexts is still relatively isolated and in it's early stages. -->
+<!-- Examples of AI applications, and corresponding concerns, have largely been confined to the context of enforcing environmental laws (i.e. algorithms which predict wildlife poaching events [@adams2019] or identify illegal fishing behavior [@mcdonald2021; @swartz2021]).  -->
+<!-- However, more diverse applications of AI algorithms - such as applications which contribute to meeting sustainable development goals [@vinuesa2020] or designing  protected area networks - raise additional concerns of entrenching power asymmetries between those reliant on natural resources and those designing algorithms and their objectives. -->
+<!-- These issues of power become particularly acute when private industry holds the keys to propriety algorithms or environmental data, and generally operate without the same community engagement obligations of public agencies.  -->
+<!-- In these cases, good intentions might not be sufficient to ensure equitable outcomes.  -->
+<!-- Interdisciplinary collaborations with experts in algorithmic governance and ethics will be important ensure that applications of AI to ecological challenges promotes equity in both the procedural process of developing objective functions and the distribution of benefits that result from decisions. -->
 
 
 
