@@ -187,7 +187,7 @@ We can plot the resulting data.frames using standard `ggplot2` methods shown in 
 
 ```{r}
 # add a column indicating the model
-algos <- c("Optimal", "SAC")
+algos <- c("Optimal", "TD3", "TD3-tuned")
 sims_df <- opt_sims %>% mutate(model = factor("Optimal", algos))
 policy_df <- opt_policy  %>% mutate(model = factor("Optimal", algos))
 
@@ -204,12 +204,13 @@ At the heart of each deep RL algorithm is a neural network or a collection of ne
 Confusingly, the parameters of a RL algorithm that detail the overall learning process are called _hyper-parameters_ while the parameters of a RL algorithm that are learned during training are called parameters. For example, the number of layers in a neural network is a hyper-parameter but a weight in the neural net is referred to as a parameter.
 Before training an agent, we must first specify the hyper-parameters; the algorithm's parameters are often randomly initialized.
 Each algorithm may have different hyper-parameters. `stable-baselines3` provides default values for all hyper-parameters based on the original papers that introduced the corresponding algorithms.
-For example, here we will try the Soft Actor-Critic algorithm, SAC, training with the default hyperparameters originally posed in @SAC.  We use SAC to train an agent that has a multi-layer perceptron ('MlpPolicy') neural network, with the default architecture of two 64-neuron layers.
+<!-- For example, here we will try the Actor-Critic algorithm A2C, training with the default hyperparameters originally posed in @A2C.-->
+We use this algorithm to train an agent that has a multi-layer perceptron ('MlpPolicy') neural network, with the default architecture of two 64-neuron layers.
 
 
 ```{r}
 env = gym$make("fishing-v1", sigma=0.1)
-agent = sb3$SAC('MlpPolicy', env, seed = seed) 
+agent = sb3$TD3('MlpPolicy', env, seed = seed) 
 ```
 
 
@@ -217,13 +218,13 @@ Training is the main computationally intensive process, which can take anywhere 
 Therefore, we save the trained agent to disk, and only execute the training method (`learn`) if no previously saved agent is found:
 
 ```{r}
-if(!file.exists("../python/cache/sac.zip")) {
+if(!file.exists("../python/cache/td3_untuned.zip")) {
 
   # Train the agent for a fixed number of timesteps
   agent$learn(total_timesteps=300000L)
   
   # Save our trained agent for future use
-  agent$save("../python/cache/sac")
+  agent$save("../python/cache/td3_untuned")
 
 }
 ```
@@ -231,12 +232,12 @@ if(!file.exists("../python/cache/sac.zip")) {
 
 Note that while default hyper-parameters provide a useful starting place (particularly when the environment has been suitably normalized, a best-practice we discuss above), better performance can almost always be achieved by _tuning_ the hyper-parameter selection.
 This is discussed further below.
-Having saved our trained agent to disk (`cache/sac.zip`), we can then re-load this agent for evaluation or to continue training.
+Having saved our trained agent to disk, we can then re-load this agent for evaluation or to continue training.
 Note that a copy of the trained agents are included in the corresponding GitHub repository.
 
 ```{r}
 # load the trained agent from cache
-agent = sb3$SAC$load("../python/cache/sac")
+agent = sb3$TD3$load("../python/cache/td3_untuned")
 ```
 
 
@@ -299,25 +300,65 @@ agent_policy = env$policyfn(agent, reps = 5L)
 ```{r}
 # stack result simulations with those above and plot:
 sims_df <- agent_sims %>% 
-  mutate(model = factor("SAC", algos)) %>% 
+  mutate(model = factor("RL", algos)) %>% 
   bind_rows(sims_df)
 policy_df <- agent_policy  %>% 
-  mutate(model = factor("SAC", algos))  %>% 
+  mutate(model = factor("RL", algos))  %>% 
   bind_rows(policy_df)
 
 plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 ```
 
 
-After an initial over-harvest (top panel), SAC achieves nearly optimal performance as measured by reward over time, (bottom right), or compared to the steady-state management solution.
-The policy function (bottom left) explains this behavior.
-The RL agent has a nearly optimal policy for stock sizes between zero and just above the $B_{MSY}$ target.
-At higher stocks, the agent has a tendency to over-harvest.
+## After Tuning
+
+
+```{r}
+hyper$action_noise = sb3$common$noise$NormalActionNoise(
+        mean=np$zeros(1L),
+        sigma= 0.6656948079225263* np$ones(1L))
+td3 = sb3$TD3('MlpPolicy',
+              env,  
+              seed = 42L,
+              gamma = 0.995,
+              learning_rate = 0.0001355522450968401,
+              batch_size = 128L,
+              buffer_size = 10000L,
+              train_freq = 128L,
+              gradient_steps = 128L,
+              policy_kwargs = list(net_arch=c(400L, 300L)))
+```
+
+```{r}
+if(!file.exists("../python/cache/td3_tuned.zip")){
+  td3$learn(total_timesteps=300000L)
+  td3$save("../python/cache/td3_tuned.zip")
+}
+```
+
+
+
+```{r}
+td3_sims = env$simulate(td3, reps = 100L)
+td3_policy = env$policyfn(td3, reps = 5L)
+
+# stack result simulations with those above and plot:
+sims_df <- td3_sims %>% 
+  mutate(model = "TD3_tuned") %>% 
+  bind_rows(sims_df)
+policy_df <- td3_policy  %>% 
+  mutate(model = "TD3_tuned")  %>% 
+  bind_rows(policy_df)
+
+plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
+```
 
 
 
 
-In this simple example, SAC is able to achieve nearly-optimal performance (as defined by the reward conditions) without tuning, simply by using hyperparameters originally chosen for different RL tasks.
+
+
+In this simple example, the RL agent is able to achieve nearly-optimal performance (as defined by the reward conditions) without tuning, simply by using hyperparameters originally chosen for different RL tasks.
 As noted in appendix C, careful design of the environment, such as rescaling of state and action space, can also improve the ability of a Deep RL algorithm to find an acceptable policy without altering the substance of the challenge.
 Even so, our agent still had extensive time to train on this specific environment, a total of 300,000 timesteps or 3000 training episodes.
 Sufficient tuning of the hyperparameters to this environment may be able result in better performance than we have seen here.
@@ -345,15 +386,6 @@ hake = read_csv("../data/hake.csv")
 ```
 
 We will use the agent we have just trained using the `gym_fishing` simulator above, 
-
-```{r}
-# Simulate management under the trained agent
-# parameters based on statistical best model estimate, see Memarzadeh & Boettiger 2019
-# or Appendix D
-agent = sb3$SAC$load("../python/cache/sac")
-
-```
-
 
 
 ```{r}
@@ -457,7 +489,6 @@ Our implementation in `gym_conservation` allows the user to consider alternative
 For some such scenarios the optimal solution is known or can be determined by stochastic dynamic programming, while for others, including the scenario of focus here, the optimal solution is unknown.
 
 
-For simplicity of illustration, we will train only a TD3-based agent on this scenario.
 
 
 ```{r}
