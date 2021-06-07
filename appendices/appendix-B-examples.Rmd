@@ -86,7 +86,7 @@ From the project directory, we can then install all the necessary dependencies u
 
 ```{r message=FALSE}
 #install.packages("renv")
-#renv::restore()
+renv::restore()
 ```
 
 
