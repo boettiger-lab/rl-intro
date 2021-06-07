@@ -34,4 +34,3 @@ plot_reward <- function(sims_df, gamma = 1)
               alpha=0.25, show.legend = FALSE) +
   geom_line(aes(col = model), show.legend = FALSE) +
   ylab("reward")
-

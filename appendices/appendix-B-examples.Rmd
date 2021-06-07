@@ -52,6 +52,12 @@ scale_colour_discrete = function(...) ggthemes::scale_colour_solarized()
 scale_fill_discrete = function(...) ggthemes::scale_fill_solarized()
 pal = ggthemes::solarized_pal()(8)
 txtcolor = "#586e75"
+
+
+colors <- set_names(c(pal[c(1,3,5,8)], txtcolor),
+                    c("Optimal", "TD3", "TD3_tuned", "RL", "historical"))
+scale_colour_discrete <- function(...) scale_colour_manual(..., values=colors)
+scale_fill_discrete <- function(...) scale_fill_manual(..., values=colors)
 ```
 
 
@@ -186,10 +192,11 @@ opt_policy = env$policyfn(opt)
 We can plot the resulting data.frames using standard `ggplot2` methods shown in the `R/plotting-helpers.R`, or in python using either the `plot` methods defined in `gym_fishing` or standard plotting libraries.
 
 ```{r}
+
+
 # add a column indicating the model
-algos <- c("Optimal", "TD3", "TD3-tuned")
-sims_df <- opt_sims %>% mutate(model = factor("Optimal", algos))
-policy_df <- opt_policy  %>% mutate(model = factor("Optimal", algos))
+sims_df <- opt_sims %>% mutate(model = "Optimal")
+policy_df <- opt_policy  %>% mutate(model = "Optimal")
 
 # plot results as separate panels
 plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
@@ -300,23 +307,32 @@ agent_policy = env$policyfn(agent, reps = 5L)
 ```{r}
 # stack result simulations with those above and plot:
 sims_df <- agent_sims %>% 
-  mutate(model = factor("RL", algos)) %>% 
+  mutate(model = "TD3") %>% 
   bind_rows(sims_df)
 policy_df <- agent_policy  %>% 
-  mutate(model = factor("RL", algos))  %>% 
+  mutate(model = "TD3")  %>% 
   bind_rows(policy_df)
 
 plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 ```
 
+As we can see in the figure above, without hyper-parameter tuning, our agent has found only a sub-optimal policy.
+The RL agent trained under an un-tuned TD3 algorithm here tends to over-harvest the fishery, resulting in an initially higher reward that grows steadily but more slowly than the optimal strategy.
+As discussed in the main text, training of Deep RL algorithms is subject to several sources of instability that can make it difficult or impossible to reproduce the same results from training with the same hyper-parameters on different hardware or hardware drivers, even when controlling for random seed [@instability_2019; @drlthatmatters].
+Consequently, users may not recover identical behavior when training under identical parameters.
+However, by using the cached neural network parameter weights of the trained agent, users should be able to reproduce the same agent behavior.
 
-## After Tuning
+
+## Tuning hyperparameters
+
+By tuning the hyper-parameters that control the training regime used by the TD3 algorithm, we are able to further improve upon on the performance of the RL agent.
+Tuning may be performed manually by adjusting hyperparameters based on mechanistic reasoning (e.g. larger action noise may improve exploration over exploitation, a larger neural network may better approximate a more complex policy).
+This search can also be automated using standard non-linear optimization techniques, adjusting hyperparameters to maximize the reward attained by the trained network.
+Using such an approach (see <https://github.com/boettiger-lab/conservation-agents>), we discover the following hyperparameters achieve better performance (see @TD3 or @SB3 documentation for formal definitions of each hyperparameter) :
+
 
 
 ```{r}
-hyper$action_noise = sb3$common$noise$NormalActionNoise(
-        mean=np$zeros(1L),
-        sigma= 0.6656948079225263* np$ones(1L))
 td3 = sb3$TD3('MlpPolicy',
               env,  
               seed = 42L,
@@ -326,8 +342,15 @@ td3 = sb3$TD3('MlpPolicy',
               buffer_size = 10000L,
               train_freq = 128L,
               gradient_steps = 128L,
+              action_noise = sb3$common$noise$NormalActionNoise(
+                mean=np$zeros(1L),
+                sigma= 0.6656948079225263 * np$ones(1L)),
               policy_kwargs = list(net_arch=c(400L, 300L)))
 ```
+
+We train this new RL agent using it's tuned hyperparameters, and saving the resulting trained agent as before:
+
+
 
 ```{r}
 if(!file.exists("../python/cache/td3_tuned.zip")){
@@ -336,12 +359,16 @@ if(!file.exists("../python/cache/td3_tuned.zip")){
 }
 ```
 
-
+Once our agent has been trained, we can again evaluate its performance across replicate simulations:
 
 ```{r}
-td3_sims = env$simulate(td3, reps = 100L)
-td3_policy = env$policyfn(td3, reps = 5L)
+td3 <- sb3$TD3$load("../python/cache/td3_tuned.zip")
 
+td3_sims = env$simulate(td3, reps = 100L)
+td3_policy = env$policyfn(td3)
+```
+
+```{r}
 # stack result simulations with those above and plot:
 sims_df <- td3_sims %>% 
   mutate(model = "TD3_tuned") %>% 
@@ -350,19 +377,25 @@ policy_df <- td3_policy  %>%
   mutate(model = "TD3_tuned")  %>% 
   bind_rows(policy_df)
 
+
+
+colors <- set_names(c(pal[c(1,3,8,2)], txtcolor),
+                    c("Optimal", "TD3", "TD3_tuned", "RL", "historical"))
+scale_colour_discrete <- function(...) scale_colour_manual(..., values=colors)
+scale_fill_discrete <- function(...) scale_fill_manual(..., values=colors)
 plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 ```
 
 
 
-
-
-
-In this simple example, the RL agent is able to achieve nearly-optimal performance (as defined by the reward conditions) without tuning, simply by using hyperparameters originally chosen for different RL tasks.
-As noted in appendix C, careful design of the environment, such as rescaling of state and action space, can also improve the ability of a Deep RL algorithm to find an acceptable policy without altering the substance of the challenge.
+In this simple example, the RL tuned agent is able to achieve nearly-optimal performance (as defined by the reward conditions).
+Note that the largest deviations from the optimal policy occur at large stock sizes, at or above carrying capacity of the model.
+This pattern is not surprising, since these large stock values are least likely to observed over the simulated episodes.
+For the same reason, that deviation contributes very little to reward. 
+Only by comparing average stock sizes directly can we see that the RL agent slightly under-harvests on average relative to the optimal policy.
+As noted in appendix C, careful design of the environment, such as re-scaling of state and action space, can also improve the ability of a Deep RL algorithm to find an acceptable policy without altering the substance of the challenge.
 Even so, our agent still had extensive time to train on this specific environment, a total of 300,000 timesteps or 3000 training episodes.
-Sufficient tuning of the hyperparameters to this environment may be able result in better performance than we have seen here.
-For more difficult problems, it may be impossible to find an acceptable policy without first tuning candidate approaches to select the best hyperparameters for the environment.
+
 
 
 
@@ -376,52 +409,33 @@ write_csv(policy_df, "../manuscript/figs/policy_df.csv")
 ## Applying an RL agent to real data
 
 
-We use historical data from Argentine Hake to illustrate how an RL agent might be applied in practice.
-
+We use historical data from Argentine Hake to illustrate how an RL agent might be applied in practice.  
 Historical biomass and catch data for Argentine Hake can be found in the R.A. Myers Legacy Stock Assessment Database [@ramlegacy].
 Here, we load a local copy of the stock assessment for the Argentine Hake from 1986 to 2000.
+(Annotated code for data cleaning can be found in Appendix D).
 
-```{r}
+```{r message=FALSE}
 hake = read_csv("../data/hake.csv")
 ```
 
-We will use the agent we have just trained using the `gym_fishing` simulator above, 
-
+For each year in the data, we compare the historical harvest to the quota that would have been recommended by the TD3-based Deep RL agent we have just trained.
+To utilize our RL agent to set a quota for the stock, we only have to map the observed biomass estimates and historical harvests into the re-scaled state space of the environment. 
+Recall that the `gym_fishing` environment includes helper function `get_state()` to turn observed biomass to the state-space units used in the gym.
 
 ```{r}
-x0 = hake %>%
- filter(year == min(year)) %>%
-  pull(scaled_biomass)
-Tmax = 15
-years =1986:2000
+# Initial states
+x0 = hake[[1, "scaled_biomass"]]
 agent_state = agent_action = numeric(Tmax)
 agent_state[1] = x0
 agent_action[1] = NA
-```
 
-
-Our hindcast considers the scenario of managing catch quotas using the RL agent, beginning in 1986. 
-We compare both the anticipated harvest and resulting stock biomass to the historically recorded harvest and biomass.
-This shows that quotas set by the RL agent would have been lower than historical values throughout the late 80s and early 90s, which
-saw a sharp decline in estimated biomass of the Argentine Hake.
-For the same or higher estimated stock sizes from the historical record, we see that the RL agent would recommend a lower quota.
-We also see that under the RL agent the stock recovers sufficiently to predict higher quotas by the second half of the 90s than were
-being set in the now-depleted stock.  
-Whether the the RL agent quotas would have truly been sufficient to permit recovery in stock sizes shown in the simulation clearly depends on the accuracy of the underlying simulation.
-However, the fact that the RL agent would set a lower quota than the historical management given the same or even higher estimate of stock size is independent of the Hake simulation.
-Combined with the observed historical declines, this provides some evidence that the RL agent could have decreased or avoided the over-harvesting in this case. 
-
-
-```{r}
-# Env is used only for helper methods to translate between original units and transformed space
-env = gym$make("fishing-v1")
-## Now we can represent the initial stock size in the 'rescaled' state space.
-state = env$get_state( x0 )
-
-for(i in 2:Tmax){
+# `env` is used only to translate between original units and transformed space
+# Represent the initial stock size in the 'rescaled' state space:
+state = env$get_state(x0)
+for(i in 1:15){
   
   # The RL agent recommends a Quota based on current state
-  out = agent$predict(state)
+  out = td3$predict(state)
   action = out[[1]]
   
   # We record state and proposed quota (in the original units)
@@ -431,14 +445,36 @@ for(i in 2:Tmax){
   # Use historical data to determine the next state
   state = env$get_state(hake$scaled_biomass[i+1])
 }
-df = bind_rows(
-  tibble(year = years, state = agent_state, action = agent_action, model = "RL"),
-  tibble(year = years, state = hake$scaled_biomass, action = hake$scaled_catch, model = "historical"))
-df %>% ggplot(aes(year, state, col=model)) + geom_line() + geom_point(aes(year, action, col=model))
 ```
 
 
+Plot the results: 
 
+```{r}
+years =1986:2000
+df = bind_rows(
+  tibble(year = years, harvest = agent_action, model = "TD3_tuned"),
+  tibble(year = years, harvest = hake$scaled_catch, model = "historical")
+)
+stock <-  tibble(year = years, biomass = hake$scaled_biomass, model = "historical")
+
+top_panel <- ggplot(stock, aes(year, biomass, col=model)) + geom_line(lty=2) + 
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+bottom_panel <- ggplot(df, aes(year, harvest, col=model)) + 
+  geom_line() + geom_point()
+
+top_panel / bottom_panel
+```
+
+The Argentine hake biomass exhibited a steep decline between 1986 and 2000 as shown by the stock assessment estimates.
+Over that time, historical harvests showed some decline in step with the declining biomass.
+By contrast, for each of the historically observed biomass estimates the RL agent would have proposed much steeper cuts to the biomass quota which may have avoided the continued loss of biomass and eventual decline in harvest as well.
+This result should not be over-interpreted. 
+Without being able to replay history we have no way of truly knowing if the RL agent would have managed this stock better.
+While this example shows that it is in principle very straight forward to utilize a trained RL agent to recommend real harvest quotas, we must bear in mind that the agent is only as good as the environments on which it was trained.
+In practice, the RL agent would have to first be trained and evaluated on much more realistic environments than only the `fishing-v1` gym illustrated here.
 
 
 # Ecological tipping points
@@ -577,9 +613,6 @@ write_csv(sims_df, "../manuscript/figs/tipping_sims_df.csv")
 write_csv(policy_df, "../manuscript/figs/tipping_policy_df.csv")
 ```
 
-
-
-### Manuscript Figure 3
 
 ```{r fig3}
 plot_sims(sims_df) / ( plot_policy(policy_df) + plot_policy(sims_df))
