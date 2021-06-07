@@ -1,13 +1,14 @@
 name: Docker Actions
 on: [push]
 jobs:
-  my_job:
+  render_all:
     runs-on: ubuntu-latest
     container: rocker/ml-verse:4.1.0-cuda11.1
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
         run: |-
+          sudo apt update -qq && sudo apt -y install swig
           Rscript -e "renv::restore()"
       - name: Render all appendices
         run: |-
