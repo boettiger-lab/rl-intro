@@ -3,12 +3,11 @@ on: [push]
 jobs:
   my_job:
     runs-on: ubuntu-latest
-    container: rocker/verse
+    container: rocker/ml-verse
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
         run: |-
-          /rocker_scripts/install_python.sh
           Rscript -e "renv::restore()"
       - name: Render all appendices
         run: |-
