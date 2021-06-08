@@ -326,7 +326,7 @@ How would an RL agent be applied to empirical data?
 In principle, this is straight forward.
 Once our agent has been trained on appropriate simulation environments, it is able to propose a quota given an observation of the stock after appropriate transformation of variables.
 To illustrate this, we examine the quota that would be recommended by our newly trained RL agent, above, against historical harvest levels of Argentine hake based on stock assessments from 1986 - 2014 [@ram, see Appendix D].
-Hake stocks showed a marked decline throughout this period, while harvests deceased only in proportion [Fig 3].
+Hake stocks showed a marked decline throughout this period, while harvests decreased only in proportion [Fig 3].
 In contrast, our RL agent would have recommended significantly lower quotas over most of the same interval, including the closure of the fishery as stocks were sufficiently depleted.
 While we have no way of knowing for sure if the RL quotas would have led to recovery, let alone an optimal harvest rate, the contrast between those recommended quotas and the historical catch is notable.
 
