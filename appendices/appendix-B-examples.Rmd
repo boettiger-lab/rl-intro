@@ -20,41 +20,50 @@ authors:
     email: cboettig@berkeley.edu
 
 
-keywords:
-  - blah
-  - blee
-  - bloo
-  - these are optional and can be removed
 bibliography: ../manuscript/references.bib
 
 header-includes:
   - \usepackage{amsmath}
   - \usepackage{amssymb}
 
-output: 
-  rticles::arxiv_article:
-    keep_tex: true
+output: rticles::arxiv_article
 ---
 
-```{r knitr, include = FALSE}
-knitr::opts_chunk$set(echo=TRUE, message = FALSE, warning = FALSE,
-                      fig.width = 7, fig.height = 4, cache = FALSE)
-ggplot2::theme_set(ggplot2::theme_bw())
+# Overview
 
-scale_colour_discrete = function(...) ggthemes::scale_colour_solarized()
-scale_fill_discrete = function(...) ggthemes::scale_fill_solarized()
-pal = ggthemes::solarized_pal()(8)
-txtcolor = "#586e75"
-```
+In this appendix, we provide examples with annotated code illustrating how to use recent deep RL algorithms
+to train RL agents to make decisions in two distinct ecological management scenarios: setting a harvest quota in a fishery, and managing conservation effort in the face of ecological tipping points.
+The approach illustrated here should be sufficient to reproduce the results presented in the main text,
+and should serve as an effective starting point for researchers seeking to apply deep RL to these simulation environments, 
+to other simulation environments we have built and continue to develop, or to their own environments.
+(Appendix C details the process of defining one's own `gym` environment from an ecological model). 
+This overview is neither a complete introduction to deep RL or a comprehensive analysis of RL solutions to these environments.
 
-# Building a simulation environment `gym`
 
-[@openai_gym]
 
+# Deep Reinforcement Learning in R
+
+Although all the necessary tooling for deep RL is most extensively implemented in Python, the R language is more familiar to most ecologists.
+Fortunately, modern bindings such as the `reticulate` package [@reticulate] make it straightforward to use these tools without ever leaving the R interface.
+In this appendix, we detail this "pure R" approach, as well as a "pure Python" approach.
+
+In the R based-approach, R functions take responsibility from the user for translating commands into Python code before it is executed, an approach commonly referred to as meta-programming.
+This still requires a local Python installation, which can be installed directly from R using the command `install_miniconda()` from the `reticulate` package in R.
+Alternately, users may prefer running the analysis inside a docker container.  
+The Rocker Project [@rocker] provides pre-built docker containers which include the necessary R and Python environments, as well as CUDA libraries required to take advantage of GPU-based acceleration on suitable architectures.
+This can be particularly useful for users running ML algorithms on remote servers.
+
+By using a cache of pre-trained agents distributed with this appendix, it should be possible to efficiently reproduce the results shown here on any recent laptop with the versions of software indicated.
+Reproducing the training of RL agents is more computationally intensive, and a more powerful multi-core CPU or CUDA-enabled GPU is recommended.
+Note that hardware differences are also a source of instability in the reproduciblity of RL training (see main text and Appendix A).
+
+In this appendix, we illustrate how to apply a deep reinforcement learning framework to train previously published RL algorithms on the novel decision environments as illustrated in the main text.
+Appendix C discusses the construction of such environments in code. 
 
 # Deep Reinforcement Learning Frameworks
 
-At the time of writing, several major frameworks exist which provide convenient access to baseline algorithms commonly used in deep reinforcement learning.
+Rather than implement deep RL algorithms from scratch, we illustrate the use of one of the leading software frameworks for research and application of deep RL methods.
+At the time of writing, several major frameworks exist which provide reference implementations of the leading deep RL algorithms (see table 1 and Appendix A).
 While we do not seek to provide a comprehensive review of available frameworks, some familiarity with current frameworks can be helpful.
 Like many machine learning libraries, these frameworks are themselves each built around one of two popular machine learning libraries, PyTorch [@torch] or Tensorflow [@tensorflow], and all are based in Python.
 Existing frameworks we evaluated include Keras-RL [@keras-rl], Tensorflow Agents [@tensorflow-agents],  OpenAI Spinning Up [@spinningup] OpenAI Baselines, Stable-Baselines2 [@sb2], and Stable-Baselines3 [@sb3]. 
@@ -69,29 +78,20 @@ The examples here all use the Stable-Baselines3 framework, though researchers in
 Grand challenge problems will likely require significant development beyond the current algorithms and capabilities available in existing frameworks.
 
 
-# Deep Reinforcement Learning in R
-
-Although all the necessary tooling for RL is implemented in Python, the R language is more familiar to most ecologists.
-Fortunately, modern bindings such as the `reticulate` package [@reticulate] make it straightforward to use these tools without ever leaving the R interface.
-In this appendix, we detail this "pure R" approach, as well as a "pure Python" approach.
-
-In the R-based approach, R functions take responsibility from the user for translating commands into Python code before it is executed, an approach commonly referred to as meta-programming.
-This still requires a local Python installation, which can be installed directly from R using the command `install_miniconda()` from the `reticulate` package in R.
-Alternately, users may prefer running the analysis inside a docker container.  
-The Rocker Project [@rocker] provides pre-built docker containers which include the necessary R and Python environments, as well as CUDA libraries required to take advantage of GPU-based acceleration on suitable architectures.
-This can be particularly useful for users running ML algorithms on remote servers, as configuring R, Python, and CUDA environments appropriately can be challenging.  
-
+# Getting started
 
 Clone the repository <https://github.com/boettiger-lab/rl-intro>, e.g. using the New Project->From Version Control->Git menu in RStudio.
+
 From the project directory, we can then install all the necessary dependencies using `renv`, which helps ensure a reproducible environment of fixed versions of R packages and Python modules.
 
-
-```{r}
+```{r message=FALSE}
 #install.packages("renv")
 renv::restore()
 ```
 
 
+Python users can install the dependencies listed in the repository's `requirements.txt` and run the corresponding python scripts found in the `python/` sub-directory instead. 
+Meanwhile, the RMarkdown source-code for this file can be found in the `appendices` directory of the project repository.
 Once the packages have installed, we are ready to load the necessary libraries.  Note that the `import` function from `reticulate` package acts much like the `library` command in R, though it does not attach the package function to the global namespace.  To make it more convenient to access those functions, we can assign a shorthand name.  
 
 ```{r setup, cache = FALSE, message=FALSE}
@@ -101,11 +101,36 @@ library(patchwork)
 library(reticulate)
 
 ## Python dependencies loaded via R
-sb3         = import ("stable_baselines3")
-gym         = import ("gym")
+sb3      = import("stable_baselines3")
+torch    = import("torch")
+gym      = import("gym")
 gym_fishing = import("gym_fishing")
 gym_conservation = import("gym_conservation")
+
+
+source("../R/plotting-helpers.R")
 ```
+
+
+
+```{r knitr, include = FALSE}
+# This chunk controls plot aesthetics only, and can be omitted with no material change
+knitr::opts_chunk$set(echo=TRUE, message = FALSE, warning = FALSE,
+                      fig.width = 7, fig.height = 4, cache = FALSE)
+ggplot2::theme_set(ggplot2::theme_bw())
+
+scale_colour_discrete = function(...) ggthemes::scale_colour_solarized()
+scale_fill_discrete = function(...) ggthemes::scale_fill_solarized()
+pal = ggthemes::solarized_pal()(8)
+txtcolor = "#586e75"
+
+colors <- set_names(c(pal[c(1,3,8,2)], txtcolor, pal[6]),
+                    c("Optimal", "TD3_untuned", "TD3", "RL", "historical", "steady-state"))
+scale_colour_discrete <- function(...) scale_colour_manual(..., values=colors)
+scale_fill_discrete <- function(...) scale_fill_manual(..., values=colors)
+```
+
+
 
 Numerical reproducibility can be challenging in machine learning problems, particularly when using GPU-based acceleration. In addition to setting a random seed in our Python environment, we can optionally disable GPU use to improve reproducibility by setting the `CUDA_VISIBLE_DEVICES` to a blank value.  
 
@@ -116,7 +141,7 @@ seed = 24L # integer
 np$random$seed(seed)
 
 # Optionally set to "" to force CPU-evaluation if needing perfect reproducibility
-Sys.setenv("CUDA_VISIBLE_DEVICES"="")
+#Sys.setenv("CUDA_VISIBLE_DEVICES"="")
 set.seed(seed)
 ```
 
@@ -133,23 +158,70 @@ With few exceptions, the R code shown here can be re-written as python code by d
 
 ## Sustainable Harvest Quotas
 
-We begin by selecting an environment from `gym_fishing` by name, passing the optional parameter `sigma` to initialize the environment with multiplicative Gaussian environmental noise of sd of `0.1`.  
+We begin by selecting an environment from `gym_fishing`.  While we use default parameter values for this example, note that is possible to pass alternative parameterizations using additional optional arguments.
 
 ```{r }
 ## initialize the environment
-env = gym$make("fishing-v1", sigma = 0.1)
+env = gym$make("fishing-v1", sigma=0.1)
 ```
 
-<!-- Kari: the role neural networks play in RL is not very well explained in the paper, more detail there would probably make this part more intuitive --> 
+
+## An optimal solution
+
+Recall that under the assumptions of the simple model used in the `fishing-v1` environment, we can determine the optimal harvest policy analytically if the model and parameters are known precisely [@Reed1979].
+The optimal strategy is a policy of 'constant escapement', designed to keep the remaining stock size (the population that 'escapes' fishing harvest) at the biomass corresponding to a maximum growth rate, i.e. at $B_{MSY} = K/2$ in this model.
+`gym_fishing` defines a collection of non-RL agents in the `models` submodule, including the a human agent that merely asks to enter their desired quota manually. 
+The `escapement` model implements the provably optimal constant escapement rule.
+A third model, `msy`, implements a policy based on "Maximum Sustainable Yield" policy [@Schaefer1954], which is actually more commonly used as a basis for management than constant escapement, despite only being optimal at the steady state under deterministic dynamics.  
+
+```{r}
+# Simulate under the optimal solution (given the model)
+opt = gym_fishing$models$escapement(env)
+```
+
+Note that the `escapement` function makes very specific assumptions about the environment that it is given.
+In particular, it assumes we can compute $B_{MSY}$ directly from the internal model of stock recruitment contained in the environment.
+In contrast, the RL methods make no such assumption of being able to access that internal model directly.
+
+
+```{r}
+opt_sims = env$simulate(opt, reps = 100L)
+opt_policy = env$policyfn(opt)
+```
+
+
+We can plot the resulting data.frames using standard `ggplot2` methods shown in the `R/plotting-helpers.R`, or in python using either the `plot` methods defined in `gym_fishing` or standard plotting libraries.
+
+```{r}
+
+
+# add a column indicating the model
+sims_df <- opt_sims %>% mutate(model = "Optimal")
+policy_df <- opt_policy  %>% mutate(model = "Optimal")
+
+# plot results as separate panels
+plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
+```
+
+## RL-based solutions
+
+We will compare this optimal solution with results from the several different RL algorithms.
+Unlike the optimal solution, the RL methods never know the underlying growth function used by the simulation (or even if such a function actually exists).
+These methods merely seek to learn a strategy for setting harvest quotas which maximizes the cumulative reward the receive from the environment.
 At the heart of each deep RL algorithm is a neural network or a collection of neural networks. The RL agent uses these networks to approximate a policy function and/or a value function. The policy function is the agent's mapping of states to actions -- i.e. the agent's strategy. Value functions attempt to evaluate the goodness of a state or state-action pair towards achieving the RL objective of maximizing cumulative rewards. 
 Confusingly, the parameters of a RL algorithm that detail the overall learning process are called _hyper-parameters_ while the parameters of a RL algorithm that are learned during training are called parameters. For example, the number of layers in a neural network is a hyper-parameter but a weight in the neural net is referred to as a parameter.
 Before training an agent, we must first specify the hyper-parameters; the algorithm's parameters are often randomly initialized.
-Each algorithm may have different hyper-parameters. `stable-baselines3` provides default values for all hyper-parameters based on the original papers that introduced the corresponding algorithms,
-for instance, the A2C algorithm originally described in @A2C.
-Here, we train an agent using the A2C algorithm using default hyper-parameter settings with a multi-layer perceptron policy and value network composed of two 64-neuron layers.
+Each algorithm may have different hyper-parameters. `stable-baselines3` provides default values for all hyper-parameters based on the original papers that introduced the corresponding algorithms.
+
+
+For example, here we will use the Twin Delayed DDPG method (TD3) described in @TD3.
+This algorithm is a successor of Deep Deterministic Policy Gradient (DDPG) method [@DDPG], itself a policy-gradient-modification that extends the original Deep Q-Network (DQN) algorithm [@DQN] to continuous action spaces.
+We use this algorithm to train an agent that has a multi-layer perceptron (`MlpPolicy`) neural network, with the default architecture of two 64-neuron layers.
+
 
 ```{r}
-a2c = sb3$A2C('MlpPolicy', env, verbose=0L, seed = seed) # L indicates a (Long) integer, not floating point
+env = gym$make("fishing-v1", sigma=0.1)
+agent = sb3$TD3('MlpPolicy', env, seed = seed) 
 ```
 
 
@@ -157,23 +229,26 @@ Training is the main computationally intensive process, which can take anywhere 
 Therefore, we save the trained agent to disk, and only execute the training method (`learn`) if no previously saved agent is found:
 
 ```{r}
-if(!file.exists("cache/a2c.zip")) {
+if(!file.exists("../python/cache/td3_untuned.zip")) {
 
   # Train the agent for a fixed number of timesteps
-  a2c$learn(total_timesteps=300000L)
+  agent$learn(total_timesteps=300000L)
   
   # Save our trained agent for future use
-  a2c$save("cache/a2c")
+  agent$save("../python/cache/td3_untuned")
+
 }
 ```
 
 
-Note that while default hyper-parameters provide a useful starting place (particularly when the environment has been suitably normalized, a best-practice we discuss above), better performance can almost always be achieved by _tuning_ the hyper-parameter selection. This is discussed further below. 
-Having saved our trained agent to disk (`cache/a2c.zip`), we can then re-load this agent for evaluation or to continue training.  Note that a copy of the trained agents are included in the corresponding GitHub repository.
+Note that while default hyper-parameters provide a useful starting place (particularly when the environment has been suitably normalized, a best-practice we discuss above), better performance can almost always be achieved by _tuning_ the hyper-parameter selection.
+This is discussed further below.
+Having saved our trained agent to disk, we can then re-load this agent for evaluation or to continue training.
+Note that a copy of the trained agents are included in the corresponding GitHub repository.
 
 ```{r}
-# Simulate management under the trained agent
-a2c = sb3$A2C$load("cache/a2c")
+# load the trained agent from cache
+agent = sb3$TD3$load("../python/cache/td3_untuned")
 ```
 
 
@@ -191,7 +266,6 @@ a user must first inspect the state space of an environment and choose themselve
 problem into that state space.  
 
 ```{r}
-
 ## represent the initial state size in the 'rescaled' state space.
 state = env$get_state( 0.75 )
 state
@@ -199,13 +273,14 @@ state
 
 
 With an initial state in hand, we are ready to simulate management using our agent.
-The iteration is simple: we use the agent to predict what action we should take given the current state. Then, we take said action and examine the result to determine the future state. 
+The iteration is simple: we use the agent to predict what action we should take given the current state. 
+Then, we take said action and examine the result to determine the future state. 
 Because these methods return additional information as well, a little extra sub-setting is required in R:
-<!-- ML: Given recent excursions, we'll probably want to put a deterministic=True flag in here and following sections; also potentially problematic here if the agent crashes the population and restarts. -->
+
 ```{r}
 for(i in 1:10){
   
-  out = a2c$predict(state)
+  out = agent$predict(state, deterministic=TRUE)
   action = out[[1]]
   result = env$step(action)
   state = result[[1]]
@@ -218,244 +293,191 @@ For convenience, `gym_fishing` defines the helper routine `simulate` to perform 
 
 
 ```{r}
-a2c_sims = env$simulate(a2c, reps = 500L)
+agent_sims = env$simulate(agent, reps = 100L)
 ```
 
 
 Because the agent typically attempts to retain the fish population near a specific value, simulations with well-trained agents will usually not explore the full range of possible states.
 To get a better idea of how the agent behaves across the full state space, it is common to examine the policy function: to do this, we'll plot the action taken at every possible state.
-Some agents are non-deterministic, so we may want to use replicate draws at each state to get a better picture of the agent's behavior. <!-- ML: This might be interesting -->
-Note that the `policyfn` method is another custom method and not part of the `gym` standard. The use of `policyfn` will not make sense for agents that consider the history of many previous states in selecting their action, such as agents which utilize recurrent neural network architectures like LSTMs [@LSTM].
+Some agents are non-deterministic, so we may want to use replicate draws at each state to get a better picture of the agent's behavior.
+Note that the `policyfn` method is another custom method and not part of the `gym` standard. 
+The use of `policyfn` will not make sense for agents that consider the history of many previous states in selecting their action, such as agents which utilize recurrent neural network architectures like LSTMs [@LSTM].
 
 ```{r}
-a2c_policy = env$policyfn(a2c, reps = 50L)
+agent_policy = env$policyfn(agent, reps = 5L)
 ```
 
 
-
-## TD3
-
-We train a second agent based on the TD3 algorithm. 
-This illustrates some of the salient differences between the different algorithms used in reinforcement learning.
-Bear in mind that the best algorithm for any given environment will depend on the details of the environment as well
-as the length of training and the selection of hyper-parameters.
-This time, we will declare our choices for the hyper-parameters explicitly.
-Note that some of these hyper-parameters, such as the `learning_rate` and discount rate, `gamma`, are also hyper-parameters of the A2C algorithm, while others, like the `action_noise` describing how new actions are proposed, are not used in A2C.
-Good choices for hyper-parameters can be found through a process known as "hyper-parameter tuning", which uses standard function optimization approaches to vary the choice of hyper-parameters to determine which hyper-parameters maximize the agent's performance. 
-For simplicity, we show only training with specified hyper-parameters here, example scripts for tuning the algorithm to discover these values can be found in <https://github.com/boettiger-lab/rl-toolkit>, and compare to the tuning utilities found in `stable-baselines3-zoo` [@zoo].  
-
 ```{r}
-# train an agent (model) on one of the environments:
+# stack result simulations with those above and plot:
+sims_df <- agent_sims %>% 
+  mutate(model = "TD3_untuned") %>% 
+  bind_rows(sims_df)
+policy_df <- agent_policy  %>% 
+  mutate(model = "TD3_untuned")  %>% 
+  bind_rows(policy_df)
 
-policy_kwargs = list(net_arch=c(400L, 300L)) # "big"
-# non-episodic action noise:
-noise_std = 0.6656948079225263
-n_actions = env$action_space$shape[0]
-action_noise = sb3$common$noise$NormalActionNoise(
-        mean=np$zeros(n_actions),
-        sigma= noise_std * np$ones(n_actions)
-        )
-
-
-td3 = sb3$TD3( 'MlpPolicy', 
-               env,  
-               verbose=0L, 
-               seed = seed,
-               policy_kwargs = policy_kwargs,
-               learning_rate = 0.0001355522450968401,
-               gamma= 0.995, 
-               batch_size = 128L,
-               buffer_size = 10000L,
-               train_freq = 128L, 
-               n_episodes_rollout = -1, 
-               gradient_steps = 128L,
-               action_noise = action_noise
-              )
+plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 ```
 
-Once again, after our agent is defined we are ready to train it:
+As we can see in the figure above, without hyper-parameter tuning, our agent has found only a sub-optimal policy.
+The RL agent trained under an un-tuned TD3 algorithm here tends to over-harvest the fishery, resulting in an initially higher reward that grows steadily but more slowly than the optimal strategy.
+As discussed in the main text, training of Deep RL algorithms is subject to several sources of instability that can make it difficult or impossible to reproduce the same results from training with the same hyper-parameters on different hardware or hardware drivers, even when controlling for random seed [@instability_2019; @drlthatmatters].
+Consequently, users may not recover identical behavior when training under identical parameters.
+However, by using the cached neural network parameter weights of the trained agent, users should be able to reproduce the same agent behavior.
 
-```{r }
-if(!file.exists("cache/td3.zip")){
-  
+
+## Tuning hyperparameters
+
+By tuning the hyper-parameters that control the training regime used by the TD3 algorithm, we are able to further improve upon on the performance of the RL agent.
+Tuning may be performed manually by adjusting hyperparameters based on mechanistic reasoning (e.g. larger action noise may improve exploration over exploitation, a larger neural network may better approximate a more complex policy).
+This search can also be automated using standard non-linear optimization techniques, adjusting hyperparameters to maximize the reward attained by the trained network.
+Using such an approach (see <https://github.com/boettiger-lab/conservation-agents>), we discover the following hyperparameters achieve better performance (see @TD3 or @SB3 documentation for formal definitions of each hyperparameter) :
+
+
+
+```{r}
+td3 = sb3$TD3('MlpPolicy',
+              env,  
+              seed = 42L,
+              gamma = 0.995,
+              learning_rate = 0.0001355522450968401,
+              batch_size = 128L,
+              buffer_size = 10000L,
+              train_freq = 128L,
+              gradient_steps = 128L,
+              action_noise = sb3$common$noise$NormalActionNoise(
+                mean=np$zeros(1L),
+                sigma= 0.6656948079225263 * np$ones(1L)),
+              policy_kwargs = list(net_arch=c(400L, 300L)))
+```
+
+We train this new RL agent using it's tuned hyperparameters, and saving the resulting trained agent as before:
+
+
+
+```{r}
+if(!file.exists("../python/cache/td3_tuned.zip")){
   td3$learn(total_timesteps=300000L)
-  td3$save("cache/td3")
-  
+  td3$save("../python/cache/td3_tuned.zip")
 }
 ```
 
-With our trained agent, we can simulate replicate scenarios or scan across states to determine the implicit policy function:
+Once our agent has been trained, we can again evaluate its performance across replicate simulations:
 
 ```{r}
-# Simulate management under the trained agent
-td3 = sb3$TD3$load("cache/td3")
-td3_sims = env$simulate(td3, reps = 500L)
-td3_policy = env$policyfn(td3, reps = 50L)
+td3 <- sb3$TD3$load("../python/cache/td3_tuned.zip")
+
+td3_sims = env$simulate(td3, reps = 100L)
+td3_policy = env$policyfn(td3)
+```
+
+```{r}
+# stack result simulations with those above and plot:
+sims_df <- td3_sims %>% 
+  mutate(model = "TD3") %>% 
+  bind_rows(sims_df)
+policy_df <- td3_policy  %>% 
+  mutate(model = "TD3")  %>% 
+  bind_rows(policy_df)
+
+
+plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 ```
 
 
-We compare the performance of these two RL agents trained using the algorithms A2C and TD3 respectively to the known optimal policy for this particular environment.  
-Recall that under the assumptions of the simple model used in the `fishing-v1` environment, we can determine the optimal harvest policy analytically if the model and parameters are known precisely [@Reed1979].
-The optimal strategy is a policy of 'constant escapement', designed to keep the remaining stock size (the population that 'escapes' fishing harvest) at the biomass corresponding to a maximum growth rate, i.e. at $B = K/2$ in this model.
-`gym_fishing` defines a collection of non-RL agents in the `models` submodule, including the a human agent that merely asks to enter their desired quota manually. 
-The `escapement` model implements the provably optimal constant escapement rule.
-A third model, `msy`, implements a policy based on "Maximum Sustainable Yield" policy [@Schaefer1954], which is actually more commonly used as a basis for management than constant escapement, despite only being optimal at the steady state under deterministic dynamics.  
 
-```{r}
-# Simulate under the optimal solution (given the model)
-opt = gym_fishing$models$escapement(env)
-opt_sims = env$simulate(opt, reps = 500L)
-opt_policy = env$policyfn(opt)
-```
+In this simple example, the RL tuned agent is able to achieve nearly-optimal performance (as defined by the reward conditions).
+Note that the largest deviations from the optimal policy occur at large stock sizes, at or above carrying capacity of the model.
+This pattern is not surprising, since these large stock values are least likely to observed over the simulated episodes.
+For the same reason, that deviation contributes very little to reward. 
+Only by comparing average stock sizes directly can we see that the RL agent slightly under-harvests on average relative to the optimal policy.
+As noted in appendix C, careful design of the environment, such as re-scaling of state and action space, can also improve the ability of a Deep RL algorithm to find an acceptable policy without altering the substance of the challenge.
+Even so, our agent still had extensive time to train on this specific environment, a total of 300,000 timesteps or 3000 training episodes.
 
 
-Having performed simulations under each method, we gather the results under each management strategy together into a single data frame for simulations (`sims_df`), the policy function (`policy_df`) and the cumulative reward, used to make the plots in the corresponding panels.  
-We preserve a copy of each data frames in local `.csv` text files for maximum cross-platform compatibility.
-
-```{r}
-sims_df = bind_rows(td3_sims, a2c_sims, opt_sims, .id = "model") %>%
-  mutate(model = c("TD3", "A2C", "optimal")[as.integer(model)])
-
-policy_df = bind_rows(td3_policy, a2c_policy, opt_policy, .id = "model") %>%
-  mutate(model = c("TD3", "A2C", "optimal")[as.integer(model)])
-
-gamma = 1 #discount
-reward_df = sims_df %>% 
-  group_by(rep, model) %>%
-  mutate(cum_reward = cumsum(reward * gamma^time)) %>%
-  group_by(time, model) %>%
-  summarise(mean_reward = mean(cum_reward), 
-            sd = sd(cum_reward), .groups = "drop")
 
 
+```{r include=FALSE}
+# Store data.frames for manuscript plotting
 write_csv(sims_df, "../manuscript/figs/sims_df.csv")
 write_csv(policy_df, "../manuscript/figs/policy_df.csv")
-write_csv(reward_df, "../manuscript/figs/reward_df.csv")
-```
-
-
-<!-- Remaining is just plotting code, repeated in the main .Rmd.  Should we omit it from the appendix? -->
-Standard R methods are used to plot the results summarized across the replicates:
-
-```{r}
-ymin = function(x) last(x[(ntile(x, 20)==1)])
-ymax = function(x) last(x[(ntile(x, 20)==19)])
-
-fig_sims = 
-sims_df %>% 
-  group_by(time, model) %>% 
-  summarise(ymin = ymin(state),
-            ymax = ymax(state),
-            state = mean(state), .groups = "drop") %>%
-  ggplot(aes(time, state, ymin = ymin, ymax = ymax, fill=model)) + 
-  geom_ribbon(alpha= 0.3) + geom_line(aes(col = model))
-```
-
-
-```{r}
-fig_policy = 
-  policy_df %>% ggplot(aes(state, action, 
-                           group=interaction(rep, model),
-                           col = model)) + 
-  geom_line(show.legend = FALSE) + 
-  coord_cartesian(xlim = c(0, 1.3), ylim=c(0,0.9)) 
-```
-
-```{r}
-
-fig_reward = reward_df %>% 
-  ggplot(aes(time, mean_reward)) + 
-  geom_ribbon(aes(ymin = mean_reward - 2*sd, 
-                  ymax = mean_reward + 2*sd, fill = model),
-              alpha=0.25, show.legend = FALSE) + 
-  geom_line(aes(col = model), show.legend = FALSE) + 
-  ylab("reward")
-```
-
-## Manuscript Figure 1
-
-<!-- Not sure if it's helpful to duplicate figures from the paper in the appendix...-->
-
-```{r fig1}
-fig_sims / ( fig_policy + fig_reward)
 ```
 
 
 ## Applying an RL agent to real data
 
 
-We use historical data from Argentine Hake to illustrate how an RL agent might be applied in practice.
-
+We use historical data from Argentine Hake to illustrate how an RL agent might be applied in practice.  
 Historical biomass and catch data for Argentine Hake can be found in the R.A. Myers Legacy Stock Assessment Database [@ramlegacy].
-We will use the agent we have just trained using the `gym_fishing` simulator above, 
+Here, we load a local copy of the stock assessment for the Argentine Hake from 1986 to 2000.
+(Annotated code for data cleaning can be found in Appendix D).
 
-```{r}
-# Simulate management under the trained agent
-env = gym$make("fishing-v1", r = 1.0379274,	K = 1.197693, sigma = 0.1121662)
-td3 = sb3$TD3$load("cache/td3")
-
-```
-
-
-
-```{r}
+```{r message=FALSE}
 hake = read_csv("../data/hake.csv")
-x0 = hake %>%
- filter(year == min(year)) %>%
-  pull(scaled_biomass)
-Tmax = 15
-years =1986:2000
-
-td3_state = td3_action = numeric(Tmax)
-td3_state[1] = x0
-td3_action[1] = NA
-
 ```
 
-
-Our hindcast considers the scenario of managing catch quotas using TD3, beginning in 1986. 
-We compare both the anticipated harvest and resulting stock biomass to the historically recorded harvest and biomass.
-This shows that quotas set by TD3 would have been lower than historical values throughout the late 80s and early 90s, which
-saw a sharp decline in estimated biomass of the Argentine Hake.
-For the same or higher estimated stock sizes from the historical record, we see that TD3 would recommend a lower quota.
-We also see that under TD3 the stock recovers sufficiently to predict higher quotas by the second half of the 90s than were
-being set in the now-depleted stock.  
-Whether the TD3 quotas would have truly been sufficient to permit recovery in stock sizes shown in the simulation clearly depends on the accuracy of the underlying simulation.
-However, the fact that TD3 would set a lower quota than the historical management given the same or even higher estimate of stock size is independent of the Hake simulation.
-Combined with the observed historical declines, this provides some evidence that the RL agent could have decreased or avoided the over-harvesting in this case. 
-
+For each year in the data, we compare the historical harvest to the quota that would have been recommended by the TD3-based Deep RL agent we have just trained.
+To utilize our RL agent to set a quota for the stock, we only have to map the observed biomass estimates and historical harvests into the re-scaled state space of the environment. 
+Recall that the `gym_fishing` environment includes helper function `get_state()` to turn observed biomass to the state-space units used in the gym.
 
 ```{r}
-env$reset()
-## represent the initial state size in the 'rescaled' state space.
-state = env$get_state( x0 )
+# Initial states
+x0 = hake[[1, "scaled_biomass"]]
+agent_state = agent_action = numeric(15)
+agent_state[1] = x0
+agent_action[1] = NA
 
-for(i in 2:Tmax){
+# `env` is used only to translate between original units and transformed space
+# Represent the initial stock size in the 'rescaled' state space:
+state = env$get_state(x0)
+for(i in 1:15){
   
-  # RL-recommended harvest action:
+  # The RL agent recommends a Quota based on current state
   out = td3$predict(state)
   action = out[[1]]
   
-  # Record state and resulting action
-  td3_state[i] = env$get_fish_population(state)
-  td3_action[i] = env$get_quota(action)
+  # We record state and proposed quota (in the original units)
+  agent_state[i] = env$get_fish_population(state)
+  agent_action[i] = env$get_quota(action)
   
-  # Implement RL-recommended harvest. 
-  result = env$step(action)
-  state = result[[1]]
-  
-  #state = env$get_state(hake$scaled_biomass[i+1])
+  # Use historical data to determine the next state
+  state = env$get_state(hake$scaled_biomass[i+1])
 }
-
-df = bind_rows(
-  tibble(year = years, state = td3_state, action = td3_action, model = "TD3"),
-  tibble(year = years, state = hake$scaled_biomass, action = hake$scaled_catch, model = "historical"))
-
-df %>% ggplot(aes(year, state, col=model)) + geom_line() + geom_point(aes(year, action, col=model))
-
 ```
 
 
+Plot the results: 
+
+```{r}
+years =1986:2000
+harvest = bind_rows(
+  tibble(year = years, harvest = agent_action, model = "TD3"),
+  tibble(year = years, harvest = hake$scaled_catch, model = "historical")
+)
+stock <-  tibble(year = years, biomass = hake$scaled_biomass, model = "historical")
+
+
+write_csv(harvest, "../manuscript/figs/historical_harvest.csv")
+write_csv(stock, "../manuscript/figs/historical_stock.csv")
+
+top_panel <- ggplot(stock, aes(year, biomass, col=model)) + geom_line(lty=2) + 
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+bottom_panel <- ggplot(harvest, aes(year, harvest, col=model)) + 
+  geom_line() + geom_point()
+
+top_panel / bottom_panel
+```
+
+The Argentine hake biomass exhibited a steep decline between 1986 and 2000 as shown by the stock assessment estimates.
+Over that time, historical harvests showed some decline in step with the declining biomass.
+By contrast, for each of the historically observed biomass estimates the RL agent would have proposed much steeper cuts to the biomass quota which may have avoided the continued loss of biomass and eventual decline in harvest as well.
+This result should not be over-interpreted. 
+Without being able to replay history we have no way of truly knowing if the RL agent would have managed this stock better.
+While this example shows that it is in principle very straight forward to utilize a trained RL agent to recommend real harvest quotas, we must bear in mind that the agent is only as good as the environments on which it was trained.
+In practice, the RL agent would have to first be trained and evaluated on much more realistic environments than only the `fishing-v1` gym illustrated here.
 
 
 # Ecological tipping points
@@ -506,17 +528,13 @@ Our implementation in `gym_conservation` allows the user to consider alternative
 For some such scenarios the optimal solution is known or can be determined by stochastic dynamic programming, while for others, including the scenario of focus here, the optimal solution is unknown.
 
 
-For simplicity of illustration, we will train only a TD3-based agent on this scenario.
 
 
 ```{r}
+# Python users see python/conservation_TD3.py
 env = gym$make("conservation-v6")
-```
 
-
-```{r}
 noise_std = 0.4805935357322933
-
 OU = sb3$common$noise$OrnsteinUhlenbeckActionNoise
 action_noise = OU(mean = np$zeros(1L),  sigma = noise_std * np$ones(1L))
 
@@ -530,18 +548,18 @@ model = sb3$TD3('MlpPolicy',
             "buffer_size"= 10000L,
             "train_freq"= 1000L,
             "gradient_steps"= 1000L,
-            "n_episodes_rollout"= -1L,
             "action_noise"= action_noise,
             "policy_kwargs"= list("net_arch"= c(64L,64L)))
 
 ```
 
+As before, we train the agent unless a cached version of the trained agent is already available:
 
 ```{r}
-if(!file.exists("cache/td3-conservation.zip")){
+if(!file.exists("../python/cache/td3-conservation.zip")){
 
   model$learn(total_timesteps=3000000L)
-  model$save("cache/td3-conservation")
+  model$save("../python/cache/td3-conservation")
   
 }
 
@@ -549,12 +567,9 @@ if(!file.exists("cache/td3-conservation.zip")){
 
 
 ```{r}
-# Simulate management under the trained agent
-# See https://github.com/boettiger-lab/conservation-agents/blob//conservation/TD3-v6.py
-
-model = sb3$TD3$load("cache/td3-conservation")
-TD3_sims = env$simulate(model, reps = 100L)
-TD3_policy = env$policyfn(model, reps = 10L)
+model = sb3$TD3$load("../python/cache/td3-conservation")
+TD3_sims = env$simulate(model, reps = 100L) %>% mutate(model = "TD3")
+TD3_policy = env$policyfn(model, reps = 1L)  %>% mutate(model = "TD3")
 ```
 
 
@@ -572,27 +587,16 @@ This is implemented using the `fixed_action` method provided in our `gym_conserv
 K = 1.5
 alpha = 0.001
 opt = gym_conservation$models$fixed_action(env, fixed_action = alpha * 100 * 2 * K )
-opt_sims = env$simulate(opt, reps = 100L)
-opt_policy = env$policyfn(opt)
+opt_sims = env$simulate(opt, reps = 100L) %>% mutate(model="steady-state")
+opt_policy = env$policyfn(opt) %>% mutate(model="steady-state")
 ```
 
 
 We gather together the results under the RL agent and steady-state policy as before,
 
 ```{r}
-sims_df = bind_rows(TD3_sims, opt_sims, .id = "model") %>%
-  mutate(model = c("TD3", "steady-state")[as.integer(model)])
-
-policy_df = bind_rows(TD3_policy, opt_policy, .id = "model") %>%
-  mutate(model = c("TD3", "steady-state")[as.integer(model)])
-
-gamma = 1 #discount
-reward_df = sims_df %>% 
-  group_by(rep, model) %>%
-  mutate(cum_reward = cumsum(reward * gamma^time)) %>%
-  group_by(time, model) %>%
-  summarise(mean_reward = mean(cum_reward), 
-            sd = sd(cum_reward), .groups = "drop")
+sims_df = bind_rows(TD3_sims, opt_sims)
+policy_df = bind_rows(TD3_policy, opt_policy)
 
 ```
 
@@ -602,53 +606,15 @@ The resulting three data frames contain the necessary data for each of the subpl
 ```{r}
 write_csv(sims_df, "../manuscript/figs/tipping_sims_df.csv")
 write_csv(policy_df, "../manuscript/figs/tipping_policy_df.csv")
-write_csv(reward_df, "../manuscript/figs/tipping_reward_df.csv")
 ```
 
-
-<!-- Remaining is just plotting code, repeated in the main .Rmd.  Should we omit it from the appendix? -->
-
-```{r}
-# ensemble statistics
-ymin = function(x) last(x[(ntile(x, 20)==1)])
-ymax = function(x) last(x[(ntile(x, 20)==19)])
-
-fig_sims = 
-  sims_df %>%
-   group_by(time, model) %>% 
-   summarise(ymin = ymin(state),
-            ymax = ymax(state),
-            state = mean(state), .groups = "drop") %>%
-  ggplot(aes(time, state, ymin = ymin, ymax = ymax, fill=model)) + 
-   geom_ribbon(alpha= 0.3) + geom_line(aes(col = model))
-```
-
-
-```{r}
-fig_policy = 
-  policy_df %>% ggplot(aes(state, action, 
-                           group=interaction(rep, model),
-                           col = model)) + 
-  geom_line(show.legend = FALSE) 
-```
-
-```{r}
-
-fig_reward = reward_df %>% 
-  ggplot(aes(time, mean_reward)) + 
-  geom_ribbon(aes(ymin = mean_reward - 2*sd, 
-                  ymax = mean_reward + 2*sd, fill = model),
-              alpha=0.25, show.legend = FALSE) + 
-  geom_line(aes(col = model), show.legend = FALSE) + 
-  ylab("reward")
-```
-
-### Manuscript Figure 3
 
 ```{r fig3}
-fig_sims / ( fig_policy + fig_reward)
+plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 ```
 
+
+## Rescues: individual simulation trajectories
 
 Because it is difficult to get a feel for the dynamics of individual replicate simulations from ensemble statistics, we select a few example trajectories to examine directly. 
 Of the 100 replicate simulations, we pick 4 examples that dip below a state value of 0.2 for over 15 consecutive timesteps, indicating a transition into the lower basin of attraction. 
@@ -668,8 +634,8 @@ is_low = sims_df %>%
 
 ## First 4 such cases:
 sims_df %>% inner_join(is_low) %>%
-  ggplot(aes(time, state,  group=interaction(model, rep))) +
-  geom_line(color = pal[3], show.legend = FALSE) + facet_wrap(~rep)
+  ggplot(aes(time, state,  col=model, group=interaction(model, rep))) +
+  geom_line(show.legend = FALSE) + facet_wrap(~rep)
 ```
 
 
@@ -679,6 +645,15 @@ is_low = sims_df %>% filter(model == "steady-state") %>%
   group_by(rep, model) %>% summarize(low = sum(state < .2) > 10) %>% 
   filter(low) %>% head(6)
 sims_df %>% inner_join(is_low) %>%
-  ggplot(aes(time, state, group=interaction(model, rep))) +
-  geom_line(color = pal[1], show.legend = FALSE) + facet_wrap(~rep)
+  ggplot(aes(time, state, col=model, group=interaction(model, rep))) +
+  geom_line(show.legend = FALSE) + facet_wrap(~rep)
 ```
+
+
+```{r}
+```
+
+
+\pagebreak
+
+# References

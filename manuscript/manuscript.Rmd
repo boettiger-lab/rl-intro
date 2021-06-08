@@ -484,26 +484,23 @@ Interdisciplinary collaborations with experts in algorithmic governance and ethi
 
 
 
-<!-- Something about the way forward, point to appendix resources etc -->
 
-
-<!-- Discussion really doesn't discuss/draw conclusions from the fisheries and tipping points examples! Do we need to or maybe not since it's not about the science-->
-
-
-<!-- ML: I think talking about the examples in a very passing manner is fine as the point is primarily to show that RL can work. To conclude, I feel like we could portray the vision of open ai gym environments building a CS-ecology community.-->
-
-
-
-<!-- 
-The pitfalls of RL-based solutions to global environmental change problems are not only technical, but include issues of ethics and power, especially when the algorithms or data are proprietary.
-We discuss not only technical issues that can cause RL solutions to fail in surprising ways, but also potential issues raised by the adoption of more algorithmic approaches to conservation generally.
-We emphasize how an open, transparent and reproducible approach can help mitigate some (but not all) of these concerns, and facilitate a more effective interface between teams of researchers from both ecological and computer sciences.
-If algorithms are to play a meaningful role in the allocation and exploitation of natural resources from fish to forests, good intentions [@Joppa] may not be sufficient to ensure equitable outcomes.
-Ecologists and computer scientists will also need input from experts in governance and ethics to ensure that applications of AI to ecological challenges are fair and just.
-
--->
 
 
 \pagebreak
+
+
+
+
+
+
+
+
+
+
+
+\pagebreak
+
+
 
 # References
