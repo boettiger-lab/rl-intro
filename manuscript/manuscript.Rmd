@@ -236,22 +236,10 @@ While there are other function approximators that can be used in RL, e.g. Gaussi
 We will not discuss in detail how neural networks work -- see [@lecun_deep_2015] for further background --, but the general process for how neural networks are used in RL is that at each learning step, the agent, say a policy gradient-based agent, will adjust the parameters in its policy-approximating neural network so that according to past experiences, the agent will be more likely to engage in highly rewarding behavior in the future. 
 This same process occurs in value learning and actor-critic-based deep RL algorithms, except these agents are adjusting either a value network or both a value and policy network respectively
 
-Over the course of training, RL agents will engage in trial and error learning, whereby it will be necessary for the agent to explore new sequences of actions as well as exploit past high rewarding sequences.
-Occasionally, the agent will need to propose exploratory actions that may result in higher rewards than previously seen. 
-Yet, the agent may also need to focus on past sequences of actions which may require marginal improvement to reach optimality.
-The fundamental issue is that it is very difficult for the agent to know when it should engage in explorative or exploitative behavior. 
-This *exploration-exploitation dilemma* is an open research problem [@berger-tal_exploration-exploitation_2014], and current deep RL algorithms take a range of approaches towards this dilemma -- in Appendix A, we discuss some of the more specific exploration algorithms.
-Yet, overall, the manner in which RL algorithms explore depend on whether the algorithms are *on-policy* or *off-policy*.
-The distinction between on and off-policy evaluation comes from what policy the agent is using to select actions during training.
-For off-policy algorithms, the agent uses a policy during training that can be different from the policy that the agent will use during evaluation; while in on-policy algorithms, the agent updates the same policy in training as the agent will use during evaluation.
-There are trade-offs to consider in using an off-policy or on-policy learner, which we will further discuss in the Appendix A.
-
-On top of the aforementioned distinctions for model-free, deep RL algorithms, there are more algorithm design choices that can be made. 
-One important point of divergence is whether the agent learns a deterministic or stochastic policy.
-Another is whether the algorithm is formulated to work on a discrete, continuous or both a discrete and continuous state and action space.
-In Appendices A and B, we will introduce the considerations one should make in deciding whether an algorithm is well suited for a specific environment. 
-
-
+On top of the aforementioned distinctions of deep RL algorithms, there are more algorithms design choices that are made. 
+A very significant consideration is deciding how the agent will explore the environment.
+Another is whether the algorithm can work on a discrete, continuous or both a discrete and continuous state and action space.
+In Appendix A, we provide more detail on the important components of RL algorithms.
 
 
 # Examples
