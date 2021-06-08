@@ -235,7 +235,6 @@ Neural networks have been widely useful in reinforcement learning because neural
 Whenever there is a need for an agent to approximate some function, say a policy function or value function, neural networks can be used in this capacity.
 While there are other function approximators that can be used in RL, e.g. Gaussian processes [@grande14], neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@briefsurveydrl].
 We will not discuss in detail how neural networks work [see @lecun_deep_2015], but the general process for how neural networks are used in RL is that at each learning step, the agent, will adjust the parameters in its neural network with which it approximates the policy function and/or value function, so that according to past experiences, the agent will be more likely to engage in highly rewarding behavior in the future. 
-This same process occurs in value learning and actor-critic-based deep RL algorithms, except these agents are adjusting either a value network or both a value and policy network respectively
 
 Over the course of training, RL agents will engage in trial and error learning, whereby it will be necessary for the agent to explore new sequences of actions as well as exploit past high rewarding sequences.
 Occasionally, the agent will need to propose exploratory actions that may result in higher rewards than previously seen. 
