@@ -30,4 +30,3 @@ jobs:
       - name: Manuscript
         run: |-
           Rscript -e "rmarkdown::render('manuscript/manuscript.Rmd')"
-
