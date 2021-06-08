@@ -189,11 +189,16 @@ A simple sketch of an actor critic algorithm is shown in Algorithm 3.
 
 # Exploration 
 
-Exploration is a central component of any deep RL algorithm, and there are a variety of exploration algorithms that an agent can employ.
+Over the course of training, RL agents will engage in trial and error learning, whereby it will be necessary for the agent to explore new sequences of actions as well as exploit past high rewarding sequences.
 In the sections above, we procedurally mentioned that the agent must select actions during training.
 Yet, how the agent selects these actions is very important because if an agent explores the state-action space poorly, the agent will learn a sub-optimal policy.
-As mentioned in the manuscript, the dilemma in training is that it is difficult for the agent to know when to balance exploration of new actions and exploitation of past behavior.
+Occasionally, the agent will need to propose exploratory actions that may result in higher rewards than previously seen.
+Yet, the agent may also need to focus on past sequences of actions which may require marginal improvement to reach optimality.
+The fundamental issue is that it is very difficult for the agent to know when it should engage in explorative or exploitative behavior.
+This *exploration-exploitation dilemma* is an open research problem [@berger-tal_exploration-exploitation_2014].
 For RL problems with small state-action spaces, e.g. space-action spaces that can be represented in a table, simple exploration algorithms will converge to the optimal policy, but with large or infinite state-action spaces, there are no convergence guarantees.
+
+Current deep RL algorithms take a range of approaches towards this dilemma.
 In the sections below, we will present some of the more commonly encountered exploration algorithms and then point to some more advanced methods.
 
 ## Epsilon-Greedy Algorithm
@@ -240,19 +245,24 @@ Look at @go-explore and @nevergiveup for recent applications of memory-based exp
 See @largescalecuriosity and @bellemare2016 for recent studies of curiosity-driven methods.   
 
 
-# Replay Buffers vs. Parallel Workers
+# On-Policy vs. Off-policy Evaluation
 
-Another critical algorithm design choice involves how an RL agent collects and samples past experiences.
-A significant issue that arises from sampling past experiences is correlation of samples [@DQN, @schaul_prioritized_2016].
-In the simple case that we have an RL agent that interacts with the environment for a few time steps and then uses this trajectory for its learning update, these samples, since they come from the same trajectory, will be strongly correlated.
+Before deciding how to explore the environment, RL algorithms must have a policy to use during training.
+RL agents can either select actions from the same policy that they intend to use during evaluation or they can sample actions from a policy that is different.
+The former is called on-policy learning; the agent learns to select actions with the same policy it will use in testing.
+The latter is called off-policy learning; the agent uses a policy during training that is potentially different than the policy that the agent will evaluate.
+
+A significant issue that arises when sampling actions and then using this experience to maximize the RL objective is correlation [@DQN, @schaul_prioritized_2016].
+In the simple case that we have an RL agent that interacts with the environment for a few time steps and then uses this trajectory for its learning update, these samples, since they come from the same trajectory, will be strongly correlated[@DQN].
 Learning from correlated samples is undesirable since this can result in agents getting stuck in local optima, which will impede learning, but there are other reasons why learning from a single trajectory causes problems -- see @schaul_prioritized_2016 and @DQN for more insight here.
-There are two commonly used solutions to this problem of correlated samples: Replay Buffers and Parallel Workers.
+
+On-policy and off-policy agents have different solutions to the correlated samples problem.
 If the agent is off-policy, the agent can employ a replay buffer -- see @DQN for an example of a replay buffer-based agent.
-With a replay buffer, the agent will save state-action-reward transitions in the replay buffer, and during learning updates, the agent will sample transitions from the replay buffer.
-Since the replay buffer can be arbitrarily large and thus store transitions from numerous trajectories, sampling from the buffer will result in decorrelated samples.
-On-policy agents, however, cannot use a replay buffer since these agents are not allowed to use samples from a policy different than the policy they are trying to improve -- note replay buffers are generally large enough to hold transitions from old policies.
+With a replay buffer, the agent saves state-action-reward transitions in the replay buffer, and during learning updates, the agent samples transitions from the buffer.
+Since the replay buffer can be arbitrarily large and thus store transitions from numerous trajectories, sampling from the buffer results in decorrelated samples.
+On-policy agents, however, cannot use a replay buffer since these agents are not allowed to use samples from a policy different than the policy they are trying to improve -- note replay buffers are generally large enough to hold transitions from multiple policies.
 The solution to de-correlate samples for on-policy agents is to use parallel workers, whereby multiple workers explore the environment according to the current policy.
-Due to stochasticity that can come from exploration and the environment, the workers will go on different trajectories in state-action space.
+Due to stochasticity that can come from exploration and the environment, the workers go on different trajectories in state-action space.
 The agent will collect samples across these workers in a learning step, perform its learning step and then repeat the process of collecting and sampling transitions with an updated policy.
 The idea behind using parallel workers is that sampling over multiple trajectories de-correlates samples -- see @a3c on more details here.
 In practice, using a large replay buffer, on the order of millions of transitions, or a modest number of parallel, around 4-16 for simple RL problems, is very important to achieve good agent performance for off-policy and on-policy algorithms respectively.
