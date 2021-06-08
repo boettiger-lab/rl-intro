@@ -30,9 +30,9 @@ header-includes:
   - \usepackage{amsmath}
   - \usepackage{amssymb}
 output: 
-  word_document: default
   rticles::arxiv_article:
     keep_tex: true
+  word_document: default
 editor_options: 
   markdown: 
     wrap: sentence
