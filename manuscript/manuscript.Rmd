@@ -351,7 +351,7 @@ top_panel / bottom_panel
 
 This approach is not as different from conventional strategies at it may seem.
 In a conventional approach, ecological models are first estimated from empirical data, (stock assessments in the fisheries case).
-Quotas can then be set based directly on these model estimates, or by comparing alternative candidate "harvest control rules" (the policy function) against model-based simulations of stock dynamics.
+Quotas can then be set based directly on these model estimates, or by comparing alternative candidate "harvest control rules" (policies) against model-based simulations of stock dynamics.
 This latter approach, known in fisheries as Management Strategy Evaluation [MSE; @Punt2016] is already very closely analogous to the RL process.
 Instead of researchers evaluating a handful of control rules, the RL agent proposes and evaluates a plethora of possible control rules autonomously. 
 
