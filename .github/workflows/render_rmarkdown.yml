@@ -1,20 +1,32 @@
-name: Docker Actions
-on: [push]
+
+on: push
+
+name: Render manuscript
+
 jobs:
-  render_all:
-    runs-on: ubuntu-latest
-    container: rocker/ml-verse:4.1.0-cuda11.1
+  render:
+    name: Render RMarkdown
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - name: Install dependencies
+      - uses: r-lib/actions/setup-r@master
+      - uses: r-lib/actions/setup-pandoc@v1
+      - uses: r-lib/actions/setup-tinytex@master
+      - name: Cache Renv packages
+        uses: actions/cache@v2
+        with:
+          path: $HOME/.local/share/renv
+          key: r-${{ hashFiles('renv.lock') }}
+          restore-keys: r-
+      - name: Install system dependencies
+        run: sudo apt-get update -qq && sudo apt-get -y install libcurl4-openssl-dev
+      - name: Install packages
+        run: |
+          R -e 'install.packages("renv")'
+          R -e 'renv::restore()'
+      - name: Appendix
         run: |-
-          sudo apt update -qq && sudo apt -y install swig
-          Rscript -e "renv::restore()"
-      - name: Render all appendices
+          Rscript -e "rmarkdown::render('appendices/appendix-B-examples.Rmd')"
+      - name: Manuscript
         run: |-
-          Rscript -e "lapply(fs::dir_ls('appendices', glob='*.Rmd', recurse=TRUE), rmarkdown::render, envir = globalenv())"
-      - name: Render manuscript
-        run: |-
-          Rscript -e "lapply(fs::dir_ls('manuscript', glob='manuscript.Rmd', recurse=TRUE), rmarkdown::render, envir = globalenv())"
-
-
+          Rscript -e "rmarkdown::render('manuscript/manuscript.Rmd')"
