@@ -294,7 +294,7 @@ In constrast, a model-free deep RL algorithm makes no assumption about the preci
 
 We illustrate the deep RL approach using the algorithm known as Twin Delayed Deep Deterministic Policy Gradient or more simply, TD3 [@TD3].
 TD3 is an extension of Deep Deterministic Policy Gradient [DDPG, @DDPG], which itself extended the original Deep Q-Network [DQN, @DQN] algorithm to continuous action space.
-A step-by-step walk-through for training both agents on this environment is provided in the Appendix.
+A step-by-step walk-through for training agents on this environment is provided in the Appendix.
 We compare the resulting management, policy, and reward under either RL agent to that achieved by the optimal management solution [Fig 2].
 Despite having no knowledge of the underlying model, the RL agent learns enough to achieve nearly optimal performance.
 
