@@ -30,6 +30,7 @@ header-includes:
   - \usepackage{amsmath}
   - \usepackage{amssymb}
 output: 
+  word_document: default
   rticles::arxiv_article:
     keep_tex: true
 editor_options: 
@@ -258,7 +259,7 @@ We provide two examples that illustrate the application and potential of deep RL
 library(tidyverse)
 library(patchwork)
 # This chunk controls plot aesthetics only, and can be omitted with no material change
-knitr::opts_chunk$set(echo=TRUE, message = FALSE, warning = FALSE,
+knitr::opts_chunk$set(echo=FALSE, message = FALSE, warning = FALSE,
                       fig.width = 7, fig.height = 4, cache = FALSE)
 ggplot2::theme_set(ggplot2::theme_bw())
 
