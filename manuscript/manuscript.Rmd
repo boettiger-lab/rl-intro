@@ -54,7 +54,7 @@ editor_options:
 <!-- Environmental problems, ML -->
 Advances in both available data and computing power have begun to open the door to a greater role for machine learning (ML) in addressing some of our planet’s most pressing environmental problems, such as the growing frequency and intensity of wildfire [@wildfire], over-exploited fisheries [@Worm2006], declining biodiversity [@biodiversity], and zoonotic pandemics [@covid].
 But will ML approaches really help us tackle a changing planet?
-Applications of ML in ecology have begun to illustrate the promise of two methods of ML: *supervised learning* [@joseph2020] and *unsupervised learning* [@unsupervised], but have so far largely overlooked the third and possibly most promising approach in the ML triad: *reinforcement learning* (RL).
+Applications of ML in ecology have begun to illustrate the promise of two methods of ML: *supervised learning* [@joseph_neural_2020] and *unsupervised learning* [@valletta_applications_2017], but have so far largely overlooked the third and possibly most promising approach in the ML triad: *reinforcement learning* (RL).
 Three features distinguish RL from other ML methods in ways that are particularly well suited to addressing global ecological change issues:
 
 1) RL is explicitly focused on the task of selecting actions in an uncertain and changing environment to maximize some objective,
@@ -62,7 +62,7 @@ Three features distinguish RL from other ML methods in ways that are particularl
 3) RL approaches easily integrate with existing ecological models and simulations, which may be our best guide to understanding and predicting future possibilities.
 
 Despite relevance to uncertainty and decision making that could make RL uniquely well suited for ecological and conservation problems, it has so far seen little application in this area.
-To date, the problems considered by RL research have largely been drawn from examples in robotic movement and games like Go and Starcraft [@lillicrap; @alphazero; @alphastar]
+To date, the problems considered by RL research have largely been drawn from examples in robotic movement and games like Go and Starcraft [@openai_learning_2019; @alphazero; @alphastar]
 Complex environmental problems share many similarities to these tasks and games: the need to plan many moves ahead given a large number of possible outcomes, to account for uncertainty and to respond with contingency to the unexpected.
 RL agents typically develop their strategies by interacting with simulators, a practice that should not be unsettling to ecologists since learning from simulators is common across ecology.
 Rich, processes-based simulations such as the SORTIE model in forest management [@sortie], Ecopath with Ecosim in fisheries management [@ecopath], or climate change policy models [@dice] are already used to explore scenarios and inform ecosystem management.
@@ -88,7 +88,7 @@ We include an extensive appendix with carefully annotated code which should allo
 
 
 Any application of RL can be divided into two components: an *environment* and an *agent*.
-An *environment* is typically a computer simulation, though it is possible to use the real world as the RL environment [@robotics].
+An *environment* is typically a computer simulation, though it is possible to use the real world as the RL environment [@ha_learning_2020].
 The *agent*, which is often a computer program, continuously interacts with the environment. 
 At each time step, the agent observes the current *state* of the environment then performs an *action*; as a result of this action, the environment will transition to a new state and will transmit a numerical *reward* signal to the agent.
 The goal of the agent is to learn how to maximize its expected cumulative reward.
@@ -219,7 +219,7 @@ When the population growth rate is stochastic, the problem is slightly harder to
 
 This provides a natural first benchmark for deep RL approaches, since we can compare the RL solution to the mathematical optimum directly.
 The problem is also of interest because the RL approach can be extended to consider ecological dynamics that either surpass the complexity possible with SDP methods, or violate assumptions of such classical approaches).
-Moreover, fisheries management is both an important global challenge in it's own right [@Worm2006; @Costello2016] as well as a common test case to understand ecological dynamics and conservation management more broadly [@something].
+Moreover, fisheries management is both an important global challenge in it's own right [@Worm2006; @Costello2016] as well as a common test case to understand ecological dynamics and conservation management more broadly [@something]. <!-- ML: This seems repetitive with second sentence in first paragraph above so going to leave this citation unfulfilled-->
 
 For illustrative purposes, we consider the simplest version of the dynamic optimal harvest problem as outlined by [@Clark1973] (for the deterministic case) and [@Reed1979] (under stochastic recruitment).
 The manager seeks to optimize the net present value (discounted cumulative catch) of a fishery, observing the stock size each year and setting an appropriate harvest quota in response.
@@ -319,7 +319,7 @@ bifur_df %>%
 
 Because this problem involves a parameter whose value changes over time (the slowly deteriorating environment), the resulting ecosystem dynamics are not autonomous.
 This precludes our ability to solve for the optimal management policy using classical theory such as for Markov Decision Processes (MDP, [@Marescot2013]), typically used to solve sequential decision-making problems.
-However, it is often argued that simple rules can achieve nearly optimal management of ecological conservation objectives in many cases [@Possingham; @Possingham; @morePossingham].
+However, it is often argued that simple rules can achieve nearly optimal management of ecological conservation objectives in many cases [@Possingham2004; @Possingham2006; @Possingham2009].
 A common conservation strategy employs a fixed response level rather than a dynamic policy which is toggled up or down each year: for example, declaring certain regions as protected areas in perpetuity.
 An intuitive strategy faced with an ecosystem tipping point would be 'perfect conservation', in which the management response is perfectly calibrated to counter-balance any further decline.
 While the precise rate of such decline may not be known in practice (and will not be known to RL algorithms before-hand either), it is easy to implement such a policy in simulation for comparative purposes.
@@ -383,7 +383,7 @@ Neural networks used in deep RL have proven remarkably effective in handling suc
 The rapidly expanding class of Model-free RL algorithms is particularly appealing given the ubiquitous presence of model uncertainty in ecological dynamics.
 Rarely do we know the underlying functional forms for ecological processes -- is population recruitment more Beverton-Holt or Ricker?
 Methods which must first assume something about the structure or functional form of a process before estimating the corresponding parameter can only ever be as good as those structural assumptions.
-Frequently available ecological data is insufficient to distinguish between possible alternative models [@devalpine], or the correct model may be non-identifiable with any amount of data.
+Frequently available ecological data is insufficient to distinguish between possible alternative models [@knape_are_2012], or the correct model may be non-identifiable with any amount of data.
 Model-free RL approaches offer a powerful solution for this thorny issue.
 Model-free algorithms have proven successful at learning effective policies even when the underlying model is difficult or impossible to learn [@Pong2020], as long as simulations of possible mechanisms are available.
 
@@ -416,7 +416,7 @@ Yet, even in the case that an agent performs well on a realistic problem, there 
 <!-- But never fear, hard problems have been solved before!-->
 Deep RL is still a very young field, where despite several landmark successes, potential far outstrips practice.
 Recent advances in the field have proven the potential of the approach to solve complex problems [@alphaGo2016; @alphaGoZero; @alphazero; @DQN], but typically leveraging large teams with decades of experience in ML and millions of dollars worth of computing power [@alphaGoZero].
-Successes have so far been concentrated in applications to games and robotics, not scientific and policy domains, though this is beginning to change [@protein_folding].
+Successes have so far been concentrated in applications to games and robotics, not scientific and policy domains, though this is beginning to change [@popova_deep_2018; @zhou_optimizing_2017].
 Iterative improvements to well-posed public challenges have proven immensely effective in the computer science community in tackling difficult problems, which allow many teams with diverse expertise not only to compete but to learn from each other [@netflix_prize; @imagenet].
 By working to develop similarly well-posed challenges as clear benchmarks, ecology and environmental science researchers may be better able to replicate that collaborative, iterative success in cracking hard problems.
 
