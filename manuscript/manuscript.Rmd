@@ -423,7 +423,7 @@ Neural networks used in deep RL have proven remarkably effective in handling suc
 The rapidly expanding class of Model-free RL algorithms is particularly appealing given the ubiquitous presence of model uncertainty in ecological dynamics.
 Rarely do we know the underlying functional forms for ecological processes -- is population recruitment more Beverton-Holt or Ricker?
 Methods which must first assume something about the structure or functional form of a process before estimating the corresponding parameter can only ever be as good as those structural assumptions.
-Frequently available ecological data is insufficient to distinguish between possible alternative models [@devalpine], or the correct model may be non-identifiable with any amount of data. <!-- ML: Having difficulty finding what the reference here should be. -->
+Frequently available ecological data is insufficient to distinguish between possible alternative models [@knape_are_2012], or the correct model may be non-identifiable with any amount of data.
 Model-free RL approaches offer a powerful way to factor this thorny issue.
 The model-free RL agent needs to make no such a priori hypothesis about a particular functional form.
 Model-free approaches have proven successful at learning effective policies even when the underlying model may be difficult or impossible to learn [@Pong2020], as long as simulations of possible mechanisms are available.
