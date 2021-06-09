@@ -215,7 +215,7 @@ Each algorithm may have different hyper-parameters. `stable-baselines3` provides
 
 
 For example, here we will use the Twin Delayed DDPG method (TD3) described in @TD3.
-This algorithm is a successor of Deep Deterministic Policy Gradient (DDPG) method [@DDPG], itself a policy-gradient-modification that extends the original Deep Q-Network (DQN) algorithm [@DQN] to continuous action spaces.
+This algorithm is a successor of Deep Deterministic Policy Gradient (DDPG) method [@ddpg], itself a policy-gradient-modification that extends the original Deep Q-Network (DQN) algorithm [@DQN] to continuous action spaces.
 We use this algorithm to train an agent that has a multi-layer perceptron (`MlpPolicy`) neural network, with the default architecture of two 64-neuron layers.
 
 
@@ -332,7 +332,7 @@ However, by using the cached neural network parameter weights of the trained age
 By tuning the hyper-parameters that control the training regime used by the TD3 algorithm, we are able to further improve upon on the performance of the RL agent.
 Tuning may be performed manually by adjusting hyperparameters based on mechanistic reasoning (e.g. larger action noise may improve exploration over exploitation, a larger neural network may better approximate a more complex policy).
 This search can also be automated using standard non-linear optimization techniques, adjusting hyperparameters to maximize the reward attained by the trained network.
-Using such an approach (see <https://github.com/boettiger-lab/conservation-agents>), we discover the following hyperparameters achieve better performance (see @TD3 or @SB3 documentation for formal definitions of each hyperparameter) :
+Using such an approach (see <https://github.com/boettiger-lab/conservation-agents>), we discover the following hyperparameters achieve better performance (see @TD3 or @sb3 documentation for formal definitions of each hyperparameter) :
 
 
 
@@ -498,7 +498,7 @@ X_{t+1} \sim \text{lognormal}(\mu_t, \sigma)
 
 where we take $r=0.7$, $K=1.2$, $q=3$, $b=0.15$, $a_0 = 0.19$ and $\sigma = 0.2$ 
 Slow change over time in the parameter $a_t$ represents a process of environmental degradation, modeled as a constant increment $a_{t+1} = a_t + \alpha$, where we will take $\alpha = 0.001$.
-This model supports the dynamics of a fold bifurcation, widely used to model critical transitions in both theory and empirical manipulation in systems from microbes [@Dai2012] to lakes [@Carptenter2011] to the planet biosphere [@Barnosky2014].  
+This model supports the dynamics of a fold bifurcation, widely used to model critical transitions in both theory and empirical manipulation in systems from microbes [@Dai2012] to lakes [@Carptenter2011] to the planet biosphere [@Barnosky2014].  <!-- ML: Not sure what citation to use here for Barnosky or Carptenter in these years-->
 
 
 
