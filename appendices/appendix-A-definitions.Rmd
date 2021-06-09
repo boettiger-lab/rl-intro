@@ -56,12 +56,6 @@ Throughout these sections, we'll consider the environment to be an MDP which mak
 
 # Gradient-based Model-free RL Algorithms
 
-To solve the RL problem, algorithms either take a *model-free* or *model-based* approach. 
-The distinction is that *model-free* algorithms do not attempt to learn or use a model of the environment; yet, *model-based* algorithms employ a model of the environment to achieve the RL objective.
-A trade-off between these approaches is that when it is possible to quickly learn a model of the environment or the model is already known, model-based algorithms tend to require much less interaction with the environment to learn good-performing policies [@mbpo].
-Yet, frequently, learning a model of the environment is very difficult, and in these cases, model-free algorithms tend to outperform [@mbpo].
-Since our examples use model-free agents, we will focus on model-free algorithms in this section.
-
 Among model-free methods, there is divergence around what functions the agent is attempting to learn in order to achieve the RL objective.
 Generally, model-free agents are either learning a policy function, a value function or both.
 For context, *value functions* are proxies for how high of a cumulative reward an agent can expect to receive from a given state or state-action pair.

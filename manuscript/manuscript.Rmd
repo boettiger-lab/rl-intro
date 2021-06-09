@@ -132,7 +132,7 @@ We further discuss and show the benefits of hyperparameter tuning in Appendix B.
 
 
 
-# Formal RL Concepts
+# Reinforcement Learning
 <!-- ML: As I read this section, I have some concerns on this coming off as overly repetitive with the parts above. -->
 
 In this brief section, we will introduce the concept of the RL environment as a partially observable Markov decision process (POMDP); we will then use POMDP definitions to define the RL objective.
@@ -174,33 +174,15 @@ $$
   \pi^* = \underset{\pi}{\text{argmax}} \,\, \mathbb{E}_{\tau \sim p_\pi(\tau)}\Big[\sum_{t=0}^{H} \gamma^t r(s_t, a_t) \Big] =  \underset{\pi}{\text{argmax}} \,\, J (\pi)
 $$
 
-In Appendix B, we will go into greater detail on the general approaches that deep RL algorithms take towards optimizing the RL objective. 
-
-# Deep RL Overview <!-- ML: Might need to change the title to this section. It's not much of an overview imo. -->
-
-<!-- 
-
-Conceptual figure:
-
-Algorithm 
-  hyper-parameters specifying neural network, learning rate, etc.  
-  We refer to a particular selection of algorithm and hyperparameters as an "agent", which is then "trained" to solve one or more environments
-  internal 'parameters', estimated by "training" the agent. 
-  
-
--->
+To optimize the RL objective, algorithms either take a *model-free* or *model-based* approach. 
+The distinction is that *model-free* algorithms do not attempt to learn or use a model of the environment; yet, *model-based* algorithms employ a model of the environment to achieve the RL objective.
+A trade-off between these approaches is that when it is possible to quickly learn a model of the environment or the model is already known, model-based algorithms tend to require much less interaction with the environment to learn good-performing policies [@mbpo].
+Yet, frequently, learning a model of the environment is very difficult, and in these cases, model-free algorithms tend to outperform [@mbpo].
 
 Neural networks become useful in RL when the environment has a large state-action space, which happens frequently with realistic decision-making problems. 
-Classic RL algorithms, like policy iteration, value iteration and TD-learning, fail when the state-action space is large, e.g. when the possible states and actions can not be represented in a tractable table [@suttonbarto].
-Yet, over the last 10 years, researchers have shown that neural network-based RL algorithms can perform well on previously unsolvable environments [@DQN, @alphaGo2016].
-Neural networks have been widely useful in reinforcement learning because neural nets have the property of being general function approximators [@universalapproximators].
-Whenever there is a need for an agent to approximate some function, say a policy, transition or value function^[Value functions estimate the expected return from a state or state-action pair. If you know the value function under certain conditions, you can use the value function to retrieve the optimal policy by selecting the action that maximizes the value function. We talk more about value-based learning methods in Appendix A], neural networks can be used in this capacity.
+Whenever there is a need for an agent to approximate some function, say a policy, transition or value function^[Value functions estimate the expected return from a state or state-action pair. If you know the value function under certain conditions, you can use the value function to retrieve the optimal policy by selecting the action that maximizes the value function. We talk more about value-based learning methods in Appendix A], neural networks can be used in this capacity due to their property of being general function approximators [@universalapproximators].
 While there are other function approximators that can be used in RL, e.g. Gaussian processes [@grande14], neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@briefsurveydrl].
-We will not discuss in detail how neural networks work [see @lecun_deep_2015], but the general process for how neural networks are used in RL is that at each learning step, the agent, will adjust the parameters in its neural network with which it approximates the policy, transition and/or value function, so that according to past experiences, the agent will be more likely to engage in highly rewarding behavior in the future. 
 
-Beyond how neural networks are integrated, there are many other algorithm design choices to be made. 
-A significant consideration is deciding how the agent will explore the environment.
-Another is whether the algorithm can work on a discrete, or continuous state and action space.
 In Appendix A, we provide more detail on the important components of RL algorithms.
 
 
@@ -395,7 +377,6 @@ Consequently, that research must also confront the challenge of making robust, r
 The science of ecological management and quantitative decision-making has a long history [e.g. @Schaefer1954; @Walters1978] and remains an active area of research [@Possingham2006; @Fischer2009; @Polasky2011].
 However, the limitations of classical methods such as optimal control frequently constrain applications to relatively simplified models [@Possingham2006], ignoring elements such as spatial or temporal heterogeneity and autocorrelation, stochasticity, imperfect observations, age or state structure or other sources of complexity that are both pervasive and influential on ecological dynamics [@Hastings2012].
 Complexity comes not only from the ecological processes but also the available actions.
-Conservation efforts can be implemented in a wide variety of ways, and the most effective policies may vary in both space and time.
 While such complex dynamics and large state and action spaces are intractable to classical methods, they are straight forward to implement in simulation environments such as those used to train an RL algorithm.
 Neural networks used in deep RL have proven remarkably effective in handling such complexity, particularly when leveraging immense computing resources increasingly available through advances in hardware and software [@gpu_computing]. 
 
