@@ -41,7 +41,6 @@ header-includes:
 
 output: 
   rticles::arxiv_article:
-    keep_tex: true
     extra_dependencies:
       algorithm: null
       algpseudocode: noend
