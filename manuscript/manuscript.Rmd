@@ -125,29 +125,18 @@ In other environments, an agent may have to learn to forgo immediate rewards (or
 \end{figure}
 
 @brockman2016 identified (1) the lack of standardization of environments used in publication and (2) the need for better benchmark environments as two core problems limiting more rapid advancement of RL research, and proposed the creation of the OpenAI `gym` framework to address both problems.
-The `gym` framework defines a standard interface and methods by which a developer can describe an arbitrary environment in a computer program.
-This allows the design and application of software agents which can interact and learn in that environment without knowing anything about the environment's internal details.
-The `gym` Python module created by OpenAI also provides over 100 pre-built environments that serve as benchmark problems against which new RL algorithms can be tested.
-The `gym` framework is now recognized by all major software frameworks for writing RL algorithms (see Appendix, 'Deep RL Frameworks').
-While this library of environments spans a range of difficulties from classic control problems that can be solved in closed form to complex three-dimensional robotics simulators, they include no examples of ecological or biological problems.
-We use the `gym` framework to turn several existing ecological models into valid environmental simulators that can similarly be used in any RL framework.
+We use the `gym` framework to turn existing ecological models into valid environmental simulators that can similarly be used in any RL framework.
 In Appendix C, we give detailed instruction on how an OpenAI `gym` is constructed.
 
 ## Training and tuning an agent
 
 Training a deep RL agent on an environment involves allowing the agent to interact with the environment for thousands or even millions of time steps.
-The training period involves a trial and error process in which the agent inputs actions to the environment and uses the reward signal to learn an optimal policy. 
-According to the algorithm that the agent follows, the agent will explore the state-action space and use its experience to improve its decisions.
 The amount of time needed for an agent to learn high reward yielding behavior cannot be predetermined and depends on a host of factors including the amount of dedicated compute, complexity of the environment, complexity of the agent and more.
-Yet, overall, it has been well established that deep, model-free RL agents tend to be very sample inefficient [@gu_q-prop_2017], so it is recommended to provide a generous training budget for these agents.
-An advantage of using deep, model-free algorithms is that since they function autonomously and do not require any knowledge about the environment, we can readily test how these algorithms perform without knowing anything about the environment's transition dynamics or the inner workings of the algorithm.
+Yet, overall, it has been well established that deep RL agents tend to be very sample inefficient [@gu_q-prop_2017], so it is recommended to provide a generous training budget for these agents.
 
-Hyperparameters refer to the parameters in a deep, RL algorithm that control the learning process, e.g. the step size to use for gradient descent steps.
-Since the optimal hyperparameters vary across environments and can not be predetermined [@drlthatmatters], it is necessary to find a good-performing set of hyperparameters in a process called hyperparameter tuning.
-Hyperparameter tuning consists of the following general steps in repetition: proposing a new set of hyperparameters, training an agent with these hyperparameters, then examining the resulting performance.
-This procedure can be automated through standard multi-dimensional optimization approaches. 
-Since one round of training can be time intensive, hyperparameter tuning, which consists of usually numerous rounds of training, can be particularly time intensive.
-Hyperparameter tuning, however, is a necessary step in evaluating the performance of an algorithm and should be a standard component of any deep RL workflow.
+Hyperparameters refer to the parameters in a deep RL algorithm that control the learning process, e.g. the step size to use for gradient descent steps.
+Since the optimal hyperparameters vary across environments and can not be predetermined [@drlthatmatters], it is necessary to find a good-performing set of hyperparameters in a process called hyperparameter tuning, which can be automated through standard multi-dimensional optimization approaches. 
+We further discuss and show the benefits of hyperparameter tuning in Appendix B.
 
 
 
@@ -193,11 +182,9 @@ $$
   \pi^* = \underset{\pi}{\text{argmax}} \,\, \mathbb{E}_{\tau \sim p_\pi(\tau)}\Big[\sum_{t=0}^{H} \gamma^t r(s_t, a_t) \Big] =  \underset{\pi}{\text{argmax}} \,\, J (\pi)
 $$
 
-Note that this formalism extends to an infinite horizon case when $H= \infty$.
-While there are RL methods to deal with infinite horizon cases, we will only present methods for finite horizon or episodic POMDPs.
-In the appendix, we will go into further detail on the general approaches that model-free deep RL algorithms take towards optimizing the RL objective. 
+In Appendix B, we will go into greater detail on the general approaches that deep RL algorithms take towards optimizing the RL objective. 
 
-# Deep RL Algorithms
+# Deep RL Overview <!-- ML: Might need to change the title to this section. It's not much of an overview imo. -->
 
 <!-- 
 
@@ -211,36 +198,18 @@ Algorithm
 
 -->
 
-There is an ever increasing multitude of reinforcement learning algorithms, and while there are far too many algorithms to discuss in detail in this paper, we will herein classify and touch on some current methods.
-
-To solve the RL problem, algorithms either take a *model-free* or *model-based* approach. 
-The distinction is that *model-free* algorithms do not attempt to learn or use a model of the environment; yet, *model-based* algorithms employ a model of the environment to achieve the RL objective.
-A trade-off between these approaches is that when it is possible to quickly learn a model of the environment or the model is already known, model-based algorithms tend to require much less interaction with the environment to learn good-performing policies [@mbpo].
-Yet, frequently, learning a model of the environment is very difficult, and in these cases, model-free algorithms tend to outperform [@mbpo].
-Since our examples use model-free agents, we will focus on model-free algorithms in this section.
-
-Among model-free methods, there is divergence around what functions the agent is attempting to learn in order to achieve the RL objective.
-Generally, model-free agents are either learning a policy function, a value function or both.
-For context, *value functions* are proxies for how high of a cumulative reward an agent can expect to receive from a given state or state-action pair.
-If an agent knows the value function, then the agent can find the optimal action at any state by selecting the action that will maximize the value function in expectation.
-The class of algorithms that exclusively try to learn a value function are called *value-based* methods.
-In contrast, *policy gradient* algorithms exclusively learn the policy.
-And, lastly, *actor-critic* algorithms attempt to learn both a policy and value function, whereby the value function is used to inform the agent on the goodness of a selected action.
-We go into greater depth on these different classes of RL algorithms in Appendix A.
-
 Neural networks become useful in RL when the environment has a large state-action space, which happens frequently with realistic decision-making problems. 
 Classic RL algorithms, like policy iteration, value iteration and TD-learning, fail when the state-action space is large, e.g. when the possible states and actions can not be represented in a tractable table [@suttonbarto].
 Yet, over the last 10 years, researchers have shown that neural network-based RL algorithms can perform well on previously unsolvable environments [@DQN, @alphaGo2016].
 Neural networks have been widely useful in reinforcement learning because neural nets have the property of being general function approximators [@universalapproximators].
-Whenever there is a need for an agent to approximate some function, say a policy function or value function, neural networks can be used in this capacity.
+Whenever there is a need for an agent to approximate some function, say a policy, transition or value function^[Value functions estimate the expected return from a state or state-action pair. If you know the value function under certain conditions, you can use the value function to retrieve the optimal policy by selecting the action that maximizes the value function. We talk more about value-based learning methods in Appendix A], neural networks can be used in this capacity.
 While there are other function approximators that can be used in RL, e.g. Gaussian processes [@grande14], neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@briefsurveydrl].
-We will not discuss in detail how neural networks work [see @lecun_deep_2015], but the general process for how neural networks are used in RL is that at each learning step, the agent, will adjust the parameters in its neural network with which it approximates the policy function and/or value function, so that according to past experiences, the agent will be more likely to engage in highly rewarding behavior in the future. 
+We will not discuss in detail how neural networks work [see @lecun_deep_2015], but the general process for how neural networks are used in RL is that at each learning step, the agent, will adjust the parameters in its neural network with which it approximates the policy, transition and/or value function, so that according to past experiences, the agent will be more likely to engage in highly rewarding behavior in the future. 
 
-On top of these distinctions of deep RL algorithms, there are other algorithms design choices to be made. 
+Beyond how neural networks are integrated, there are many other algorithm design choices to be made. 
 A significant consideration is deciding how the agent will explore the environment.
 Another is whether the algorithm can work on a discrete, or continuous state and action space.
 In Appendix A, we provide more detail on the important components of RL algorithms.
-
 
 
 # Examples
