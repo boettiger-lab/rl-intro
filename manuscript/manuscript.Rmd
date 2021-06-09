@@ -30,9 +30,9 @@ header-includes:
   - \usepackage{amsmath}
   - \usepackage{amssymb}
 output: 
-  word_document: default
   rticles::arxiv_article:
     keep_tex: true
+  word_document: default
 editor_options: 
   markdown: 
     wrap: sentence
@@ -228,7 +228,7 @@ From this model, the optimal harvest policy -- that is, the function which retur
 In constrast, a model-free deep RL algorithm makes no assumption about the precise functional form or parameter values underlying the dynamics -- it is in principle agnostic to the details of the simulation.
 
 We illustrate the deep RL approach using the model-free algorithm known as Twin Delayed Deep Deterministic Policy Gradient or more simply, TD3 [@TD3].
-TD3 is an extension of Deep Deterministic Policy Gradient [DDPG, @DDPG], which itself extended the original Deep Q-Network [DQN, @DQN] algorithm to continuous action space.
+TD3 is an extension of Deep Deterministic Policy Gradient [DDPG, @ddpg], which itself extended the original Deep Q-Network [DQN, @DQN] algorithm to continuous action space.
 A step-by-step walk-through for training agents on this environment is provided in the Appendix.
 We compare the resulting management, policy, and reward under either RL agent to that achieved by the optimal management solution [Fig 2].
 Despite having no knowledge of the underlying model, the RL agent learns enough to achieve nearly optimal performance.
@@ -260,7 +260,7 @@ Training these agents in a variety of alternative contexts can improve there abi
 How would an RL agent be applied to empirical data?
 In principle, this is straight forward.
 After we train an agent on a simulation environment that approximates the fishery of interest, we can query the policy of the agent to find a quota for the observed stock.    
-To illustrate this, we examine the quota that would be recommended by our newly trained RL agent, above, against historical harvest levels of Argentine hake based on stock assessments from 1986 - 2014 [@ram, see Appendix D].
+To illustrate this, we examine the quota that would be recommended by our newly trained RL agent, above, against historical harvest levels of Argentine hake based on stock assessments from 1986 - 2014 [@ramlegacy, see Appendix D].
 Hake stocks showed a marked decline throughout this period, while harvests decreased only in proportion [Fig 3].
 In contrast, our RL agent would have recommended significantly lower quotas over most of the same interval, including the closure of the fishery as stocks were sufficiently depleted.
 While we have no way of knowing for sure if the RL quotas would have led to recovery, let alone an optimal harvest rate, the contrast between those recommended quotas and the historical catch is notable.
@@ -287,7 +287,7 @@ top_panel / bottom_panel
 This approach is not as different from conventional strategies at it may seem.
 In a conventional approach, ecological models are first estimated from empirical data, (stock assessments in the fisheries case).
 Quotas can then be set based directly on these model estimates, or by comparing alternative candidate "harvest control rules" (policies) against model-based simulations of stock dynamics.
-This latter approach, known in fisheries as Management Strategy Evaluation [MSE; @Punt2016] is already very closely analogous to the RL process.
+This latter approach, known in fisheries as Management Strategy Evaluation [MSE; @punt_management_2016] is already very closely analogous to the RL process.
 Instead of researchers evaluating a handful of control rules, the RL agent proposes and evaluates a plethora of possible control rules autonomously. 
 
 
@@ -404,13 +404,10 @@ Even on relatively uncomplicated environments, training an RL agent can be more 
 As Section 5.1 and 5.2 illustrate, it is important to begin with simple problems, including those for which an optimal strategy is already known.
 Such examples provide important benchmarks to calibrate the performance, tuning and training requirements of RL.
 Once RL agents have mastered the basics, the examples can be easily extended into more complex problems by changing the environment.
-Yet, even in the case that an agent performs well on a realistic problem, there will still be a range of open questions in using deep RL to inform decision-making: 
-
-- Since deep neural networks lack transparency [@castelvecchi_can_2016], can we be confident that the deep RL agent will generalize its past experience to new situations?
-
-- Given that there have been many examples of reward misspecification leading to undesirable behavior [@hadfield-menell_inverse_2020], what if we have selected an objective that unexpectedly causes damaging behavior?
-
-- Will using software-based agents create power assymetries between those developing the agents and those that rely on the natural resources at stake? 
+Yet, even in the case that an agent performs well on a realistic problem, there will be a range of open questions in using deep RL to inform decision-making. 
+Since deep neural networks lack transparency [@castelvecchi_can_2016], can we be confident that the deep RL agent will generalize its past experience to new situations?
+Given that there have been many examples of reward misspecification leading to undesirable behavior [@hadfield-menell_inverse_2020], what if we have selected an objective that unexpectedly causes damaging behavior?
+A greater role of algorithms in conservation decision-making also raises questions about ethics and power, particularly when those algorithms are opaque or proprietary [@scoville_algorithmic_2021, @chapman_promoting_2021].
 
 
 <!-- But never fear, hard problems have been solved before!-->
