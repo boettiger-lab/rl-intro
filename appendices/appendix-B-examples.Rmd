@@ -405,7 +405,6 @@ write_csv(sims_df, "../manuscript/figs/sims_df.csv")
 write_csv(policy_df, "../manuscript/figs/policy_df.csv")
 ```
 
-
 # Ecological tipping points
 
 Our second example utilizes our `gym_conservation` to provide the necessary environment to simulate an ecosystem approaching a tipping point.
