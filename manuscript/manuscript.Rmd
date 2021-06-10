@@ -105,7 +105,7 @@ An environment is a mathematical function, computer program, or real world exper
 In contrast to classical approaches [@Marescot2013], there are few restrictions on what comprises a state or action. 
 States and actions may be continuous or discrete, completely or partially observed, single or multidimensional.
 The main focus of building an RL environment, however, is in the environment's transition dynamics and reward function.
-The designer of the environment can make the environment follow any transition and reward function provided that both are functions of the currentstate and action.
+The designer of the environment can make the environment follow any transition and reward function provided that both are functions of the current state and action.
 This ability allows RL environments to model a broad range of decision making problems.
 For example, we can set the transitions to be deterministic or stochastic.
 We can also specify the reward function to be *sparse*, whereby a positive reward can only be received after a long sequence of actions, e.g. the end point in a maze.
@@ -212,15 +212,11 @@ source("../R/plotting-helpers.R")
 ## Sustainable harvest \label{sec:fishery}
 
 The first example focuses on the important but well-studied problem of setting harvest quotas in fisheries management.
+This provides a natural benchmark for deep RL approaches, since we can compare the RL solution to the mathematical optimum directly.
 Determining fishing quotas is both a critical ecological issue [@Worm2006; @Worm2009; @Costello2016], and a textbook example that has long informed the management of renewable resources within fisheries and beyond [@Clark1990].
 
 Given a population growth model that predicts the total biomass of a fish stock in the following year as a function of the current biomass, it is straightforward to determine what biomass corresponds to the maximum growth rate of the stock, or $B_{\textrm{MSY}}$, the biomass at Maximum Sustainable Yield (MSY) [@Schaefer1954].
 When the population growth rate is stochastic, the problem is slightly harder to solve, as the harvest quota must constantly adjust to the ups and downs of stochastic growth, but it is still possible to show the optimal strategy merely seeks to maintain the stock at $B_{\textrm{MSY}}$, adjusted for any discounting of future yields [@Reed1979]. 
-
-This provides a natural first benchmark for deep RL approaches, since we can compare the RL solution to the mathematical optimum directly.
-The problem is also of interest because the RL approach can be extended to consider ecological dynamics that either surpass the complexity possible with SDP methods, or violate assumptions of such classical approaches).
-Moreover, fisheries management is both an important global challenge in it's own right [@Worm2006; @Costello2016] as well as a common test case to understand ecological dynamics and conservation management more broadly [@something]. <!-- ML: This seems repetitive with second sentence in first paragraph above so going to leave this citation unfulfilled--> 
-<!-- ^MC:+1 to this sentence seeming repetative -->
 
 For illustrative purposes, we consider the simplest version of the dynamic optimal harvest problem as outlined by [@Clark1973] (for the deterministic case) and [@Reed1979] (under stochastic recruitment).
 The manager seeks to optimize the net present value (discounted cumulative catch) of a fishery, observing the stock size each year and setting an appropriate harvest quota in response.
