@@ -106,7 +106,7 @@ A trade-off between these approaches is that when it is possible to quickly lear
 Yet, frequently, learning a model of the environment is very difficult, and in these cases, model-free algorithms tend to outperform [@mbpo].
 
 Neural networks become useful in RL when the environment has a large state-action space, which happens frequently with realistic decision-making problems. 
-Whenever there is a need for an agent to approximate some function, say a policy, transition or value function^[Value functions estimate the expected return from a state or state-action pair. If you know the value function under certain conditions, you can use the value function to retrieve the optimal policy by selecting the action that maximizes the value function. We talk more about value-based learning methods in Appendix A.], neural networks can be used in this capacity due to their property of being general function approximators [@universalapproximators].
+Whenever there is a need for an agent to approximate some function, say a policy function, neural networks can be used in this capacity due to their property of being general function approximators [@universalapproximators].
 While there are other function approximators that can be used in RL, e.g. Gaussian processes [@grande14], neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@briefsurveydrl].
 
 In this paper, we will focus on model-free RL approaches that employ neural networks.
