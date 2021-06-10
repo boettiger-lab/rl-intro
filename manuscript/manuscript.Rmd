@@ -134,7 +134,7 @@ Yet, frequently, learning a model of the environment is very difficult, and in t
 Neural networks become useful in RL when the environment has a large observation-action space^[Conventionally, an observation-action space is considered to be large when it is non-tabular, i.e. cannot be represented in a computationally tractable table.], which happens frequently with realistic decision-making problems. 
 Whenever there is a need for an agent to approximate some function, say a policy function, neural networks can be used in this capacity due to their property of being general function approximators [@universalapproximators].
 Although there being other function approximators that can be used in RL, e.g. Gaussian processes [@grande14], neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@briefsurveydrl].
-In this paper, we will focus on model-free RL approaches that employ neural networks.
+In this paper, we will focus on model-free RL approaches that employ neural networks. <!-- ML: put in sentence to introduce table here-->
 We provide more conceptual and practical background on model-free deep RL in Appendix A and B respectively.
 
 Training a deep RL agent involves allowing the agent to interact with the environment for potentially thousands to millions of time steps.
@@ -146,7 +146,7 @@ Since the optimal hyperparameters vary across environments and can not be predet
 We further discuss and show the benefits of hyperparameter tuning in Appendix B.
 
 
-## RL Formalism 
+## RL Objective 
 
 The reinforcement learning environment is typically formalized as a discrete-time partially observable Markov decision process (POMDP).
 A POMDP is a tuple that consists of the following: 
@@ -182,6 +182,7 @@ $$
 $$
 
 Although there are RL-based methods for infinite horizon problems, i.e. when $H=\infty$, we will only present episodic or finite horizon POMDPs in this study.
+<!-- Put in a sentence to point to the appendix -->
 
 
 # Examples
