@@ -90,11 +90,12 @@ We include an extensive appendix with carefully annotated code which should allo
 All applications of RL can be divided into two components: an *environment* and an *agent*.
 The *environment* is typically a computer simulation, though it is possible to use the real world as the RL environment [@ha_learning_2020].
 The *agent*, which is often a computer program, continuously interacts with the environment. 
-At each time step, the agent observes the current *state* of the environment then performs an *action*. As a result of this action, the environment transitions to a new state and transmits a numerical *reward* signal to the agent.
+At each time step, the agent observes the current *state* of the environment then performs an *action*. 
+As a result of this action, the environment transitions to a new state and transmits a numerical *reward* signal to the agent.
 The goal of the agent is to learn how to maximize its expected cumulative reward in the environment.
 The agent learns how to achieve this objective during a period called *training*.
-In training, the agent *explores* the available states and actions. 
-Once the agent comes across a highly rewarding sequence of states and actions, the agent will reinforce this behavior so that it is more likely for the agent to *exploit* the same high reward trajectory in the future.
+In training, the agent *explores* the available actions. 
+Once the agent comes across a highly rewarding sequence of observations and actions, the agent will reinforce this behavior so that it is more likely for the agent to *exploit* the same high reward trajectory in the future.
 Throughout this process, the agent's behavior is codified into what is called a *policy*, which describes what action an agent should take for a given state.
 
 
@@ -141,7 +142,7 @@ We further discuss and show the benefits of hyperparameter tuning in Appendix B.
 
 
 The reinforcement learning environment is typically formalized as a discrete-time partially observable Markov decision process (POMDP).
-A POMDP is a 7-tuple that consists of the following: 
+A POMDP is a tuple that consists of the following: 
 
 - $\mathcal{S}$: a set of states called the state space
 
@@ -160,18 +161,11 @@ A POMDP is a 7-tuple that consists of the following:
 - $\gamma \in (0,1]$: a discount factor
 
 The agent interacts with the environment in an iterative loop, whereby the agent only has access to the observation space, action space and the discounted reward signal, $\gamma^t \, r(s_t, a_t)$.
-
-<!-- yeah this is pretty repetative... I dont think you necessarily need to avoid some of the formal notation in the first subsection-->
-
-At each time step, the agent makes an observation of the environment at time t, $o_t$, and selects an action, $a_t$, according to its policy, $\pi$, which maps observations to a probability distribution over actions, $\pi: \Omega \rightarrow p(\mathcal{A} \mid \Omega)$.
-The action will cause the environment to transition to a new state according to the state transition operator. 
-The agent will then receive a new observation and a discounted reward signal, $\gamma^t \, r(s_t, a_t)$, as feedback. 
-This process will repeat until a terminal state is reached, after which the environment can reset to an initial state.
-As the agent interacts with the environment, the agent will create a trajectory in state-action space given as $\tau = (s_0, a_0, \dots, s_H, a_H)$ where H denotes the length of the state-action sequence.
+As the agent interacts with the environment by selecting actions according to its policy, $\pi(a_t | o_t)$, the agent will create a trajectory given as $\tau = (s_0, o_0, a_0, \dots, s_{H-1}, o_{H-1}, a_{H-1}, s_H)$^[While there are RL methods for infinite horizon problems, i.e. when $H=\infty$, we will only present methods for episodic or finite horizon POMDPs.].
 From these definitions, we can provide an agent's trajectory distribution for a given policy as,
 
 $$
-  p_\pi(\tau) = d_0(s_0) \prod_{t=0}^H \pi(a_t | o_t) \, E(o_{t}| s_{t}) \, T(s_{t+1} | s_t, a_t)
+  p_\pi(\tau) = d_0(s_0) \prod_{t=0}^{H-1} \pi(a_t | o_t) \, E(o_{t}| s_{t}) \, T(s_{t+1} | s_t, a_t)
 $$
 
 The goal of reinforcement learning is for the agent to find an optimal policy distribution, $\pi^*(a_t|o_t)$, that maximizes the expected return, $J(\pi)$:
