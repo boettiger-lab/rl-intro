@@ -125,7 +125,7 @@ In Appendix C, we give detailed instruction on how an OpenAI `gym` is constructe
 ## Training and tuning an agent
 
 Training a deep RL agent on an environment involves allowing the agent to interact with the environment for thousands to millions of time steps.
-The amount of time needed for an agent to learn high reward yielding behavior cannot be predetermined and depends on a host of factors including the amount of dedicated compute, complexity of the environment, complexity of the agent and more.
+The amount of time needed for an agent to learn high reward yielding behavior cannot be predetermined and depends on a host of factors including the amount of dedicated compute <!-- Kari: is this supposed to be "dedicated compute time"? Not sure what dedicated compute is -->, complexity of the environment, complexity of the agent and more.
 Yet, overall, it has been well established that deep RL agents tend to be very sample inefficient [@gu_q-prop_2017], so it is recommended to provide a generous training budget for these agents.
 
 Hyperparameters refer to the parameters in a deep RL algorithm that control the learning process, e.g. the step size to use for gradient descent steps.
@@ -391,7 +391,7 @@ Neural networks used in deep RL have proven remarkably effective in handling suc
 
 <!-- Model free is great bc we don't know the true models -->
 The rapidly expanding class of Model-free RL algorithms is particularly appealing given the ubiquitous presence of model uncertainty in ecological dynamics.
-Rarely do we know the underlying functional forms for ecological processes -- is population recruitment more Beverton-Holt or Ricker?
+Rarely do we know the underlying functional forms for ecological processes -- is population recruitment more Beverton-Holt or Ricker? <!-- I don't know what those things are - might not be the place to introduce new concepts even if they're off hand? Or am I the only one that doesn't recognize them? -->
 Methods which must first assume something about the structure or functional form of a process before estimating the corresponding parameter can only ever be as good as those structural assumptions.
 Frequently available ecological data is insufficient to distinguish between possible alternative models [@knape_are_2012], or the correct model may be non-identifiable with any amount of data.
 Model-free RL approaches offer a powerful solution for this thorny issue.
