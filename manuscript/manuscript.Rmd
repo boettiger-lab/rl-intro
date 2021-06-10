@@ -165,13 +165,13 @@ As the agent interacts with the environment by selecting actions according to it
 From these definitions, we can provide an agent's trajectory distribution for a given policy as,
 
 $$
-  p_\pi(\tau) = d_0(s_0) \prod_{t=0}^{H-1} \pi(a_t | o_t) \, E(o_{t}| s_{t}) \, T(s_{t+1} | s_t, a_t)
+  p_\pi(\tau) = d_0(s_0) \prod_{t=0}^{H-1} \pi(a_t | o_t) \, E(o_{t}| s_{t}) \, T(s_{t+1} | s_t, a_t).
 $$
 
 The goal of reinforcement learning is for the agent to find an optimal policy distribution, $\pi^*(a_t|o_t)$, that maximizes the expected return, $J(\pi)$:
 
 $$
-  \pi^* = \underset{\pi}{\text{argmax}} \,\, \mathbb{E}_{\tau \sim p_\pi(\tau)}\Big[\sum_{t=0}^{H} \gamma^t r(s_t, a_t) \Big] =  \underset{\pi}{\text{argmax}} \,\, J (\pi)
+  \pi^* = \underset{\pi}{\text{argmax}} \,\, \mathbb{E}_{\tau \sim p_\pi(\tau)}\Big[\sum_{t=0}^{H} \gamma^t r(s_t, a_t) \Big] =  \underset{\pi}{\text{argmax}} \,\, J (\pi).
 $$
 
 To optimize the RL objective, algorithms either take a *model-free* or *model-based* approach. 
