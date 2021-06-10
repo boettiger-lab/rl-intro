@@ -174,7 +174,7 @@ A POMDP is a tuple that consists of the following:
 - $\gamma \in (0,1]$: a discount factor
 
 The agent interacts with the environment in an iterative loop, whereby the agent only has access to the observation space, action space and the discounted reward signal, $\gamma^t \, r(s_t, a_t)$.
-As the agent interacts with the environment by selecting actions according to its policy, $\pi(a_t | o_t)$, the agent will create a trajectory given as $\tau = (s_0, o_0, a_0, \dots, s_{H-1}, o_{H-1}, a_{H-1}, s_H)$^[While there are RL methods for infinite horizon problems, i.e. when $H=\infty$, we will only present methods for episodic or finite horizon POMDPs.].
+As the agent interacts with the environment by selecting actions according to its policy, $\pi(a_t | o_t)$, the agent will create a trajectory given as $\tau = (s_0, o_0, a_0, \dots, s_{H-1}, o_{H-1}, a_{H-1}, s_H)$.
 From these definitions, we can provide an agent's trajectory distribution for a given policy as,
 
 $$
@@ -187,7 +187,7 @@ $$
   \pi^* = \underset{\pi}{\text{argmax}} \,\, \mathbb{E}_{\tau \sim p_\pi(\tau)}\Big[\sum_{t=0}^{H} \gamma^t r(s_t, a_t) \Big] =  \underset{\pi}{\text{argmax}} \,\, J (\pi).
 $$
 
-
+While there are RL methods for infinite horizon problems, i.e. when $H=\infty$, we will only handle episodic or finite horizon POMDPs.
 
 <!-- I really like the last few paragraphs here! I do feel like what is above model-free vs model based paragrph is repetative and could just be introduced with the concepts in the previous section. Then you could make this whole subsection about the distrinction between model free and model based? -->
 
