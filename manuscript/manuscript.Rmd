@@ -98,6 +98,19 @@ In training, the agent *explores* the available actions.
 Once the agent comes across a highly rewarding sequence of observations and actions, the agent will reinforce this behavior so that it is more likely for the agent to *exploit* the same high reward trajectory in the future.
 Throughout this process, the agent's behavior is codified into what is called a *policy*, which describes what action an agent should take for a given state.
 
+## RL Algorithm Overview
+
+To optimize the RL objective, algorithms either take a *model-free* or *model-based* approach. 
+The distinction is that *model-free* algorithms do not attempt to learn or use a model of the environment; yet, *model-based* algorithms employ a model of the environment to achieve the RL objective.
+A trade-off between these approaches is that when it is possible to quickly learn a model of the environment or the model is already known, model-based algorithms tend to require much less interaction with the environment to learn good-performing policies [@mbpo].
+Yet, frequently, learning a model of the environment is very difficult, and in these cases, model-free algorithms tend to outperform [@mbpo].
+
+Neural networks become useful in RL when the environment has a large state-action space, which happens frequently with realistic decision-making problems. 
+Whenever there is a need for an agent to approximate some function, say a policy, transition or value function^[Value functions estimate the expected return from a state or state-action pair. If you know the value function under certain conditions, you can use the value function to retrieve the optimal policy by selecting the action that maximizes the value function. We talk more about value-based learning methods in Appendix A.], neural networks can be used in this capacity due to their property of being general function approximators [@universalapproximators].
+While there are other function approximators that can be used in RL, e.g. Gaussian processes [@grande14], neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@briefsurveydrl].
+
+In this paper, we will focus on model-free RL approaches that employ neural networks.
+We provide more conceptual and practical background on model-free deep RL in Appendix A and B respectively. 
 
 ## Designing and building an environment
 
@@ -135,7 +148,7 @@ We further discuss and show the benefits of hyperparameter tuning in Appendix B.
 
 
 
-# Reinforcement Learning
+## RL Formalism 
 <!-- ML: As I read this section, I have some concerns on this coming off as overly repetitive with the parts above. -->
 
 <!-- Mc: I agree-- could you intregrate this into the other parts? Like when you introduce states and actions rather than having a separate section? -->
@@ -174,17 +187,7 @@ $$
   \pi^* = \underset{\pi}{\text{argmax}} \,\, \mathbb{E}_{\tau \sim p_\pi(\tau)}\Big[\sum_{t=0}^{H} \gamma^t r(s_t, a_t) \Big] =  \underset{\pi}{\text{argmax}} \,\, J (\pi).
 $$
 
-To optimize the RL objective, algorithms either take a *model-free* or *model-based* approach. 
-The distinction is that *model-free* algorithms do not attempt to learn or use a model of the environment; yet, *model-based* algorithms employ a model of the environment to achieve the RL objective.
-A trade-off between these approaches is that when it is possible to quickly learn a model of the environment or the model is already known, model-based algorithms tend to require much less interaction with the environment to learn good-performing policies [@mbpo].
-Yet, frequently, learning a model of the environment is very difficult, and in these cases, model-free algorithms tend to outperform [@mbpo].
 
-Neural networks become useful in RL when the environment has a large state-action space, which happens frequently with realistic decision-making problems. 
-Whenever there is a need for an agent to approximate some function, say a policy, transition or value function^[Value functions estimate the expected return from a state or state-action pair. If you know the value function under certain conditions, you can use the value function to retrieve the optimal policy by selecting the action that maximizes the value function. We talk more about value-based learning methods in Appendix A.], neural networks can be used in this capacity due to their property of being general function approximators [@universalapproximators].
-While there are other function approximators that can be used in RL, e.g. Gaussian processes [@grande14], neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@briefsurveydrl].
-
-In this paper, we will focus on model-free RL approaches that employ neural networks.
-We provide more conceptual and practical background on model-free deep RL in Appendix A and B respectively. 
 
 <!-- I really like the last few paragraphs here! I do feel like what is above model-free vs model based paragrph is repetative and could just be introduced with the concepts in the previous section. Then you could make this whole subsection about the distrinction between model free and model based? -->
 
