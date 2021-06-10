@@ -98,27 +98,14 @@ In training, the agent *explores* the available actions.
 Once the agent comes across a highly rewarding sequence of observations and actions, the agent will reinforce this behavior so that it is more likely for the agent to *exploit* the same high reward trajectory in the future.
 Throughout this process, the agent's behavior is codified into what is called a *policy*, which describes what action an agent should take for a given state.
 
-## RL Algorithm Overview
 
-To optimize the RL objective, algorithms either take a *model-free* or *model-based* approach. 
-The distinction is that *model-free* algorithms do not attempt to learn or use a model of the environment; yet, *model-based* algorithms employ a model of the environment to achieve the RL objective.
-A trade-off between these approaches is that when it is possible to quickly learn a model of the environment or the model is already known, model-based algorithms tend to require much less interaction with the environment to learn good-performing policies [@mbpo].
-Yet, frequently, learning a model of the environment is very difficult, and in these cases, model-free algorithms tend to outperform [@mbpo].
-
-Neural networks become useful in RL when the environment has a large state-action space, which happens frequently with realistic decision-making problems. 
-Whenever there is a need for an agent to approximate some function, say a policy function, neural networks can be used in this capacity due to their property of being general function approximators [@universalapproximators].
-While there are other function approximators that can be used in RL, e.g. Gaussian processes [@grande14], neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@briefsurveydrl].
-
-In this paper, we will focus on model-free RL approaches that employ neural networks.
-We provide more conceptual and practical background on model-free deep RL in Appendix A and B respectively. 
-
-## Designing and building an environment
+## RL Environments
 
 An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an observation of the environment's current *state* and an associated *reward* as output.
 In contrast to classical approaches [@Marescot2013], there are few restrictions on what comprises a state or action. 
 States and actions may be continuous or discrete, completely or partially observed, single or multidimensional.
 The main focus of building an RL environment, however, is in the environment's transition dynamics and reward function.
-The designer of the environment can make the environment follow any transition and reward function provided that both are functions of the current state and action.
+The designer of the environment can make the environment follow any transition and reward function provided that both are functions of the currentstate and action.
 This ability allows RL environments to model a broad range of decision making problems.
 For example, we can set the transitions to be deterministic or stochastic.
 We can also specify the reward function to be *sparse*, whereby a positive reward can only be received after a long sequence of actions, e.g. the end point in a maze.
@@ -136,23 +123,30 @@ In other environments, an agent may have to learn to forgo immediate rewards (or
 We use the `gym` framework to turn existing ecological models into valid environmental simulators that can similarly be used in any RL framework.
 In Appendix C, we give detailed instruction on how an OpenAI `gym` is constructed.
 
-## Training and tuning an agent
+## Deep RL Agents
 
-Training a deep RL agent on an environment involves allowing the agent to interact with the environment for thousands to millions of time steps.
-The amount of time needed for an agent to learn high reward yielding behavior cannot be predetermined and depends on a host of factors including the amount of dedicated compute, complexity of the environment, complexity of the agent and more.
+To optimize the RL objective, agents either take a *model-free* or *model-based* approach. 
+The distinction is that *model-free* algorithms do not attempt to learn or use a model of the environment; yet, *model-based* algorithms employ a model of the environment to achieve the RL objective.
+A trade-off between these approaches is that when it is possible to quickly learn a model of the environment or the model is already known, model-based algorithms tend to require much less interaction with the environment to learn good-performing policies [@mbpo].
+Yet, frequently, learning a model of the environment is very difficult, and in these cases, model-free algorithms tend to outperform [@mbpo].
+
+
+Neural networks become useful in RL when the environment has a large observation-action space^[Conventionally, an observation-action space is considered to be large when it is non-tabular, i.e. cannot be represented in a computationally tractable table.], which happens frequently with realistic decision-making problems. 
+Whenever there is a need for an agent to approximate some function, say a policy function, neural networks can be used in this capacity due to their property of being general function approximators [@universalapproximators].
+Although there being other function approximators that can be used in RL, e.g. Gaussian processes [@grande14], neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@briefsurveydrl].
+In this paper, we will focus on model-free RL approaches that employ neural networks.
+We provide more conceptual and practical background on model-free deep RL in Appendix A and B respectively.
+
+Training a deep RL agent involves allowing the agent to interact with the environment for potentially thousands to millions of time steps.
+The amount of time needed for an agent to learn high reward yielding behavior cannot be predetermined and depends on a host of factors including the complexity of the environment, complexity of the agent and more.
 Yet, overall, it has been well established that deep RL agents tend to be very sample inefficient [@gu_q-prop_2017], so it is recommended to provide a generous training budget for these agents.
 
-Hyperparameters refer to the parameters in a deep RL algorithm that control the learning process, e.g. the step size to use for gradient descent steps.
-Since the optimal hyperparameters vary across environments and can not be predetermined [@drlthatmatters], it is necessary to find a good-performing set of hyperparameters in a process called hyperparameter tuning, which can be automated through standard multi-dimensional optimization approaches. 
+*Hyperparameters* refer to the parameters in a deep RL algorithm that control the learning process, e.g. the step size to use for gradient descent steps.
+Since the optimal hyperparameters vary across environments and can not be predetermined [@drlthatmatters], it is necessary to find a good-performing set of hyperparameters in a process called hyperparameter tuning which uses standard multi-dimensional optimization methods. 
 We further discuss and show the benefits of hyperparameter tuning in Appendix B.
 
 
-
 ## RL Formalism 
-<!-- ML: As I read this section, I have some concerns on this coming off as overly repetitive with the parts above. -->
-
-<!-- Mc: I agree-- could you intregrate this into the other parts? Like when you introduce states and actions rather than having a separate section? -->
-
 
 The reinforcement learning environment is typically formalized as a discrete-time partially observable Markov decision process (POMDP).
 A POMDP is a tuple that consists of the following: 
@@ -187,9 +181,8 @@ $$
   \pi^* = \underset{\pi}{\text{argmax}} \,\, \mathbb{E}_{\tau \sim p_\pi(\tau)}\Big[\sum_{t=0}^{H} \gamma^t r(s_t, a_t) \Big] =  \underset{\pi}{\text{argmax}} \,\, J (\pi).
 $$
 
-While there are RL methods for infinite horizon problems, i.e. when $H=\infty$, we will only handle episodic or finite horizon POMDPs.
+Although there are RL-based methods for infinite horizon problems, i.e. when $H=\infty$, we will only present episodic or finite horizon POMDPs in this study.
 
-<!-- I really like the last few paragraphs here! I do feel like what is above model-free vs model based paragrph is repetative and could just be introduced with the concepts in the previous section. Then you could make this whole subsection about the distrinction between model free and model based? -->
 
 # Examples
 
@@ -220,7 +213,7 @@ source("../R/plotting-helpers.R")
 The first example focuses on the important but well-studied problem of setting harvest quotas in fisheries management.
 Determining fishing quotas is both a critical ecological issue [@Worm2006; @Worm2009; @Costello2016], and a textbook example that has long informed the management of renewable resources within fisheries and beyond [@Clark1990].
 
-Given a population growth model that predicts the total biomass of a fish stock in the following year as a function of the current biomass, it is straight forward to determine what biomass corresponds to the maximum growth rate of the stock, or $B_{\textrm{MSY}}$, the biomass at Maximum Sustainable Yield (MSY) [@Schaefer1954].
+Given a population growth model that predicts the total biomass of a fish stock in the following year as a function of the current biomass, it is straightforward to determine what biomass corresponds to the maximum growth rate of the stock, or $B_{\textrm{MSY}}$, the biomass at Maximum Sustainable Yield (MSY) [@Schaefer1954].
 When the population growth rate is stochastic, the problem is slightly harder to solve, as the harvest quota must constantly adjust to the ups and downs of stochastic growth, but it is still possible to show the optimal strategy merely seeks to maintain the stock at $B_{\textrm{MSY}}$, adjusted for any discounting of future yields [@Reed1979]. 
 
 This provides a natural first benchmark for deep RL approaches, since we can compare the RL solution to the mathematical optimum directly.
@@ -265,7 +258,7 @@ Because these simulations rarely reach stock sizes at or above carrying capacity
 Training these agents in a variety of alternative contexts can improve there ability to generalize to other scenarios.
 
 How would an RL agent be applied to empirical data?
-In principle, this is straight forward.
+In principle, this is straightforward.
 After we train an agent on a simulation environment that approximates the fishery of interest, we can query the policy of the agent to find a quota for the observed stock.    
 To illustrate this, we examine the quota that would be recommended by our newly trained RL agent, above, against historical harvest levels of Argentine hake based on stock assessments from 1986 - 2014 [@ramlegacy, see Appendix D].
 Hake stocks showed a marked decline throughout this period, while harvests decreased only in proportion [Fig 3].
@@ -366,7 +359,7 @@ Nevertheless, such quirks are likely to be common features of RL solutions -- lo
 ## Additional Environments
 
 Ecology holds many open problems for deep RL.  
-It is straight-forward to extend the simple environments presented here to reflect greater biological complexity, or to consider a host of more realistic decision scenarios.
+To extend the examples presented here to reflect greater biological complexity or more realistic decision scenarios, the transition, emission and/or reward functions of the environment can be modified.
 We provide an initial library of example environments at <https://boettiger-lab.github.io/conservation-gym>.
 Some environments in this library include a wildfire `gym` that poses the problem on wildfire suppression with a cellular automata model, an epidemic `gym` that examines timing of interventions to curb disease spread, as well as more complex variations of the fishing and conservation environments presented above.  
 
@@ -383,8 +376,7 @@ Consequently, that research must also confront the challenge of making robust, r
 The science of ecological management and quantitative decision-making has a long history [e.g. @Schaefer1954; @Walters1978] and remains an active area of research [@Possingham2006; @Fischer2009; @Polasky2011].
 However, the limitations of classical methods such as optimal control frequently constrain applications to relatively simplified models [@Possingham2006], ignoring elements such as spatial or temporal heterogeneity and autocorrelation, stochasticity, imperfect observations, age or state structure or other sources of complexity that are both pervasive and influential on ecological dynamics [@Hastings2012].
 Complexity comes not only from the ecological processes but also the available actions.
-While such complex dynamics and large state and action spaces are intractable to classical methods, they are straight forward to implement in simulation environments such as those used to train an RL algorithm.
-Neural networks used in deep RL have proven remarkably effective in handling such complexity, particularly when leveraging immense computing resources increasingly available through advances in hardware and software [@gpu_computing]. 
+Deep RL agents have proven remarkably effective in handling such complexity, particularly when leveraging immense computing resources increasingly available through advances in hardware and software [@gpu_computing]. 
 
 <!-- Model free is great bc we don't know the true models -->
 The rapidly expanding class of Model-free RL algorithms is particularly appealing given the ubiquitous presence of model uncertainty in ecological dynamics.
