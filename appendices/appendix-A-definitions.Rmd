@@ -56,8 +56,14 @@ Throughout these sections, we'll consider the environment to be an MDP which mak
 
 # Gradient-based Model-free RL Algorithms
 
-Policy gradients, value-based and actor-critic methods are the general classes of algorithms for gradient-based model-free RL.
-In this section, we will go over these algorithm classes to convey a sense of what they are attempting to achieve and the trade-offs between them.
+Among model-free methods, there is divergence around what functions the agent is attempting to learn in order to achieve the RL objective.
+Generally, model-free agents are either learning a policy function, a value function or both.
+For context, *value functions* are proxies for how high of a cumulative reward an agent can expect to receive from a given state or state-action pair.
+If an agent knows the value function, then the agent can find the optimal action at any state by selecting the action that will maximize the value function in expectation.
+The class of algorithms that exclusively try to learn a value function are called *value-based* methods.
+In contrast, *policy gradient* algorithms exclusively learn the policy.
+And, lastly, *actor-critic* algorithms attempt to learn both a policy and value function, whereby the value function is used to inform the agent on the goodness of a selected action.
+We will go into further detail on these different approaches below.
 
 ## Policy Gradients
 The most straightforward way to optimize the RL objective is through a policy search, whereby the agent continually updates its policy to maximize rewards.
