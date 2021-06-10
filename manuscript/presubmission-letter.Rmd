@@ -2,35 +2,12 @@
 output: pdf_document
 ---
 
-
-
 Dear John Drake,
-
 
 We would like to propose an article for the Methods section of Ecology Letters which discusses and displays the potential applications of deep Reinforcement Learning in both theoretical and applied ecological conservation and decision making.
 
-Advances in both available data and computing power have begun to open the door to a greater role for machine learning (ML) in addressing some of our planet's most pressing environmental problems, such as the growing frequency and intensity of wildfire, over-exploited fisheries, declining biodiversity, and zoonotic pandemics. 
-But will ML approaches really help us tackle a changing planet?
-Applications of ML in ecology have begun to illustrate the promise of both supervised learning (e.g. image recognition) and unsupervised learning (including clustering and prediction), but have so far largely overlooked the third and possibly most promising approach in the ML triad: Reinforcement Learning (RL).
-Supervised and unsupervised learning approaches often require massive amounts of historical data to learn underlying patterns.
-Even when such data is eventually available, these two methods may prove reliable for relatively static tasks such as species identification from audio or visual recordings, yet be a poor guide to a future climate we have never observed.  
-The task of selecting actions in an uncertain and changing environment to maximize some objective is the explicit focus of RL.
+Advances in both available data and computing power have begun to open the door to a greater role for machine learning (ML) in addressing some of our planet's most pressing environmental problems, such as the growing frequency and intensity of wildfire, over-exploited fisheries, declining biodiversity, and zoonotic pandemics. But will ML approaches really help us tackle a changing planet? Current applications of ML in ecology have made great strides in both supervised learning (e.g. image recognition) and unsupervised learning (including clustering and prediction), but have so far largely overlooked the third and possibly most promising approach in the ML triad: Reinforcement Learning (RL). Where supervised and unsupervised learning approaches require massive amounts of historical data to learn underlying patterns and focus on relatively static tasks (e.g. species identification from audio or visual recordings), RL focuses on the task of selecting actions in an uncertain and changing environment. These characteristics make RL particularly well suited for for addressing some of the most challenging problems in ecology.
 
-To date, the uncertain and changing environments considered by RL research have largely been drawn from examples in robotic movement and video games. 
-_Nature_ recently featured RL agents achieving superhuman performance on classic Atari games, and _Science_ described the success of Deepmind's AlphaZero against grandmasters in Go, Chess, and Shogi.
-We believe that similar techniques could improve decision-making in managing ecological environments as well. 
-Already, complex ecological simulators -- SORTIE in forest ecosystems, EcoPath with EcoSim in marine systems, GCM models in climate -- are the Atari games of our policy grandmasters.
-Detailed, process-based models allow a window into the future scenarios of ecological management.
-Even simple processed-based ecological models can provide important insight into future scenarios that no amount of historical data would reveal.
-Rather than displacing existing ecological models and knowledge, we illustrate how RL-based approaches can allow us to leverage such understanding to better explore and guide complex decision-making in changing environments.
-Whereas previous decision techniques have historically constrained the complexity and realism of practical modeling efforts, RL may open the door to the design of ever more realistic assumptions. 
-Drawing on examples from fisheries management, ecosystem tipping points, and wildfire spread, we illustrate how ecological models and simulations can be used to successfully train RL agents that match or exceed the performance of available management strategies.
-Although our examples are primarily a proof-of-principle, they serve to illuminate both the promise as well as potential pitfalls. 
+To date, the uncertain and changing environments considered by RL research have largely been drawn from examples in robotic movement and games. *Nature* recently featured RL agents achieving superhuman performance on classic Atari games, *Science* described the success of Deepmind's AlphaZero against grandmasters in Go, Chess, and Shogi. We believe that similar techniques could improve decision-making in managing ecological environments as well. Already, complex ecological simulators -- SORTIE in forest ecosystems, EcoPath with EcoSim in marine systems, GCM models in climate -- are the Atari games of our policy grandmasters. Detailed, process-based models allow a window into the future scenarios of ecological management. Drawing on examples from fisheries management, ecosystem tipping points, and wildfire spread, we illustrate how ecological models and simulations can be used to successfully train RL agents that match or exceed the performance of available management strategies. Although our examples are primarily a proof-of-principle, they serve to illuminate both the promise as well as potential pitfalls.
 
-Those pitfalls are not only technical, but include issues of ethics and power, particularly if the algorithms or data are proprietary. 
-We conclude with a discussion of how an open, transparent and reproducible approach can help mitigate some concerns, while also offering a more effective interface between teams of researchers from both ecological and computer sciences.
-We include an extensive appendix with carefully annotated code which should allow readers to both reproduce and extend this analysis.
-We further include implementations of three fully featured python modules following current leading standards, which would allow engineers and computer scientists already working in RL to test their agents against both solved and unsolved problems in conservation management.
-We believe this piece would provide an effective introduction to the concepts and practices of RL which would allow ecologists to apply, extend, and critique such methods.
-
-
+Those pitfalls are not only technical, but include issues of ethics and power, particularly if the algorithms or data are proprietary. We conclude with a discussion of how an open, transparent and reproducible approach can help mitigate some concerns, while also offering a more effective interface between teams of researchers from both ecological and computer sciences. We include an extensive appendix with carefully annotated code which should allow readers to both reproduce and extend this analysis. We further include implementations of three fully featured python modules following current leading standards, which would allow engineers and computer scientists already working in RL to test their agents against both solved and unsolved problems in conservation management. We believe this piece would provide an effective introduction to the concepts and practices of RL which would allow ecologists to apply, extend, and critique such methods.
