@@ -425,7 +425,7 @@ X_{t+1} \sim \text{lognormal}(\mu_t, \sigma)
 
 where we take $r=0.7$, $K=1.2$, $q=3$, $b=0.15$, $a_0 = 0.19$ and $\sigma = 0.2$ 
 Slow change over time in the parameter $a_t$ represents a process of environmental degradation, modeled as a constant increment $a_{t+1} = a_t + \alpha$, where we will take $\alpha = 0.001$.
-This model supports the dynamics of a fold bifurcation, widely used to model critical transitions in both theory and empirical manipulation in systems from microbes [@Dai2012] to lakes [@Carptenter2011] to the planet biosphere [@Barnosky2014].  <!-- ML: Not sure what citation to use here for Barnosky or Carptenter in these years-->
+This model supports the dynamics of a fold bifurcation, widely used to model critical transitions in both theory and empirical manipulation in systems from microbes [@Dai2012] to lakes [@Carpenter2011] to the planet biosphere [@Barnosky2012].
 
 
 
