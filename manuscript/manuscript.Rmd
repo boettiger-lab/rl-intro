@@ -369,15 +369,15 @@ tip_sims_df <-read_csv("figs/tipping_sims_df.csv")
 tip_policy_df <- read_csv("figs/tipping_policy_df.csv")
 ```
 
-```{r fig.cap="Ecosystem dynamics under management using the steady-state rule-of-thumb strategy compared to management using a neural network trained using the TD3 RL algorithm.  Top panel: mean and 95% confidence interval of ecosystem state over 100 replicate simulations.  As more replicates cross the tipping point threshold under steady-state strategy, the mean slowly decreases, while the TD3 agent preserves most replicates safely above the tipping point.  Lower left: the policy function learned using TD3 relative to the policy function under the steady state.  Lower right: mean rewards under TD3 management evenutally exceed those expected under the steady state strategy as a large initial investment in conservation eventually pays off."}
+```{r fig.cap="Ecosystem dynamics under management using the steady-state rule-of-thumb strategy compared to management using a neural network trained using the TD3 RL algorithm.  Top panel: mean and 95% confidence interval of ecosystem state over 100 replicate simulations.  As more replicates cross the tipping point threshold under steady-state strategy, the mean slowly decreases, while the TD3 agent preserves most replicates safely above the tipping point.  Lower left: the policy function learned using TD3 relative to the policy function under the steady state.  Lower right: mean rewards under TD3 management evenutally exceed those expected under the steady-state strategy as a large initial investment in conservation eventually pays off."}
 
 plot_sims(tip_sims_df) / ( plot_policy(tip_policy_df) + plot_reward(tip_sims_df))
 ```
 
 The TD3-trained agent proves far more successful in preventing chance transitions across the tipping point, consistently achieving a higher cumulative ecosystem service value across replicates than the steady-state strategy.
 
-Examining the replicate management trajectories and corresponding rewards [Fig 5] reveal that the RL agent incurs significantly higher costs in the initial phases of the simulation, dipping the cumulative reward into negative territory on average and well below the reward realized by the simple steady-state strategy. <!-- ML: Nit picky; it looks like it almost goes negative but not quite on average in the plot -->
-This initial investment then begins to pay off -- by about the 200th time step the RL agent has surpassed the performance of the steady state strategy.
+Examining the replicate management trajectories and corresponding rewards [Fig 5] reveal that the RL agent incurs significantly higher costs in the initial phases of the simulation, dipping well below the mean stead-state reward initially before exceeding it in the long run.
+This initial investment then begins to pay off -- by about the 200th time step the RL agent has surpassed the performance of the steady-state strategy.
 The policy plot provides more intuition for the RL agent's strategy: at very high state values, the RL agent opts for no conservation action -- so far from the tipping point, no response is required.
 Near the tipping point, the RL agent steeply ramps up the conservation effort, and retains this effort even as the system falls below the critical threshold, where a sufficiently aggressive response can tip the system back into recovery.
 For a system at or very close to the zero-state, the RL agent gives up, opting for no action.
