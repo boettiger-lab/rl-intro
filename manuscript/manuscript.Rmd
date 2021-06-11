@@ -19,12 +19,27 @@ authors:
     location: Berkeley, California
     email: cboettig@berkeley.edu
 abstract: |
-  Enter the text of your abstract here.
+  Can machine learning really help us make better decisions about a changing planet?
+  In this paper, we illustrate and discuss the potential of a promising 
+  corner of machine learning known as _reinforcement learning_ (RL) to help tackle the
+  most challenging conservation decision problems. RL is uniquely
+  well suited to conservation and global change challenges for three reasons: (1)
+  rather than passively modeling observed data, RL is explicitly designed around 
+  the actions of an agent who _interacts_ with an environment which is dynamic and uncertain,
+  (2) RL approaches do not require massive amounts of data, (3) RL approaches would 
+  utilize rather than replace existing models, simulations, and the knowledge they contain.
+  We provide a conceptual and technical introduction to RL and its relevance to ecological
+  and conservation challenges, including examples of both a previously solved problem in setting
+  fisheries quotas and a previously unsolved problem in managing ecological tipping points.
+  Four appendices with annotated code provide a tangible introduction to researchers 
+  looking to adopt, evaluate, or extend these approaches.
+  
 keywords:
-  - blah
-  - blee
-  - bloo
-  - these are optional and can be removed
+  - Reinforcement Learning
+  - Conservation
+  - Machine Learning
+  - Artificial Intelligence
+  - Tipping points
 bibliography: references.bib
 header-includes:
   - \usepackage{amsmath}
