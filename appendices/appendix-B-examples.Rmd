@@ -244,7 +244,7 @@ if(!file.exists("../python/cache/td3_untuned.zip")) {
 ```
 
 
-Note that while default hyperparameters provide a useful starting place (particularly when the environment has been suitably normalized, a best-practice we discuss below), better performance can almost always be achieved by _tuning_ the hyperparameter selection. <!-- ML: eek I think we dropped normalization talk -->
+Note that while default hyperparameters provide a useful starting place (particularly when the environment has been suitably normalized, a best-practice we discuss below), better performance can almost always be achieved by _tuning_ the hyperparameter selection.
 This is discussed further below.
 Having saved our trained agent to disk, we can then re-load this agent for evaluation or to continue training.
 Note that a copy of the trained agents are included in the corresponding GitHub repository.
