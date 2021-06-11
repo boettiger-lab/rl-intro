@@ -287,19 +287,19 @@ However, it is important to keep in mind though that deep RL has only become est
 \begin{table}[H]
 \resizebox{\textwidth}{!}{\begin{tabular}{l l l l l}
 \hline
-Algorithm & Description                                                       & Model       & Policy     & Method \\
+Abbreviation & Algorithm Name                                                   & Model       & Policy     & Method \\
 \hline
-MBPO      & Model-based Policy Optimization (Janner et al. 2019)              & Model-based & On-policy  & Policy Gradient \\
-MCTS      & Monte Carlo Tree Search (Sutton and Barto 2018)                   & Model-based & Either     & Any\\
-A2C       & Advantage Actor Critic  (Mnih et al. 2016)                        & Model-free  & On-policy  & Actor-critic\\
-A3C       & Asynchronous A2C  (Babaeizadeh et al. 2017)                       & Model-free  & On-policy  & Actor-critic\\
-TRPO      & Trust Region Policy Optimization  (Schulman, Levine,et al. 2017)  & Model-free  & On-policy  & Policy Gradient\\
-PPO       & Proximal Policy Optimization  (Schulman, Wolski, et al. 2017)     & Model-free  & On-policy  & Actor-critic\\
-DQN       & Deep Q Networks   (Mnih et al. 2015)                              & Model-free  & Off-policy & Value-Based\\
-DDPG      & Deep Deterministic Policy Gradient   (Lillicrap et al. 2019)      & Model-free  & Off-policy & Actor-critic\\
-TD3       & Twin Delayed DDPG  (Fujimoto, Hoof, and Meger 2018)               & Model-free  & Off-policy & Actor-critic\\
-SAC       & Soft Actor Critic   (Haarnoja et al. 2018)                        & Model-free  & Off-policy & Actor-critic\\
-IMPALA    & Importance Weighted Actor Learner (Espeholt et al. 2018)          & Model-free  & Off-policy & Actor-critic\\
+MBPO         & Model-based Policy Optimization (Janner et al. 2019)              & Model-based & On-policy  & Policy Gradient \\
+MCTS         & Monte Carlo Tree Search (Sutton and Barto 2018)                   & Model-based & Either     & Any\\
+A2C          & Advantage Actor Critic  (Mnih et al. 2016)                        & Model-free  & On-policy  & Actor-critic\\
+A3C          & Asynchronous A2C  (Babaeizadeh et al. 2017)                       & Model-free  & On-policy  & Actor-critic\\
+TRPO         & Trust Region Policy Optimization  (Schulman, Levine,et al. 2017)  & Model-free  & On-policy  & Policy Gradient\\
+PPO          & Proximal Policy Optimization  (Schulman, Wolski, et al. 2017)     & Model-free  & On-policy  & Actor-critic\\
+DQN          & Deep Q Networks   (Mnih et al. 2015)                              & Model-free  & Off-policy & Value-Based\\
+DDPG         & Deep Deterministic Policy Gradient   (Lillicrap et al. 2019)      & Model-free  & Off-policy & Actor-critic\\
+TD3          & Twin Delayed DDPG  (Fujimoto, Hoof, and Meger 2018)               & Model-free  & Off-policy & Actor-critic\\
+SAC          & Soft Actor Critic   (Haarnoja et al. 2018)                        & Model-free  & Off-policy & Actor-critic\\
+IMPALA       & Importance Weighted Actor Learner (Espeholt et al. 2018)          & Model-free  & Off-policy & Actor-critic\\
 \end{tabular}}
 \caption{Survey of common deep RL algorithms. }
 \end{table}

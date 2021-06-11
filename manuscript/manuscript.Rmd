@@ -117,10 +117,11 @@ In other environments, an agent may have to learn to forgo immediate rewards (or
 \caption{Deep Reinforcement Learning:  A deep RL \emph{agent} uses a \emph{neural network} to select an \emph{action} in response to an \emph{observation} of the \emph{environment}, and receives a \emph{reward} from the environment as a result. During \emph{training}, the agent tries to maximize its cumulative reward by interacting with the environment and learning from experience. In the RL loop, the agent performs an action, and the environment returns a reward as well as an observation of the environment's state. The agent-environment loop continues until the environment reaches a terminal state, after which the environment will reset, causing a new \emph{episode} to begin. Across training episodes, the agent will continually update the \emph{parameters} in its neural network, so that the agent will select better actions. Before training starts, the researcher must input a set of \emph{hyperparameters} to the agent; hyperparameters direct the learning process and thus affect the outcome of training. A researcher finds the best set of hyperparameters during \emph{tuning}. Hyperparameter tuning consists of iterative \emph{trials}, in which the agent is trained with different sets of hyperparameters. At the end of a trial, the agent is evaluated to see which set of hyperparameters results in the highest cumulative reward. An agent is \emph{evaluated} by recording the cumulative reward over one episode, or the mean reward over multiple episodes. Within evaluation, the agent does not update its neural network; instead, the agent only uses the neural network to select actions.}
 \end{figure}
 
-@brockman2016 identified (1) the lack of standardization of environments used in publication and (2) the need for better benchmark environments as two core problems limiting more rapid advancement of RL research, and proposed the creation of the OpenAI `gym` framework to address both problems.
-<!-- this reads a little abrupt - might be worth transitioning a bit to these challenges -->
 
-We use the `gym` framework to turn existing ecological models into valid environmental simulators that can similarly be used in any RL framework.
+The OpenAI `gym` software framework was created to address the lack of standardization of RL environments and the need for better benchmark environments to advance RL research [@brockman2016].
+The `gym` framework defines a standard interface and methods by which a developer can describe an arbitrary environment in a computer program.
+This allows the design and application of software agents which can interact and learn in that environment without knowing anything about the environment's internal details.
+Using the `gym` framework, we turn existing ecological models into valid environmental simulators that can be used in any RL framework.
 In Appendix C, we give detailed instruction on how an OpenAI `gym` is constructed.
 
 ## Deep RL Agents
@@ -133,9 +134,30 @@ Yet, frequently, learning a model of the environment is very difficult, and in t
 
 Neural networks become useful in RL when the environment has a large observation-action space^[Conventionally, an observation-action space is considered to be large when it is non-tabular, i.e. cannot be represented in a computationally tractable table.], which happens frequently with realistic decision-making problems. 
 Whenever there is a need for an agent to approximate some function, say a policy function, neural networks can be used in this capacity due to their property of being general function approximators [@universalapproximators].
-Although there being other function approximators that can be used in RL, e.g. Gaussian processes [@grande14], neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@briefsurveydrl].
-In this paper, we will focus on model-free RL approaches that employ neural networks. <!-- ML: put in sentence to introduce table here-->
-We provide more conceptual and practical background on model-free deep RL in Appendix A and B respectively.
+Although there are other function approximators that can be used in RL, e.g. Gaussian processes [@grande14], neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@briefsurveydrl].
+There is a multitude of deep RL algorithms since there are many design choices that can be made in constructing a deep RL agent -- see Appendix A for more detail on these engineering decisions. 
+In Table 1, we present some of the more common deep RL algorithms which serve as good reference points for the current state of deep RL.
+
+\begin{table}
+\begin{tabular}{l l l}
+\hline
+Abbreviation & Algorithm Name                                                    & Model \\
+\hline
+MCTS         & Monte Carlo Tree Search (Sutton and Barto 2018)                   & Model-based \\
+MBPO         & Model-based Policy Optimization (Janner et al. 2019)              & Model-based \\
+DQN          & Deep Q Networks   (Mnih et al. 2015)                              & Model-free  \\
+A2C          & Advantage Actor Critic  (Mnih et al. 2016)                        & Model-free  \\
+A3C          & Asynchronous A2C  (Babaeizadeh et al. 2017)                       & Model-free  \\
+TRPO         & Trust Region Policy Optimization  (Schulman, Levine,et al. 2017)  & Model-free  \\
+PPO          & Proximal Policy Optimization  (Schulman, Wolski, et al. 2017)     & Model-free  \\
+DDPG         & Deep Deterministic Policy Gradient   (Lillicrap et al. 2019)      & Model-free  \\
+TD3          & Twin Delayed DDPG  (Fujimoto, Hoof, and Meger 2018)               & Model-free  \\
+SAC          & Soft Actor Critic   (Haarnoja et al. 2018)                        & Model-free  \\
+IMPALA       & Importance Weighted Actor Learner (Espeholt et al. 2018)          & Model-free  \\
+\hline
+\end{tabular}
+\caption{Survey of common deep RL algorithms.}
+\end{table}
 
 Training a deep RL agent involves allowing the agent to interact with the environment for potentially thousands to millions of time steps.
 The amount of time needed for an agent to learn high reward yielding behavior cannot be predetermined and depends on a host of factors including the complexity of the environment, complexity of the agent and more.
@@ -182,7 +204,7 @@ $$
 $$
 
 Although there are RL-based methods for infinite horizon problems, i.e. when $H=\infty$, we will only present episodic or finite horizon POMDPs in this study.
-<!-- Put in a sentence to point to the appendix -->
+In appendix A, we will further discuss how deep RL algorithms attempt to optimize the RL objective.
 
 
 # Examples
@@ -225,7 +247,6 @@ From this model, the optimal harvest policy -- that is, the function which retur
 In contrast, a model-free deep RL algorithm makes no assumption about the precise functional form or parameter values underlying the dynamics -- it is in principle agnostic to the details of the simulation.
 
 We illustrate the deep RL approach using the model-free algorithm known as Twin Delayed Deep Deterministic Policy Gradient or more simply, TD3 [@TD3].
-TD3 is an extension of Deep Deterministic Policy Gradient [DDPG, @ddpg], which itself extended the original Deep Q-Network [DQN, @DQN] algorithm to continuous action space.
 A step-by-step walk-through for training agents on this environment is provided in the Appendix.
 We compare the resulting management, policy, and reward under either RL agent to that achieved by the optimal management solution [Fig 2].
 Despite having no knowledge of the underlying model, the RL agent learns enough to achieve nearly optimal performance.
@@ -377,7 +398,7 @@ Deep RL agents have proven remarkably effective in handling such complexity, par
 
 <!-- Model free is great bc we don't know the true models -->
 The rapidly expanding class of Model-free RL algorithms is particularly appealing given the ubiquitous presence of model uncertainty in ecological dynamics.
-Rarely do we know the underlying functional forms for ecological processes -- is population recruitment more Beverton-Holt or Ricker?
+Rarely do we know the underlying functional forms for ecological processes.
 Methods which must first assume something about the structure or functional form of a process before estimating the corresponding parameter can only ever be as good as those structural assumptions.
 Frequently available ecological data is insufficient to distinguish between possible alternative models [@knape_are_2012], or the correct model may be non-identifiable with any amount of data.
 Model-free RL approaches offer a powerful solution for this thorny issue.
