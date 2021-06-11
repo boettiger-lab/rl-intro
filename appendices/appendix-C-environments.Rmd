@@ -44,7 +44,7 @@ Mathematically, these actions can be expressed as functions: a _step function_ $
 
 \[ s_{t+1} = f(s_t, a_t), \]
 
-a observation function (sometimes called the 'emission' function, $E$) giving the observed state as a function of the current state and possibly also the action (i.e. different actions could potentially influence the accuracy of the observation):
+an observation function (sometimes called the 'emission' function, $E$) giving the observed state as a function of the current state and possibly also the action (i.e. different actions could potentially influence the accuracy of the observation):
 
 \[ o_{t+1} = E(s_t, a_t) \]
 
@@ -137,8 +137,8 @@ class FishingEnv(gym.Env):
 ```
 
 In practice, an environment may include additional logic for rendering information about it's current states as output.
-Effective environments may often work in a transformed variable space, for example, `gym_fishing` maps the space $[0,2K]$ into the space $[-1, 1]$, which significantly improves the performance. 
-Other features, such as 32 bit precision numeric values for state and action spaces, can improve the performance of the environment on GPU-based computation.
+Effective environments may often work in a transformed variable space, for example, `gym_fishing` maps the space $[0,2K]$ into the space $[-1, 1]$, which significantly improves agent performance. 
+Other features, such as 32 bit precision numeric values for state and action spaces, can also improve agent performance with GPU-based computation.
 
 Function inheritance provides a natural way to express many variations of a gym, such as alternate step functions, utility functions, or even alternate action and state spaces.
 Standard python module structure facilitates installing and loading a gym. 
