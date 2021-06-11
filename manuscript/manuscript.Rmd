@@ -298,7 +298,7 @@ Hake stocks showed a marked decline throughout this period, while harvests decre
 In contrast, our RL agent would have recommended significantly lower quotas over most of the same interval, including the closure of the fishery as stocks were sufficiently depleted.
 While we have no way of knowing for sure if the RL quotas would have led to recovery, let alone an optimal harvest rate, the contrast between those recommended quotas and the historical catch is notable.
 
-```{r message=FALSE}
+```{r message=FALSE, fig.cap="Setting fisheries harvest quotas using Deep RL. Argentine Hake fish stocks show a marked decline between 1986 and 2014 (upper panel). Historical harvests (lower panel) declined only slowly in response to consistently falling stocks, suggesting overfishing.  In contrast, RL-based quotas would have been set considerably lower than observed harvests in each year of the data. As decline persists, the RL-based management would have closed the fishery to future harvest until the stock recovered."}
 
 harvest <- read_csv( "../manuscript/figs/historical_harvest.csv")
 stock <- read_csv("../manuscript/figs/historical_stock.csv")
@@ -328,7 +328,7 @@ Instead of researchers evaluating a handful of control rules, the RL agent propo
 ## Ecological Tipping Points \label{sec:tipping}
 
 Our second example focuses on a case for which we do not already have an existing, provably optimal policy to compare against.
-We consider the generic problem of an ecosystem facing slowly deteriorating environmental conditions which move the dynamics closer towards a tipping point [Fig 2].
+We consider the generic problem of an ecosystem facing slowly deteriorating environmental conditions which move the dynamics closer towards a tipping point [Fig 4].
 This model of a critical transition has been posited widely in ecological systems, from the simple consumer-resource model of [@May1977] on which our dynamics are based, to microbial dynamics [@Dai2012] lake ecosystem communities [@Carpenter2011] to planetary ecosystems [@Barnosky2012].
 On top of these ecological dynamics we introduce an explicit ecosystem service model quantifying the value of more desirable 'high' state relative to the 'low' state.
 For simplicity, we assume a proportional benefit $b$ associated with the ecosystem state $X(t)$.
@@ -370,7 +370,7 @@ plot_sims(tip_sims_df) / ( plot_policy(tip_policy_df) + plot_reward(tip_sims_df)
 
 The TD3-trained agent proves far more successful in preventing chance transitions across the tipping point, consistently achieving a higher cumulative ecosystem service value across replicates than the steady-state strategy.
 
-Examining the replicate management trajectories and corresponding rewards [Fig 3] reveal that the RL agent incurs significantly higher costs in the initial phases of the simulation, dipping the cumulative reward into negative territory on average and well below the reward realized by the simple steady-state strategy.
+Examining the replicate management trajectories and corresponding rewards [Fig 5] reveal that the RL agent incurs significantly higher costs in the initial phases of the simulation, dipping the cumulative reward into negative territory on average and well below the reward realized by the simple steady-state strategy.
 This initial investment then begins to pay off -- by about the 200th time step the RL agent has surpassed the performance of the steady state strategy.
 The policy plot provides more intuition for the RL agent's strategy: at very high state values, the RL agent opts for no conservation action -- so far from the tipping point, no response is required.
 Near the tipping point, the RL agent steeply ramps up the conservation effort, and retains this effort even as the system falls below the critical threshold, where a sufficiently aggressive response can tip the system back into recovery.
@@ -378,7 +378,7 @@ For a system at or very close to the zero-state, the RL agent gives up, opting f
 Recall that the quadratic scaling of cost makes the rapid response of the TD3 agent much more costly to achieve the same net environmental improvement divided into smaller increments over a longer timeline.
 However, our RL agent has discovered that the extra investment for a rapid response is well justified as the risk of crossing a tipping point increases.
 
-A close examination of the trajectories of individual simulations which cross the tipping point under either management strategy [see appendix B] further highlights the difference between these two approaches.
+A close examination of the trajectories of individual simulations which cross the tipping point under either management strategy [see Appendix B] further highlights the difference between these two approaches.
 Under the steady-state strategy, the system remains poised too close to the tipping point: stochastic noise eventually drives most replicates across the threshold, where the steady-state strategy is too weak to bring them back once they collapse.
 As replicate after replicate stochastically crashes, the mean state and mean reward bend increasingly downwards.
 In contrast, the RL agent edges the system slightly farther away from the tipping point, decreasing but not eliminating the chance of a chance transition.
@@ -391,13 +391,10 @@ Nevertheless, such quirks are likely to be common features of RL solutions -- lo
 
 ## Additional Environments
 
-Ecology holds many open problems for deep RL.  
+Ecology holds many open problems for deep RL.
 To extend the examples presented here to reflect greater biological complexity or more realistic decision scenarios, the transition, emission and/or reward functions of the environment can be modified.
 We provide an initial library of example environments at <https://boettiger-lab.github.io/conservation-gym>.
 Some environments in this library include a wildfire `gym` that poses the problem on wildfire suppression with a cellular automata model, an epidemic `gym` that examines timing of interventions to curb disease spread, as well as more complex variations of the fishing and conservation environments presented above.  
-
-
-
 
 
 # Discussion
@@ -448,27 +445,6 @@ Recent advances in the field have proven the potential of the approach to solve 
 Successes have so far been concentrated in applications to games and robotics, not scientific and policy domains, though this is beginning to change [@popova_deep_2018; @zhou_optimizing_2017].
 Iterative improvements to well-posed public challenges have proven immensely effective in the computer science community in tackling difficult problems, which allow many teams with diverse expertise not only to compete but to learn from each other [@netflix_prize; @imagenet].
 By working to develop similarly well-posed challenges as clear benchmarks, ecology and environmental science researchers may be able to replicate that collaborative, iterative success in cracking hard problems.
-
-
-
-
-<!-- transition from big promise to perils -- Millie's section on risks here -->
-
-<!-- from end of Carl's discussion edits: Such benchmarks may further improve collaboration across disciplines as well, attracting the attention of AI expertise to these key issues facing our planet. -->
-<!-- If RL opens the door to greater role for artificial intelligence and engagement of technology firms in the machinery that determines environmental policy, this raises new concerns as well as new opportunities.   -->
-
-<!-- The increasingly influential role of AI in sectors as diverse as policing, finance, and employment has raised concern about the ethics, biases, and power entrenched in both decision-making algorithms and their outputs [@kalluri2020]. -->
-<!-- As algorithms play a greater role in environmental and conservation policy, will similar issues arise? -->
-<!-- While this question has garnered  recent interest in the academic literature [@wearn2019; @adams2019; @scoville2021], the use of decision making algorithms in environmental contexts is still relatively isolated and in it's early stages. -->
-<!-- Examples of AI applications, and corresponding concerns, have largely been confined to the context of enforcing environmental laws (i.e. algorithms which predict wildlife poaching events [@adams2019] or identify illegal fishing behavior [@mcdonald2021; @swartz2021]). -->
-<!-- However, more diverse applications of AI algorithms - such as applications which contribute to meeting sustainable development goals [@vinuesa2020] or designing  protected area networks - raise additional concerns of entrenching power asymmetries between those reliant on natural resources and those designing algorithms and their objectives. -->
-<!-- These issues of power become particularly acute when private industry holds the keys to propriety algorithms or environmental data, and generally operate without the same community engagement obligations of public agencies. -->
-<!-- In these cases, good intentions might not be sufficient to ensure equitable outcomes. -->
-<!-- Interdisciplinary collaborations with experts in algorithmic governance and ethics will be important ensure that applications of AI to ecological challenges promotes equity in both the procedural process of developing objective functions and the distribution of benefits that result from decisions. -->
-
-
-
-
 
 
 \pagebreak
