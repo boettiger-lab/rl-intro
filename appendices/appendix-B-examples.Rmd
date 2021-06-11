@@ -35,7 +35,7 @@ In this appendix, we provide examples with annotated code illustrating how to us
 to train RL agents to make decisions in two distinct ecological management scenarios: setting a harvest quota in a fishery, and managing conservation effort in the face of ecological tipping points.
 The approach illustrated here should be sufficient to reproduce the results presented in the main text,
 and should serve as an effective starting point for researchers seeking to apply deep RL to these simulation environments, 
-to other simulation environments we have built and continue to develop, or to their own environments.
+to other simulation environments we continue to develop, or to their own environments.
 (Appendix C details the process of defining one's own `gym` environment from an ecological model). 
 This overview is neither a complete introduction to deep RL or a comprehensive analysis of RL solutions to these environments.
 
@@ -55,7 +55,7 @@ This can be particularly useful for users running ML algorithms on remote server
 
 By using a cache of pre-trained agents distributed with this appendix, it should be possible to efficiently reproduce the results shown here on any recent laptop with the versions of software indicated.
 Reproducing the training of RL agents is more computationally intensive, and a more powerful multi-core CPU or CUDA-enabled GPU is recommended.
-Note that hardware differences are also a source of instability in the reproduciblity of RL training (see main text and Appendix A).
+Note that hardware differences are also a source of instability in the reproduciblity of RL training [@instability_2019].
 
 In this appendix, we illustrate how to apply a deep reinforcement learning framework to train previously published RL algorithms on the novel decision environments as illustrated in the main text.
 Appendix C discusses the construction of such environments in code. 
@@ -63,7 +63,7 @@ Appendix C discusses the construction of such environments in code.
 # Deep Reinforcement Learning Frameworks
 
 Rather than implement deep RL algorithms from scratch, we illustrate the use of one of the leading software frameworks for research and application of deep RL methods.
-At the time of writing, several major frameworks exist which provide reference implementations of the leading deep RL algorithms (see table 1 and Appendix A).
+At the time of writing, several major frameworks exist which provide reference implementations of the leading deep RL algorithms (see Table 1 and Appendix A).
 While we do not seek to provide a comprehensive review of available frameworks, some familiarity with current frameworks can be helpful.
 Like many machine learning libraries, these frameworks are themselves each built around one of two popular machine learning libraries, PyTorch [@torch] or Tensorflow [@tensorflow], and all are based in Python.
 Existing frameworks we evaluated include Keras-RL [@keras-rl], Tensorflow Agents [@tensorflow-agents],  OpenAI Spinning Up [@spinningup] OpenAI Baselines, Stable-Baselines2 [@sb2], and Stable-Baselines3 [@sb3]. 
@@ -132,7 +132,7 @@ scale_fill_discrete <- function(...) scale_fill_manual(..., values=colors)
 
 
 
-Numerical reproducibility can be challenging in machine learning problems, particularly when using GPU-based acceleration. 
+Numerical reproducibility can be challenging in machine learning problems, particularly when using GPU-based acceleration [@instability_2019]. 
 In addition to setting a random seed in our Python environment, we can optionally disable GPU use to improve reproducibility by setting the `CUDA_VISIBLE_DEVICES` to a blank value.  
 
 ```{r}
@@ -208,16 +208,18 @@ plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 
 We will compare this optimal solution with results from the several different RL algorithms.
 Unlike the optimal solution, the RL methods never know the underlying growth function used by the simulation (or even if such a function actually exists).
-These methods merely seek to learn a strategy for setting harvest quotas which maximizes the cumulative reward the receive from the environment.
-At the heart of each deep RL algorithm is a neural network or a collection of neural networks. The RL agent uses these networks to approximate a policy function and/or a value function. The policy function is the agent's mapping of states to actions -- i.e. the agent's strategy. Value functions attempt to evaluate the goodness of a state or state-action pair towards achieving the RL objective of maximizing cumulative rewards. 
-Confusingly, the parameters of a RL algorithm that detail the overall learning process are called _hyper-parameters_ while the parameters of a RL algorithm that are learned during training are called parameters. For example, the number of layers in a neural network is a hyper-parameter but a weight in the neural net is referred to as a parameter.
-Before training an agent, we must first specify the hyper-parameters; the algorithm's parameters are often randomly initialized.
-Each algorithm may have different hyper-parameters. `stable-baselines3` provides default values for all hyper-parameters based on the original papers that introduced the corresponding algorithms.
+These methods merely seek to learn a strategy for setting harvest quotas which maximizes the cumulative reward they receive from the environment.
+At the heart of each deep RL algorithm is a neural network or a collection of neural networks. 
+Model-free RL agents use these networks to approximate a policy function and/or a value function -- see Appendix A for more detail here. 
+Confusingly, the parameters of a RL algorithm that detail the overall learning process are called _hyperparameters_ while the parameters of a RL algorithm that are learned during training are called parameters. For example, the number of layers in a neural network is a hyperparameter, but a weight in the neural net is referred to as a parameter.
+Before training an agent, we must first specify the hyperparameters; the parameters, meanwhile, are typically randomly initialized.
+Note that each algorithm may have different hyperparameters, so it is helpful to look at the algorithm's documentation to know what these hyperparameters are. 
+`stable-baselines3` provides default values for all hyperparameters based on the original papers that introduced the corresponding algorithms.
 
 
 For example, here we will use the Twin Delayed DDPG method (TD3) described in @TD3.
 This algorithm is a successor of Deep Deterministic Policy Gradient (DDPG) method [@ddpg], itself a policy-gradient-modification that extends the original Deep Q-Network (DQN) algorithm [@DQN] to continuous action spaces.
-We use this algorithm to train an agent that has a multi-layer perceptron (`MlpPolicy`) neural network, with the default architecture of two 64-neuron layers.
+We use this algorithm to train an agent that employs multi-layer perceptron (`MlpPolicy`) neural networks, with the default architecture of two 64-neuron layers.
 
 
 ```{r}
@@ -242,7 +244,7 @@ if(!file.exists("../python/cache/td3_untuned.zip")) {
 ```
 
 
-Note that while default hyper-parameters provide a useful starting place (particularly when the environment has been suitably normalized, a best-practice we discuss above), better performance can almost always be achieved by _tuning_ the hyper-parameter selection.
+Note that while default hyperparameters provide a useful starting place (particularly when the environment has been suitably normalized, a best-practice we discuss below), better performance can almost always be achieved by _tuning_ the hyperparameter selection. <!-- ML: eek I think we dropped normalization talk -->
 This is discussed further below.
 Having saved our trained agent to disk, we can then re-load this agent for evaluation or to continue training.
 Note that a copy of the trained agents are included in the corresponding GitHub repository.
@@ -253,7 +255,7 @@ agent = sb3$TD3$load("../python/cache/td3_untuned")
 ```
 
 
-We can supply an observation to our trained agent and it will return it's proposed action using the `predict` method. 
+We can supply an observation to our trained agent and it will return its proposed action using the `predict` method. 
 This is all we need to evaluate or employ the agent on a decision-making task.
 Recall that state space and action space in the fishing gym have been re-scaled to a (-1, 1) interval.
 Note that this is equivalent to a choice of appropriate units -- we can re-scale the interval without loss of generality.
@@ -321,16 +323,16 @@ policy_df <- agent_policy  %>%
 plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 ```
 
-As we can see in the figure above, without hyper-parameter tuning, our agent has found only a sub-optimal policy.
+As we can see in the figure above, without hyperparameter tuning, our agent has found only a sub-optimal policy.
 The RL agent trained under an un-tuned TD3 algorithm here tends to over-harvest the fishery, resulting in an initially higher reward that grows steadily but more slowly than the optimal strategy.
-As discussed in the main text, training of Deep RL algorithms is subject to several sources of instability that can make it difficult or impossible to reproduce the same results from training with the same hyper-parameters on different hardware or hardware drivers, even when controlling for random seed [@instability_2019; @drlthatmatters].
+As discussed in the main text, training of Deep RL algorithms is subject to several sources of instability that can make it difficult or impossible to reproduce the same results from training with the same hyperparameters on different hardware or hardware drivers, even when controlling for random seed [@instability_2019; @drlthatmatters].
 Consequently, users may not recover identical behavior when training under identical parameters.
 However, by using the cached neural network parameter weights of the trained agent, users should be able to reproduce the same agent behavior.
 
 
 ## Tuning hyperparameters
 
-By tuning the hyper-parameters that control the training regime used by the TD3 algorithm, we are able to further improve upon on the performance of the RL agent.
+By tuning the hyperparameters that control the training regime used by the TD3 algorithm, we are able to further improve upon on the performance of the RL agent.
 Tuning may be performed manually by adjusting hyperparameters based on mechanistic reasoning (e.g. larger action noise may improve exploration over exploitation, a larger neural network may better approximate a more complex policy).
 This search can also be automated using standard non-linear optimization techniques, adjusting hyperparameters to maximize the reward attained by the trained network.
 Using such an approach (see <https://github.com/boettiger-lab/conservation-agents>), we discover the following hyperparameters achieve better performance (see @TD3 or @sb3 documentation for formal definitions of each hyperparameter) :
@@ -353,7 +355,7 @@ td3 = sb3$TD3('MlpPolicy',
               policy_kwargs = list(net_arch=c(400L, 300L)))
 ```
 
-We train this new RL agent using it's tuned hyperparameters, and saving the resulting trained agent as before:
+We train this new RL agent using its tuned hyperparameters, and saving the resulting trained agent as before:
 
 
 
@@ -390,11 +392,11 @@ plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 
 In this simple example, the RL tuned agent is able to achieve nearly-optimal performance (as defined by the reward conditions).
 Note that the largest deviations from the optimal policy occur at large stock sizes, at or above carrying capacity of the model.
-This pattern is not surprising, since these large stock values are least likely to observed over the simulated episodes.
-For the same reason, that deviation contributes very little to reward. 
+This pattern is not surprising, since these large stock values are least likely to be observed over the simulated episodes.
+For the same reason, that deviation contributes very little to the observed reward. 
 Only by comparing average stock sizes directly can we see that the RL agent slightly under-harvests on average relative to the optimal policy.
 As noted in appendix C, careful design of the environment, such as re-scaling of state and action space, can also improve the ability of a Deep RL algorithm to find an acceptable policy without altering the substance of the challenge.
-Even so, our agent still had extensive time to train on this specific environment, a total of 300,000 timesteps or 3000 training episodes.
+Even so, our agent still had extensive time to train on this specific environment, a total of 300,000 timesteps.
 
 
 
@@ -504,8 +506,8 @@ However, a simple heuristic solution provides a reasonable starting point for co
 
 
 As discussed in the main text, we have no existing optimal solution to the tipping point problem, and so rely on a common heuristic strategy instead:
-select a fixed level of conservation investment that is sufficient to counter-balance any further side towards the tipping point, preserving it in it's current state.
-This is implemented using the `fixed_action` method provided in our `gym_conservation` module, which also implements other heursitic models, including a human agent which requires interactive input to select the action each year.
+select a fixed level of conservation investment that is sufficient to counter-balance any further side towards the tipping point, preserving it in its current state.
+This is implemented using the `fixed_action` method provided in our `gym_conservation` module, which also implements other heuristic models, including a human agent which requires interactive input to select the action each year.
 
 ```{r}
 # Simulate under the steady-state solution (given the model)
