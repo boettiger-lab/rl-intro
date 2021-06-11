@@ -24,8 +24,7 @@ abstract: |
   corner of machine learning known as _reinforcement learning_ (RL) to help tackle the
   most challenging conservation decision problems. RL is uniquely
   well suited to conservation and global change challenges for three reasons: (1)
-  rather than passively modeling observed data, RL is explicitly designed around 
-  the actions of an agent who _interacts_ with an environment that is dynamic and uncertain,
+  RL explicitly focuses on designing an agent who _interacts_ with an environment which is dynamic and uncertain,
   (2) RL approaches do not require massive amounts of data, (3) RL approaches would 
   utilize rather than replace existing models, simulations, and the knowledge they contain.
   We provide a conceptual and technical introduction to RL and its relevance to ecological
