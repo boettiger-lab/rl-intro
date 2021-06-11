@@ -376,7 +376,7 @@ plot_sims(tip_sims_df) / ( plot_policy(tip_policy_df) + plot_reward(tip_sims_df)
 
 The TD3-trained agent proves far more successful in preventing chance transitions across the tipping point, consistently achieving a higher cumulative ecosystem service value across replicates than the steady-state strategy.
 
-Examining the replicate management trajectories and corresponding rewards [Fig 5] reveal that the RL agent incurs significantly higher costs in the initial phases of the simulation, dipping well below the mean stead-state reward initially before exceeding it in the long run.
+Examining the replicate management trajectories and corresponding rewards [Fig 5] reveal that the RL agent incurs significantly higher costs in the initial phases of the simulation, dipping well below the mean steady-state reward initially before exceeding it in the long run.
 This initial investment then begins to pay off -- by about the 200th time step the RL agent has surpassed the performance of the steady-state strategy.
 The policy plot provides more intuition for the RL agent's strategy: at very high state values, the RL agent opts for no conservation action -- so far from the tipping point, no response is required.
 Near the tipping point, the RL agent steeply ramps up the conservation effort, and retains this effort even as the system falls below the critical threshold, where a sufficiently aggressive response can tip the system back into recovery.
