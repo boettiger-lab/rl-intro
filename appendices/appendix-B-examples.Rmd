@@ -70,7 +70,7 @@ Existing frameworks we evaluated include Keras-RL [@keras-rl], Tensorflow Agents
 Keras-RL saw widespread early adoption, but is built on Tensorflow version 1.x. It is incompatible with Tensorflow 2.x and not actively maintained.
 Tensorflow Agents is developed by the Tensorflow team, a recent and actively developed framework with support for both Tensorflow 1.x and 2.x and good support for low-level customization of RL algorithms.
 However, higher-level interfaces and high-level documentation are still relatively limited.
-OpenAI's SpinningUp is an education-targeted framework useful for developers wanting to become more familiar with the internal methods of RL algorithms.  
+OpenAI's SpinningUp is an education-targeted framework useful for developers wanting to become more familiar with the internal methods of RL algorithms.
 OpenAI's Baselines is primarily Tensorflow 1.x-based implementation of many recently published RL algorithms.
 Researchers at Ensta Paris Tech first created Stable Baselines as a fork of the OpenAI implementation, rigorously addressing numerous issues in documentation, testing, and coding style that have helped make their fork see even greater adoption. 
 Stable-Baselines3 is the most recent version (Feb 2021), a ground-up rewrite which switches to a PyTorch-based implementation and further strengthens internal checks such as static types.
@@ -206,11 +206,11 @@ plot_sims(sims_df) / ( plot_policy(policy_df) + plot_reward(sims_df))
 
 ## RL-based solutions
 
-We will compare this optimal solution with results from the several different RL algorithms.
-Unlike the optimal solution, the RL methods never know the underlying growth function used by the simulation (or even if such a function actually exists).
+We will compare this optimal solution with results from a model-free RL agent.
+Unlike the optimal solution, model-free RL agents do not know the underlying growth function used by the simulation (or even if such a function actually exists).
 These methods merely seek to learn a strategy for setting harvest quotas which maximizes the cumulative reward they receive from the environment.
 At the heart of each deep RL algorithm is a neural network or a collection of neural networks. 
-Model-free RL agents use these networks to approximate a policy function and/or a value function -- see Appendix A for more detail here. 
+Model-free, deep RL agents use these networks to approximate a policy function and/or a value function -- see Appendix A for more detail here. 
 Confusingly, the parameters of a RL algorithm that detail the overall learning process are called _hyperparameters_ while the parameters of a RL algorithm that are learned during training are called parameters. For example, the number of layers in a neural network is a hyperparameter, but a weight in the neural net is referred to as a parameter.
 Before training an agent, we must first specify the hyperparameters; the parameters, meanwhile, are typically randomly initialized.
 Note that each algorithm may have different hyperparameters, so it is helpful to look at the algorithm's documentation to know what these hyperparameters are. 
@@ -438,7 +438,7 @@ bifur_df %>%
 ```
 
 
-We assume the benefit provided by the ecosystem state is assumed to be directly proportional to the state itself, $b x_t$.  
+We assume the benefit provided by the ecosystem state is directly proportional to the state itself, $b x_t$.  
 We further assume that each year the manager has the option to slow or reverse the environmental degradation by taking action $A_t$, such that under management, the resulting environment in the next time step is given by
 
 \[
@@ -502,10 +502,7 @@ TD3_policy = env$policyfn(model, reps = 1L)  %>% mutate(model = "TD3")
 
 In general, the optimal solution depends on the ecological dynamics, the benefit of the ecosystem services and the costs associated with a management response.
 Because the tipping point problem is non-autonomous, we cannot solve for the optimal policy even given the model and objective (utility) function using Markov Decision Process methods.
-However, a simple heuristic solution provides a reasonable starting point for comparison.
-
-
-As discussed in the main text, we have no existing optimal solution to the tipping point problem, and so rely on a common heuristic strategy instead:
+However, a simple heuristic solution provides a reasonable starting point for comparison:
 select a fixed level of conservation investment that is sufficient to counter-balance any further side towards the tipping point, preserving it in its current state.
 This is implemented using the `fixed_action` method provided in our `gym_conservation` module, which also implements other heuristic models, including a human agent which requires interactive input to select the action each year.
 

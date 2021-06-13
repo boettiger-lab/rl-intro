@@ -133,7 +133,6 @@ write_csv(hake, "../data/hake.csv")
 We use historical data from Argentine Hake to illustrate how an RL agent might be applied in practice.  
 Historical biomass and catch data for Argentine Hake can be found in the R.A. Myers Legacy Stock Assessment Database [@ramlegacy; @ricard_examining_2012].
 Here, we load a local copy of the stock assessment for the Argentine Hake from 1986 to 2000.
-(Annotated code for data cleaning can be found in Appendix D).
 
 ```{r message=FALSE}
 hake = read_csv("../data/hake.csv")
