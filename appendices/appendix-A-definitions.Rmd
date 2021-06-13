@@ -97,7 +97,7 @@ A sketch of a simple policy gradient algorithm is shown in Algorithm 1^[The algo
     \For{$k = 0, 1, 2, \dots$}
         \State Generate a trajectory $\{s_i, a_i, r_i\}$ by following an exploration algorithm with the policy $\pi_{\theta_k}$ (e.g. $\epsilon$-greedy)
         \For{$t = 0, 1, \dots, T-1$}
-            \State $G \gets \sum_{j=t}^{T} \gamma^{j-t} r_j$
+            \State $G \gets \sum_{j=t}^{T-1} \gamma^{j-t} r_j$
             \State $\theta_{k+1} \gets \theta_k + \alpha \gamma^t G \, \nabla_{\theta_k} \log \pi_{\theta_k}(a_t | s_t)$
         \EndFor
     \EndFor
@@ -199,7 +199,7 @@ Over the course of training, RL agents will engage in trial and error learning, 
 In the sections above, we procedurally mentioned that the agent must select actions during training.
 Yet, how the agent selects these actions is very important because if an agent explores the state-action space poorly, the agent will learn a sub-optimal policy.
 The fundamental issue is that it is very difficult for the agent to know when it should engage in explorative or exploitative behavior.
-This *exploration-exploitation dilemma* is an open research problem [@berger-tal_exploration-exploitation_2014].
+This *exploration-exploitation dilemma* is an open research question [@berger-tal_exploration-exploitation_2014].
 For RL problems with small state-action spaces, e.g. space-action spaces that can be represented in a table, simple exploration algorithms will converge to the optimal policy, but with large or infinite state-action spaces, there are no convergence guarantees [@berger-tal_exploration-exploitation_2014].
 
 Current deep RL algorithms take a range of approaches towards this dilemma.
@@ -209,7 +209,7 @@ In the sections below, we will present some of the more commonly encountered exp
 
 The Epsilon-Greedy algorithm takes a very simple approach towards balancing exploration and exploitation. 
 For some $\epsilon \in (0, 1)$, an Epsilon-Greedy agent exploits the best available action with probability $1-\epsilon$ and explores a random action with probability $\epsilon$.
-While simplistic, this algorithm has been effective on a range of problems notably @DQN.
+While simplistic, this algorithm has been effective on a range of problems [@DQN].
 
 ## Boltzmann Exploration
 
@@ -255,7 +255,7 @@ RL agents can either select actions from the same policy that they intend to use
 The former is called *on-policy* learning: the on-policy agent learns to select actions with the same policy it will use in testing.
 The latter is called *off-policy* learning: the off-policy agent uses a policy during training that is potentially different than the policy that the agent will evaluate.
 
-A significant issue that arises when agents learn from their experience is correlation of samples [@DQN, @schaul_prioritized_2016].
+A significant issue that arises when agents learn from their experience is correlation of samples [@DQN; @schaul_prioritized_2016].
 In the simple case that we have an RL agent that interacts with the environment for a few time steps and then uses this trajectory for its learning update, these samples, since they come from the same trajectory, will be strongly correlated [@DQN].
 Learning from correlated samples is undesirable since this can result in agents getting stuck in local optima, which will impede learning, but there are other reasons why learning from a single trajectory causes problems -- see @schaul_prioritized_2016 and @DQN for more insight here.
 
@@ -268,7 +268,7 @@ The solution to de-correlate samples for on-policy agents is to use parallel wor
 Due to stochasticity that can come from exploration and the environment, the workers go on different trajectories in state-action space.
 The agent will collect samples across these workers in a learning step, perform its learning step and then repeat the process of collecting and sampling transitions with an updated policy.
 The idea behind using parallel workers is that sampling over multiple trajectories de-correlates samples -- see @a3c on more details here.
-In practice, using a large replay buffer, on the order of millions of transitions, or a modest number of parallel, around 4-16 for simple RL problems, is very important to achieve good agent performance for off-policy and on-policy algorithms respectively.
+In practice, using a large replay buffer, on the order of millions of transitions, or a modest number of parallel, around 4-16 for simple RL problems, is very important to achieve good agent performance.
 
 
 # Next Steps
@@ -278,7 +278,7 @@ In this appendix, we briefly introduced some of the major design decisions that 
 In Table 1, we collect some of the more commonly used model-free deep RL algorithms.
 Readers who are interested in learning more about the current state of deep RL should read the literature referenced in Table 1; @DQN, @sac and @ppo are good places to start. 
 It is important to note that while we have focused on gradient-based, model-free methods, there has also been promising recent development with model-based and gradient-free techniques.
-See @mbpo and @weber_imagination-augmented_2018 for a recent examples of model-based deep RL algorithms, and @salimans_evolution_2017 as a recent example of a gradient-free approach.
+See @mbpo and @weber_imagination-augmented_2018 for recent examples of model-based deep RL algorithms, and @salimans_evolution_2017 as a recent example of a gradient-free approach.
 A benefit of model-free deep RL over these other methods is that there has been more of a general focus on model-free deep RL, so there are widely available software packages like Stable Baselines and TensorFlow Agents which implement model-free deep RL agents.
 However, it is important to keep in mind though that deep RL has only become established in the last decade, and with the large amount of open research questions, deep RL may evolve significantly in the near future.
 
@@ -296,6 +296,7 @@ DDPG         & Deep Deterministic Policy Gradient   (Lillicrap et al. 2019)     
 TD3          & Twin Delayed DDPG  (Fujimoto, Hoof, and Meger 2018)               & Model-free  & Off-policy & Actor-critic\\
 SAC          & Soft Actor Critic   (Haarnoja et al. 2018)                        & Model-free  & Off-policy & Actor-critic\\
 IMPALA       & Importance Weighted Actor Learner (Espeholt et al. 2018)          & Model-free  & Off-policy & Actor-critic\\
+\hline
 \end{tabular}}
 \caption{Survey of common model-free deep RL algorithms. }
 \end{table}
