@@ -41,7 +41,7 @@ keywords:
   - Tipping points
 bibliography: references.bib
 nocite: |
-    @A2C, @trpo, @ddpg, @TD3, @impala
+    @A2C, @trpo, @ddpg, @TD3, @impala, @lenz_deepmpc_2015, @weber_imagination-augmented_2018
 header-includes:
   - \usepackage{amsmath}
   - \usepackage{amssymb}
@@ -82,7 +82,7 @@ To date, the problems considered by RL research have largely been drawn from exa
 Complex environmental problems share many similarities to these tasks and games: the need to plan many moves ahead given a large number of possible outcomes, to account for uncertainty and to respond with contingency to the unexpected.
 RL agents typically develop strategies by interacting with simulators, a practice that should not be unsettling to ecologists since learning from simulators is common across ecology.
 Rich, processes-based simulations such as the SORTIE model in forest management [@sortie], Ecopath with Ecosim in fisheries management [@ecopath], or climate change policy models [@dice] are already used to explore scenarios and inform ecosystem management.
-Decision-theoretic approaches based on optimal control techniques can only find the best strategy in the simplest of ecological models; the so called "curse of dimensionality" makes problems with a large number of states or actions intractable by conventional methods [@Possingham2006; @Marescot2013].
+Decision-theoretic approaches based on optimal control techniques can only find the best strategy in the simplest of ecological models; the so called "curse of dimensionality" makes problems with a large number of states or actions intractable by conventional methods [@Possingham2006; @Marescot2013; @ferrer-mestres_k-n-momdps_2021].
 Neural-network-based RL techniques, referred to as *deep RL*, have proven particularly effective in problems involving complex, high-dimensional spaces that have previously proven intractable to classical methods.
 
 In this paper, we draw on examples from fisheries management and ecological tipping points to illustrate how deep RL techniques can successfully discover optimal solutions to previously solved management scenarios and discover highly effective solutions to unsolved problems.
@@ -120,7 +120,7 @@ Throughout this process, the agent's behavior is codified into what is called a 
 An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an observation of the environment's current *state* and an associated *reward* as output.
 In contrast to classical approaches [@Marescot2013], there are few restrictions on what comprises a state or action. 
 States and actions may be continuous or discrete, completely or partially observed, single or multidimensional.
-The main focus of building an RL environment, however, is in the environment's transition dynamics and reward function.
+The main focus of building an RL environment, however, is on the environment's transition dynamics and reward function.
 The designer of the environment can make the environment follow any transition and reward function provided that both are functions of the current state and action.
 This ability allows RL environments to model a broad range of decision making problems.
 For example, we can set the transitions to be deterministic or stochastic.
@@ -159,8 +159,8 @@ In Table 1, we present some of the more common deep RL algorithms which serve as
 \hline
 Abbreviation & Algorithm Name                                                    & Model \\
 \hline
-MCTS         & Monte Carlo Tree Search (Sutton and Barto 2018)                   & Model-based \\
-DYNA         & Dyna-Q (Sutton and Barto 2018)                                    & Model-based \\
+D-MPC        & Deep Model-Predictive Control (Lenz, Knepper, and Saxena 2015)    & Model-based \\
+I2A          & Imagination-Augmented Agents (Weber et al. 2018)                  & Model-based \\
 MBPO         & Model-based Policy Optimization (Janner et al. 2019)              & Model-based \\
 DQN          & Deep Q Networks   (Mnih et al. 2015)                              & Model-free  \\
 A2C          & Advantage Actor Critic  (Mnih et al. 2016)                        & Model-free  \\
@@ -221,7 +221,7 @@ $$
 The goal of reinforcement learning is for the agent to find an optimal policy distribution, $\pi^*(a_t|o_t)$, that maximizes the expected return, $J(\pi)$:
 
 $$
-  \pi^* = \underset{\pi}{\text{argmax}} \,\, \mathbb{E}_{\tau \sim p_\pi(\tau)}\Big[\sum_{t=0}^{H} \gamma^t r(s_t, a_t) \Big] =  \underset{\pi}{\text{argmax}} \,\, J (\pi).
+  \pi^* = \underset{\pi}{\text{argmax}} \,\, \mathbb{E}_{\tau \sim p_\pi(\tau)}\Big[\sum_{t=0}^{H-1} \gamma^t r(s_t, a_t) \Big] =  \underset{\pi}{\text{argmax}} \,\, J (\pi).
 $$
 
 Although there are RL-based methods for infinite horizon problems, i.e. when $H=\infty$, we will only present episodic or finite horizon POMDPs in this study.
@@ -392,15 +392,15 @@ In the few replicates that experience a critical transition anyway, the RL agent
 Only 3 out of 100 replicates degrade far enough for the RL agent to give up the high cost of trying to rescue them.
 The RL agent's use of a more dynamic strategy out-preforms the steady-state strategy.
 Numerous kinks visible in the RL policy function also suggest that this solution is not yet optimal.
+Such quirks are likely to be common features of RL solutions -- long as they have minimal impact on realized rewards.
 Further tuning of hyper-parameters, increased training, alterations or alternatives to the training algorithm would likely be able to further improve upon this performance.
-Nevertheless, such quirks are likely to be common features of RL solutions -- long as they have minimal impact on realized rewards.
 
 ## Additional Environments
 
 Ecology holds many open problems for deep RL.
 To extend the examples presented here to reflect greater biological complexity or more realistic decision scenarios, the transition, emission and/or reward functions of the environment can be modified.
 We provide an initial library of example environments at <https://boettiger-lab.github.io/conservation-gym>.
-Some environments in this library include a wildfire `gym` that poses the problem on wildfire suppression with a cellular automata model, an epidemic `gym` that examines timing of interventions to curb disease spread, as well as more complex variations of the fishing and conservation environments presented above.  
+Some environments in this library include a wildfire `gym` that poses the problem of wildfire suppression with a cellular automata model, an epidemic `gym` that examines timing of interventions to curb disease spread, as well as more complex variations of the fishing and conservation environments presented above.  
 
 
 # Discussion

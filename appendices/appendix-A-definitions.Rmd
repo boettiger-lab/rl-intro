@@ -275,10 +275,10 @@ In practice, using a large replay buffer, on the order of millions of transition
 
 Reinforcement learning is a huge, constantly evolving field, and we've only touched on a small sliver of RL in our study.
 In this appendix, we briefly introduced some of the major design decisions that are made with model-free deep RL algorithms, but there are many more decisions that are made with state of the art model-free agents.
-In Table 1, we collect some of the more commonly used deep RL algorithms.
+In Table 1, we collect some of the more commonly used model-free deep RL algorithms.
 Readers who are interested in learning more about the current state of deep RL should read the literature referenced in Table 1; @DQN, @sac and @ppo are good places to start. 
 It is important to note that while we have focused on gradient-based, model-free methods, there has also been promising recent development with model-based and gradient-free techniques.
-See @mbpo for a recent example of a model-based deep RL algorithm and @salimans_evolution_2017 as a recent example of a gradient-free approach.
+See @mbpo and @weber_imagination-augmented_2018 for a recent examples of model-based deep RL algorithms, and @salimans_evolution_2017 as a recent example of a gradient-free approach.
 A benefit of model-free deep RL over these other methods is that there has been more of a general focus on model-free deep RL, so there are widely available software packages like Stable Baselines and TensorFlow Agents which implement model-free deep RL agents.
 However, it is important to keep in mind though that deep RL has only become established in the last decade, and with the large amount of open research questions, deep RL may evolve significantly in the near future.
 
@@ -287,8 +287,6 @@ However, it is important to keep in mind though that deep RL has only become est
 \hline
 Abbreviation & Algorithm Name                                                   & Model       & Policy     & Method \\
 \hline
-MBPO         & Model-based Policy Optimization (Janner et al. 2019)              & Model-based & On-policy  & Policy Gradient \\
-MCTS         & Monte Carlo Tree Search (Sutton and Barto 2018)                   & Model-based & Either     & Any\\
 A2C          & Advantage Actor Critic  (Mnih et al. 2016)                        & Model-free  & On-policy  & Actor-critic\\
 A3C          & Asynchronous A2C  (Babaeizadeh et al. 2017)                       & Model-free  & On-policy  & Actor-critic\\
 TRPO         & Trust Region Policy Optimization  (Schulman, Levine,et al. 2017)  & Model-free  & On-policy  & Policy Gradient\\
@@ -299,7 +297,7 @@ TD3          & Twin Delayed DDPG  (Fujimoto, Hoof, and Meger 2018)              
 SAC          & Soft Actor Critic   (Haarnoja et al. 2018)                        & Model-free  & Off-policy & Actor-critic\\
 IMPALA       & Importance Weighted Actor Learner (Espeholt et al. 2018)          & Model-free  & Off-policy & Actor-critic\\
 \end{tabular}}
-\caption{Survey of common deep RL algorithms. }
+\caption{Survey of common model-free deep RL algorithms. }
 \end{table}
 
 
