@@ -48,9 +48,9 @@ nocite: |
 header-includes:
   - \usepackage{amsmath}
   - \usepackage{amssymb}
-  - \usepackage{lineno}
-  - \usepackage{endfloat}
-  - \linenumbers
+#  - \usepackage{lineno}
+#  - \usepackage{endfloat}
+#  - \linenumbers
   
 output: 
   rticles::arxiv_article:
@@ -60,6 +60,8 @@ editor_options:
   markdown: 
     wrap: sentence
 ---
+
+<!-- Journal Submission Required Statements
 
 Statement of Authorship:  ML and CB developed the code and wrote the manuscript with support from KEAN and MSC.
 
@@ -76,6 +78,8 @@ the number of references: **62**
 the number of figures, tables, and text boxes: **6** (five figures, 1 table)
 
 \pagebreak
+
+-->
 
 # Introduction
 
