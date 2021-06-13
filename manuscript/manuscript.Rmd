@@ -48,6 +48,10 @@ nocite: |
 header-includes:
   - \usepackage{amsmath}
   - \usepackage{amssymb}
+  - \usepackage{lineno}
+  - \usepackage{endfloat}
+  - \linenumbers
+  
 output: 
   rticles::arxiv_article:
     keep_tex: true
@@ -57,6 +61,9 @@ editor_options:
     wrap: sentence
 ---
 
+Statement of Authorship:  ML and CB developed the code and wrote the manuscript with support from KEAN and MSC.
+
+Data Accessibility Statement: No new empirical data were used in this analysis. Processed forms of public data used in this analysis, simulated data, and code are provided at <https://github.com/boettiger-lab/rl-intro>, archived on Zenodo Data Archive under series-DOI: <https://doi.org/10.5281/zenodo.4940139>.
 
 a short running title: **Deep Reinforcement Learning**
 
