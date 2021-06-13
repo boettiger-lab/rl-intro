@@ -5,19 +5,22 @@ authors:
     department: Department of Environmental Science, Policy, and Management
     affiliation: University of California, Berkeley
     location: Berkeley, California
+    email: mlapeyro@berkeley.edu
   - name: Melissa S. Chapman
     department: Department of Environmental Science, Policy, and Management
     affiliation: University of California, Berkeley
     location: Berkeley, California
+    email: mchapman@berkeley.edu
   - name: Kari E. A. Norman
     department: Department of Environmental Science, Policy, and Management
     affiliation: University of California, Berkeley
     location: Berkeley, California
+    email: kari.norman@berkeley.edu
   - name: Carl Boettiger
     department: Department of Environmental Science, Policy, and Management
     affiliation: University of California, Berkeley
     location: Berkeley, California
-    email: cboettig@berkeley.edu
+    email: cboettig@berkeley.edu (corresponding author)
 abstract: |
   Can machine learning help us make better decisions about a changing planet?
   In this paper, we illustrate and discuss the potential of a promising 
@@ -55,6 +58,18 @@ editor_options:
 ---
 
 
+a short running title: **Deep Reinforcement Learning**
+
+the type of article: **Method**
+
+the number of words: **4,814**
+
+the number of references: **62**
+
+the number of figures, tables, and text boxes: **6** (five figures, 1 table)
+
+\pagebreak
+
 # Introduction
 
 <!-- 
@@ -88,7 +103,7 @@ Neural-network-based RL techniques, referred to as *deep RL*, have proven partic
 In this paper, we draw on examples from fisheries management and ecological tipping points to illustrate how deep RL techniques can successfully discover optimal solutions to previously solved management scenarios and discover highly effective solutions to unsolved problems.
 We demonstrate that RL-based approaches are capable but by no means a magic bullet: reasonable solutions require careful design of training environments, choice of RL algorithms, tuning and evaluation, as well as substantial computational power.
 Our examples are intentionally simple, aiming to provide a clear template for understanding that could be easily extended to cover more realistic conditions. 
-We include an extensive appendix with carefully annotated code which should allow readers to both reproduce and extend this analysis.
+We include an extensive appendices with carefully annotated code which should allow readers to both reproduce and extend this analysis.
 
 
 # RL overview
@@ -225,12 +240,13 @@ $$
 $$
 
 Although there are RL-based methods for infinite horizon problems, i.e. when $H=\infty$, we will only present episodic or finite horizon POMDPs in this study.
-In appendix A, we will discuss in greater detail how deep RL algorithms attempt to optimize the RL objective.
+In Appendix A, we will discuss in greater detail how deep RL algorithms attempt to optimize the RL objective.
 
 
 # Examples
 
 We provide two examples that illustrate the application and potential of deep RL to ecological and conservation problems, highlighting both the potential and the inherent challenges.
+Annotated code for these examples may be found in Appendix B and at <https://github.com/boettiger-lab/rl-intro>.
 
 ```{r knitr, include = FALSE}
 library(tidyverse)

@@ -106,4 +106,4 @@ dmypy.json
 .Rproj.user
 .Rhistory
 render.csv
-
+*.tex
