@@ -285,18 +285,18 @@ However, it is important to keep in mind though that deep RL has only become est
 \begin{table}[H]
 \resizebox{\textwidth}{!}{\begin{tabular}{l l l l l}
 \hline
-Abbreviation & Algorithm Name                                                   & Model       & Policy     & Method \\
+Abbreviation & Algorithm Name                                                     & Policy     & Method \\
 \hline
-A2C          & Advantage Actor Critic  (Mnih et al. 2016)                        & Model-free  & On-policy  & Actor-critic\\
-A3C          & Asynchronous A2C  (Babaeizadeh et al. 2017)                       & Model-free  & On-policy  & Actor-critic\\
-TRPO         & Trust Region Policy Optimization  (Schulman, Levine,et al. 2017)  & Model-free  & On-policy  & Policy Gradient\\
-PPO          & Proximal Policy Optimization  (Schulman, Wolski, et al. 2017)     & Model-free  & On-policy  & Actor-critic\\
-DQN          & Deep Q Networks   (Mnih et al. 2015)                              & Model-free  & Off-policy & Value-Based\\
-DDPG         & Deep Deterministic Policy Gradient   (Lillicrap et al. 2019)      & Model-free  & Off-policy & Actor-critic\\
-TD3          & Twin Delayed DDPG  (Fujimoto, Hoof, and Meger 2018)               & Model-free  & Off-policy & Actor-critic\\
-SAC          & Soft Actor Critic   (Haarnoja et al. 2018)                        & Model-free  & Off-policy & Actor-critic\\
-IMPALA       & Importance Weighted Actor Learner (Espeholt et al. 2018)          & Model-free  & Off-policy & Actor-critic\\
-\hline
+A2C          & Advantage Actor Critic  (Mnih et al. 2016)                         & On-policy  & Actor-critic\\
+A3C          & Asynchronous A2C  (Babaeizadeh et al. 2017)                        & On-policy  & Actor-critic\\
+TRPO         & Trust Region Policy Optimization  (Schulman, Levine,et al. 2017)   & On-policy  & Policy Gradient\\
+PPO          & Proximal Policy Optimization  (Schulman, Wolski, et al. 2017)      & On-policy  & Actor-critic\\
+DQN          & Deep Q Networks   (Mnih et al. 2015)                               & Off-policy & Value-Based\\
+DDPG         & Deep Deterministic Policy Gradient   (Lillicrap et al. 2019)       & Off-policy & Actor-critic\\
+TD3          & Twin Delayed DDPG  (Fujimoto, Hoof, and Meger 2018)                & Off-policy & Actor-critic\\
+SAC          & Soft Actor Critic   (Haarnoja et al. 2018)                         & Off-policy & Actor-critic\\
+IMPALA       & Importance Weighted Actor Learner (Espeholt et al. 2018)           & Off-policy & Actor-critic\\
+\hlin
 \end{tabular}}
 \caption{Survey of common model-free deep RL algorithms. }
 \end{table}
