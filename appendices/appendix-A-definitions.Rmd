@@ -296,7 +296,7 @@ DDPG         & Deep Deterministic Policy Gradient   (Lillicrap et al. 2019)     
 TD3          & Twin Delayed DDPG  (Fujimoto, Hoof, and Meger 2018)                & Off-policy & Actor-critic\\
 SAC          & Soft Actor Critic   (Haarnoja et al. 2018)                         & Off-policy & Actor-critic\\
 IMPALA       & Importance Weighted Actor Learner (Espeholt et al. 2018)           & Off-policy & Actor-critic\\
-\hlin
+\hline
 \end{tabular}}
 \caption{Survey of common model-free deep RL algorithms. }
 \end{table}
