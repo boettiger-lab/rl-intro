@@ -44,7 +44,7 @@ keywords:
   - Tipping points
 bibliography: references.bib
 nocite: |
-    @A2C, @trpo, @ddpg, @TD3, @impala, @lenz_deepmpc_2015, @weber_imagination-augmented_2018
+    @A2C, @trpo, @ddpg, @TD3, @impala, @hafner_learning_2019, @weber_imagination-augmented_2018
 header-includes:
   - \usepackage{amsmath}
   - \usepackage{amssymb}
@@ -185,7 +185,7 @@ In Table 1, we present some of the more common deep RL algorithms which serve as
 \hline
 Abbreviation & Algorithm Name                                                    & Model \\
 \hline
-D-MPC        & Deep Model-Predictive Control (Lenz, Knepper, and Saxena 2015)    & Model-based \\
+PlaNet       & Deep Planning Network (Hafner et al. 2019)                        & Model-based \\
 I2A          & Imagination-Augmented Agents (Weber et al. 2018)                  & Model-based \\
 MBPO         & Model-based Policy Optimization (Janner et al. 2019)              & Model-based \\
 DQN          & Deep Q Networks   (Mnih et al. 2015)                              & Model-free  \\
