@@ -103,12 +103,12 @@ Three features distinguish RL from other ML methods in ways that are particularl
 2) RL does not require massive amounts of representative sampled historical data,
 3) RL approaches easily integrate with existing ecological models and simulations, which may be our best guide to understanding and predicting future possibilities.
 
-Despite relevance to decision making under uncertainty that could make RL uniquely well suited for ecological and conservation problems, RL has not been widely applied to these fields except in behavioral ecology [@yamada_evolution_2020, @wang_reinforcement_2020].
+Despite relevance to decision making under uncertainty that could make RL uniquely well suited for ecological and conservation problems, RL has not been widely applied across these fields except in behavioral ecology [@yamada_evolution_2020, @wang_reinforcement_2020].
 To date, the problems considered by RL research have largely been drawn from examples in robotic movement and games like Go and Starcraft [@openai_learning_2019; @alphazero; @alphastar].
 Complex environmental problems share many similarities to these tasks and games: the need to plan many moves ahead given a large number of possible outcomes, to account for uncertainty and to respond with contingency to the unexpected.
 RL agents typically develop strategies by interacting with simulators, a practice that should not be unsettling to ecologists since learning from simulators is common across ecology.
 Rich, processes-based simulations such as the SORTIE model in forest management [@sortie], Ecopath with Ecosim in fisheries management [@ecopath], or climate change policy models [@dice] are already used to explore scenarios and inform ecosystem management.
-Decision-theoretic approaches based on optimal control techniques can only find the best strategy in the simplest of ecological models; the so called "curse of dimensionality" makes problems with a large number of states or actions intractable by conventional methods [@Possingham2006; @Marescot2013; @ferrer-mestres_k-n-momdps_2021].
+Decision-theoretic approaches based on optimal control techniques can only find the best strategy in the simplest of ecological models; the so called "curse of dimensionality" makes problems with a large number of states or actions intractable by conventional methods [@Possingham2006; @Marescot2013; @ferrer-mestres_k-n-momdps_2021; @chades_primer_2021].
 Neural-network-based RL techniques, referred to as *deep RL*, have proven particularly effective in problems involving complex, high-dimensional spaces that have previously proven intractable to classical methods.
 
 In this paper, we draw on examples from fisheries management and ecological tipping points to illustrate how deep RL techniques can successfully discover optimal solutions to previously solved management scenarios and discover highly effective solutions to unsolved problems.
