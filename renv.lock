@@ -10,8 +10,7 @@
   },
   "Python": {
     "Version": "3.8.5",
-    "Type": "virtualenv",
-    "Name": null
+    "Type": "virtualenv"
   },
   "Packages": {
     "BH": {
@@ -58,10 +57,10 @@
     },
     "Rcpp": {
       "Package": "Rcpp",
-      "Version": "1.0.6",
+      "Version": "1.0.7",
       "Source": "Repository",
       "Repository": "RSPM",
-      "Hash": "dbb5e436998a7eba5a9d682060533338"
+      "Hash": "dab19adae4440ae55aa8a9d238b246bb"
     },
     "askpass": {
       "Package": "askpass",
@@ -549,7 +548,9 @@
     "renv": {
       "Package": "renv",
       "Version": "0.14.0",
-      "Source": "Repository"
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "30e5eba91b67f7f4d75d31de14bbfbdc"
     },
     "reprex": {
       "Package": "reprex",
