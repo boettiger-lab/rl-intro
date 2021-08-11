@@ -12,8 +12,8 @@ jobs:
       - uses: r-lib/actions/setup-r@master
       - uses: r-lib/actions/setup-pandoc@v1
       - uses: r-lib/actions/setup-tinytex@master
-      - name: Cache Renv packages
-        uses: actions/cache@v2
+        #- name: Cache Renv packages
+        #  uses: actions/cache@v2
         # with:
         #   path: $HOME/.local/share/renv
         #   key: r-${{ hashFiles('renv.lock') }}
