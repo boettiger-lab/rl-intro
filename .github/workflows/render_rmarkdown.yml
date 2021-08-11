@@ -14,10 +14,10 @@ jobs:
       - uses: r-lib/actions/setup-tinytex@master
       - name: Cache Renv packages
         uses: actions/cache@v2
-        with:
-          path: $HOME/.local/share/renv
-          key: r-${{ hashFiles('renv.lock') }}
-          restore-keys: r-
+        # with:
+        #   path: $HOME/.local/share/renv
+        #   key: r-${{ hashFiles('renv.lock') }}
+        #   restore-keys: r-
       - name: Install system dependencies
         run: sudo apt-get update -qq && sudo apt-get -y install libcurl4-openssl-dev
       - name: Install packages
