@@ -84,7 +84,7 @@ Clone the repository <https://github.com/boettiger-lab/rl-intro>, e.g. using the
 
 From the project directory, we can then install all the necessary dependencies using `renv`, which helps ensure a reproducible environment of fixed versions of R packages and Python modules.
 
-```{r message=FALSE}
+```{r message=FALSE, eval=FALSE}
 #install.packages("renv")
 renv::restore()
 ```
