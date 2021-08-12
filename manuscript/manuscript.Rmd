@@ -97,14 +97,14 @@ the number of figures, tables, and text boxes: **6** (five figures, 1 table)
 Advances in both available data and computing power are opening the door for machine learning (ML) to play a greater role in addressing some of our planet’s most pressing environmental problems. 
 But will ML approaches really help us tackle our most pressing environmental problems? From the growing frequency and intensity of wildfire [@wildfire], to over-exploited fisheries [@Worm2006] and declining biodiversity [@biodiversity], to emergent zoonotic pandemics [@covid], the diversity and scope of environmental problems are unprecedented.
 Applications of ML in ecology have to-date illustrated the promise of two methods: *supervised learning* [@joseph_neural_2020] and *unsupervised learning* [@valletta_applications_2017]. 
-However, the fields of ecology and conservation science have largely overlooked the third and possibly most promising approach in the ML triad: *reinforcement learning* (RL).
+However, the fields of ecology and conservation have largely overlooked the third and possibly most promising approach in the ML triad: *reinforcement learning* (RL).
 Three features distinguish RL from other ML methods in ways that are particularly well suited to addressing issues of global ecological change:
 
 1) RL is explicitly focused on the task of selecting actions in an uncertain and changing environment to maximize some objective,
 2) RL does not require massive amounts of representative sampled historical data,
 3) RL approaches easily integrate with existing ecological models and simulations, which may be our best guide to understanding and predicting future possibilities.
 
-Despite relevance to decision making under uncertainty that could make RL uniquely well suited for ecological and conservation problems, RL has not been widely applied across these fields except in behavioral ecology [@yamada_evolution_2020, @wang_reinforcement_2020].
+Despite relevance to decision making under uncertainty that could make RL uniquely well suited for ecological conservation, RL has not been widely applied across this field.
 To date, the problems considered by RL research have largely been drawn from examples in robotic movement and games like Go and Starcraft [@openai_learning_2019; @alphazero; @alphastar].
 Complex environmental problems share many similarities to these tasks and games: the need to plan many moves ahead given a large number of possible outcomes, to account for uncertainty and to respond with contingency to the unexpected.
 RL agents typically develop strategies by interacting with simulators, a practice that should not be unsettling to ecologists since learning from simulators is common across ecology.
@@ -324,9 +324,8 @@ RL cares only about improving the realized cumulative reward, and may sometimes 
 Because these simulations rarely reach stock sizes at or above carrying capacity, these larger stock sizes show a greater deviation from the optimal policy than we observe at more frequently visited lower stock sizes.
 Training these agents in a variety of alternative contexts can improve there ability to generalize to other scenarios.
 
-How would an RL agent be applied to empirical data?
-In principle, this is straightforward.
-After we train an agent on a simulation environment that approximates the fishery of interest, we can query the policy of the agent to find a quota for the observed stock.
+How could an RL agent be applied to empirical data?
+One solution would be to train an agent on a simulation environment that approximates the fishery of interest then query the policy of the agent to find a quota for the observed stock.
 To illustrate this, we examine the quota that would be recommended by our newly trained RL agent, above, against historical harvest levels of Argentine hake based on stock assessments from 1986 - 2014 [@ramlegacy, see Appendix D].
 Hake stocks showed a marked decline throughout this period, while harvests decreased only in proportion [Fig 3].
 In contrast, our RL agent would have recommended significantly lower quotas over most of the same interval, including the closure of the fishery as stocks were sufficiently depleted.
@@ -449,7 +448,7 @@ Methods which must first assume something about the structure or functional form
 Frequently available ecological data is insufficient to distinguish between possible alternative models [@knape_are_2012], or the correct model may be non-identifiable with any amount of data.
 Model-free RL approaches offer a powerful solution for this thorny issue.
 Model-free algorithms have proven successful at learning effective policies even when the underlying model is difficult or impossible to learn [@Pong2020], as long as simulations of possible mechanisms are available.
-Yet, model-free algorithms tend to have poor sample efficiency [@sac] which may restrain them from being insightful on simulators that are slow to run. 
+Yet, current model-free algorithms tend to have poor sample efficiency [@sac] which may restrain them from being insightful on simulators that are slow to run. 
 
 <!-- Real problems are harder than these examples -->
 The examples presented here only scrape the surface of possible RL applications to conservation problems.
