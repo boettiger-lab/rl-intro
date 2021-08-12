@@ -96,7 +96,8 @@ the number of figures, tables, and text boxes: **6** (five figures, 1 table)
 <!-- Environmental problems, ML -->
 Advances in both available data and computing power are opening the door for machine learning (ML) to play a greater role in addressing some of our planet’s most pressing environmental problems. 
 But will ML approaches really help us tackle our most pressing environmental problems? From the growing frequency and intensity of wildfire [@wildfire], to over-exploited fisheries [@Worm2006] and declining biodiversity [@biodiversity], to emergent zoonotic pandemics [@covid], the diversity and scope of environmental problems are unprecedented.
-Applications of ML in ecology have to-date illustrated the promise of two methods: *supervised learning* [@joseph_neural_2020] and *unsupervised learning* [@valletta_applications_2017]. However, the fields of ecology and conservation science have largely overlooked the third and possibly most promising approach in the ML triad: *reinforcement learning* (RL).
+Applications of ML in ecology have to-date illustrated the promise of two methods: *supervised learning* [@joseph_neural_2020] and *unsupervised learning* [@valletta_applications_2017]. 
+However, the fields of ecology and conservation science have largely overlooked the third and possibly most promising approach in the ML triad: *reinforcement learning* (RL).
 Three features distinguish RL from other ML methods in ways that are particularly well suited to addressing issues of global ecological change:
 
 1) RL is explicitly focused on the task of selecting actions in an uncertain and changing environment to maximize some objective,
@@ -144,7 +145,7 @@ Throughout this process, the agent's behavior is codified into what is called a 
 ## RL Environments
 
 An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an observation of the environment's current *state* and an associated *reward* as output.
-In contrast to classical approaches [@Marescot2013], there are few restrictions on what comprises a state or action. 
+In contrast to classical approaches [@Marescot2013; @chades_primer_2021], there are few restrictions on what comprises a state or action. 
 States and actions may be continuous or discrete, completely or partially observed, single or multidimensional.
 The main focus of building an RL environment, however, is on the environment's transition dynamics and reward function.
 The designer of the environment can make the environment follow any transition and reward function provided that both are functions of the current state and action.
@@ -448,6 +449,7 @@ Methods which must first assume something about the structure or functional form
 Frequently available ecological data is insufficient to distinguish between possible alternative models [@knape_are_2012], or the correct model may be non-identifiable with any amount of data.
 Model-free RL approaches offer a powerful solution for this thorny issue.
 Model-free algorithms have proven successful at learning effective policies even when the underlying model is difficult or impossible to learn [@Pong2020], as long as simulations of possible mechanisms are available.
+Yet, model-free algorithms tend to have poor sample efficiency [@sac] which may restrain them from being insightful on simulators that are slow to run. 
 
 <!-- Real problems are harder than these examples -->
 The examples presented here only scrape the surface of possible RL applications to conservation problems.
