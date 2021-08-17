@@ -472,6 +472,13 @@ Since deep neural networks lack transparency [@castelvecchi_can_2016], can we be
 Given that there have been many examples of reward misspecification leading to undesirable behavior [@hadfield-menell_inverse_2020], what if we have selected an objective that unexpectedly causes damaging behavior?
 A greater role of algorithms in conservation decision-making also raises questions about ethics and power, particularly when those algorithms are opaque or proprietary [@scoville_algorithmic_2021, @chapman_promoting_2021].
 
+<!-- Where/how to use deep RL -->
+Yet, a more immediate barrier to deep RL being used in conservation is deep RL's hardware requirements.
+Depending on the complexity of the RL environment and agent, the equipment necessary to train an agent can vary widely.
+The examples shown above were selected so they can be replicated on a personal computer, but more realistic problems will likely require specialized computational resources.
+For instance, one of the most notable achievements in RL, Alphastar, required 33 TPUs, processors that are specialized for deep learning, for more than 40 days [@alphastar].
+Fully detailed conservation decision-making problems will likely require comparable specialized algorithms and hardware that ecologists do not generally have access to.
+For deep RL to be an effective tool for conservation, there will need to be large investments of time and money, and extensive collaboration across computer science and ecology.
 
 <!-- But never fear, hard problems have been solved before!-->
 Deep RL is still a very young field, where despite several landmark successes, potential far outstrips practice.
