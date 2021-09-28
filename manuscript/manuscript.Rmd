@@ -115,7 +115,7 @@ Neural-network-based RL techniques, referred to as *deep RL*, have proven partic
 In this paper, we draw on examples from fisheries management and ecological tipping points to illustrate how deep RL techniques can successfully discover optimal solutions to previously solved management scenarios and discover highly effective solutions to unsolved problems.
 We demonstrate that RL-based approaches are capable but by no means a magic bullet: reasonable solutions require careful design of training environments, choice of RL algorithms, tuning and evaluation, as well as substantial computational power.
 Our examples are intentionally simple, aiming to provide a clear template for understanding that could be easily extended to cover more realistic conditions. 
-We include an extensive appendices with carefully annotated code which should allow readers to both reproduce and extend this analysis.
+We include extensive appendices with carefully annotated code which should allow readers to both reproduce and extend this analysis.
 
 
 # RL overview
@@ -157,14 +157,14 @@ In other environments, an agent may have to learn to forgo immediate rewards (or
 
 \begin{figure}
 \includegraphics[width=\linewidth]{fig1.pdf}
-\caption{Deep Reinforcement Learning:  A deep RL \emph{agent} uses a \emph{neural network} to select an \emph{action} in response to an \emph{observation} of the \emph{environment}, and receives a \emph{reward} from the environment as a result. During \emph{training}, the agent tries to maximize its cumulative reward by interacting with the environment and learning from experience. In the RL loop, the agent performs an action, then the environment returns a reward and an observation of the environment's state. The agent-environment loop continues until the environment reaches a terminal state, after which the environment will reset, causing a new \emph{episode} to begin. Across training episodes, the agent will continually update the \emph{parameters} in its neural network, so that the agent will select better actions. Before training starts, the researcher must input a set of \emph{hyperparameters} to the agent; hyperparameters direct the learning process and thus affect the outcome of training. A researcher finds the best set of hyperparameters during \emph{tuning}. Hyperparameter tuning consists of iterative \emph{trials}, in which the agent is trained with different sets of hyperparameters. At the end of a trial, the agent is evaluated to see which set of hyperparameters results in the highest cumulative reward. An agent is \emph{evaluated} by recording the cumulative reward over one episode, or the mean reward over multiple episodes. Within evaluation, the agent does not update its neural network; instead, the agent only uses a trained neural network to select actions.}
+\caption{Deep Reinforcement Learning:  A deep RL \emph{agent} uses a \emph{neural network} to select an \emph{action} in response to an \emph{observation} of the \emph{environment}, and receives a \emph{reward} from the environment as a result. During \emph{training}, the agent tries to maximize its cumulative reward by interacting with the environment and learning from experience. In the RL loop, the agent performs an action, then the environment returns a reward and an observation of the environment's state. The agent-environment loop continues until the environment reaches a terminal state, after which the environment will reset, causing a new \emph{episode} to begin. Across training episodes, the agent will continually update the \emph{parameters} in its neural network, so that the agent will select better actions. Before training starts, the researcher must input a set of \emph{hyperparameters} to the agent; hyperparameters direct the learning process and thus affect the outcome of training. A researcher finds the best set of hyperparameters during \emph{tuning}. Hyperparameter tuning consists of iterative \emph{trials}, in which the agent is trained with different sets of hyperparameters. At the end of a trial, the agent is evaluated to see which set of hyperparameters results in the highest cumulative reward. An agent is \emph{evaluated} by recording the cumulative reward over one episode, or the mean reward over multiple episodes. Within evaluation, the agent does not update its neural network; instead, the agent uses a trained neural network to select actions.}
 \end{figure}
 
 
 The OpenAI `gym` software framework was created to address the lack of standardization of RL environments and the need for better benchmark environments to advance RL research [@brockman2016].
 The `gym` framework defines a standard interface and methods by which a developer can describe an arbitrary environment in a computer program.
 This interface allows for the application of software agents that can interact and learn in that environment without knowing anything about the environment's internal details.
-Using the `gym` framework, we turn existing ecological models into valid environmental simulators that can be used with any RL agents.
+Using the `gym` framework, we turn existing ecological models into valid environmental simulators that can be used with any RL agent.
 In Appendix C, we give detailed instruction on how an OpenAI `gym` is constructed.
 
 ## Deep RL Agents
@@ -227,7 +227,7 @@ A POMDP is a tuple that consists of the following:
 
 - $\Omega$ : a set of observations called the observation space
 
-- $E(o_{t}| s_{t})$: an emission distribution, which accounts for an agent's observation being different from environment's state
+- $E(o_{t}| s_{t})$: an emission distribution, which accounts for an agent's observation being different from the environment's state
 
 - $T(s_{t+1}|s_t, a_t)$: a state transition operator which describes the dynamics of the system
 
@@ -238,7 +238,7 @@ A POMDP is a tuple that consists of the following:
 - $\gamma \in (0,1]$: a discount factor
 
 The agent interacts with the environment in an iterative loop, whereby the agent only has access to the observation space, action space and the discounted reward signal, $\gamma^t \, r(s_t, a_t)$.
-As the agent interacts with the environment by selecting actions according to its policy, $\pi(a_t | o_t)$, the agent will create a trajectory, $\tau = (s_0, o_0, a_0, \dots, s_{H-1}, o_{H-1}, a_{H-1}, s_H)$.
+As the agent interacts with the environment by selecting actions according to its policy, $\pi(a_t | o_t)$^[The policy can also be conditioned on a history of observations, $(o_0, ..., o_t)$.], the agent creates a trajectory, $\tau = (s_0, o_0, a_0, \dots, s_{H-1}, o_{H-1}, a_{H-1}, s_H)$.
 From these definitions, we can provide an agent's trajectory distribution for a given policy as,
 
 $$
@@ -322,7 +322,7 @@ This confirms that quotas tend to be slightly lower than optimal, most notably a
 These features highlight a common challenge in the design and training of RL algorithms.
 RL cares only about improving the realized cumulative reward, and may sometimes achieve this in unexpected ways.
 Because these simulations rarely reach stock sizes at or above carrying capacity, these larger stock sizes show a greater deviation from the optimal policy than we observe at more frequently visited lower stock sizes.
-Training these agents in a variety of alternative contexts can improve there ability to generalize to other scenarios.
+Training these agents in a variety of alternative contexts can improve their ability to generalize to other scenarios.
 
 How could an RL agent be applied to empirical data?
 One solution would be to train an agent on a simulation environment that approximates the fishery of interest then query the policy of the agent to find a quota for the observed stock.
@@ -473,7 +473,7 @@ Given that there have been many examples of reward misspecification leading to u
 A greater role of algorithms in conservation decision-making also raises questions about ethics and power, particularly when those algorithms are opaque or proprietary [@scoville_algorithmic_2021, @chapman_promoting_2021].
 
 <!-- Where/how to use deep RL -->
-Yet, a more immediate barrier to deep RL being used in conservation is deep RL's hardware requirements.
+Yet, a more immediate barrier to the use of deep RL in conservation is deep RL's hardware requirements.
 Depending on the complexity of the RL environment and agent, the equipment necessary to train an agent can vary widely.
 The examples shown above were selected so they can be replicated on a personal computer, but more realistic problems will likely require specialized computational resources.
 For instance, one of the most notable achievements in RL, Alphastar, required 33 TPUs, processors that are specialized for deep learning, for more than 40 days [@alphastar].
