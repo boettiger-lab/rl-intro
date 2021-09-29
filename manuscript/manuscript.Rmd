@@ -448,7 +448,7 @@ Yet, it is important to distinguish the aim of these behavioral studies from the
 In behavioral ecology studies, RL agents are used to represent organisms.
 Assuming that animals attempt to maximize some cumulative reward like RL agents, the authors of these studies draw conclusions about animal behavior and evolution by observing how the RL agents perform.
 When applying deep RL to conservation management, we do not make the assumption that the behavior of an RL agent is a good substitute for the behavior of an animal.
-For conservation management, we instead propose using RL as a tool to search for solutions to unsolved decision-making problems. 
+For conservation management, we instead propose using RL as a tool to search for solutions to decision-making problems. 
 
 <!-- Real problems are harder than these examples -->
 The examples presented here only scrape the surface of possible RL applications to conservation problems.
@@ -458,7 +458,7 @@ In the case of the ecosystem tipping point scenario, the optimal strategy is unk
 In these simple examples in which the simulation implements a single model, training is analogous to classical methods which take the model as given [@Marescot2013].
 But classical approaches can be difficult to generalize when the underlying model is unknown.
 In contrast, the process of training an RL algorithm on a more complex problem is no different than training on a simple one: we only need access to a simulation which can generate plausible future states in response to possible actions.
-This flexibility of RL could allow us to attain better decision-making insight for our most realistic ecological models such as the individual-based models used in the management of forests and wildfire [@sortie; @wildfire], disease [@covid], marine ecosystems [@ecopath], or global climate change [@dice].
+This flexibility of RL could allow us to attain better decision-making insight for our most realistic ecological models like those used for the management of forests and wildfire [@sortie; @wildfire], disease [@covid], marine ecosystems [@ecopath], or global climate change [@dice].
 
 <!-- Model free is great bc we don't know the true models -->
 The rapidly expanding class of model-free RL algorithms is particularly appealing given the ubiquitous presence of model uncertainty in ecological dynamics.
