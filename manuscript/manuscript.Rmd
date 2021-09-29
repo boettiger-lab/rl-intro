@@ -441,6 +441,14 @@ However, the limitations of classical methods such as optimal control frequently
 Complexity comes not only from the ecological processes but also the available actions.
 Deep RL agents have proven remarkably effective in handling such complexity, particularly when leveraging immense computing resources increasingly available through advances in hardware and software [@gpu_computing]. 
 
+This paper does not set the precedent as the first application of RL to ecology.
+In particular, there have been a number of studies applying RL to behavioral ecology, typically with multi-agent environments [@wang_reinforcement_2020, @frankenhuis_enriching_2019, @perolat_multi-agent_2017].
+Yet, it is important to distinguish the aim of these behavioral studies from the aim of applying RL to conservation management.
+In behavioral ecology RL studies, the authors employ RL agents to represent organisms.
+Assuming that animals try to behave optimally under some objective, these authors then draw conclusions about animal behavior and evolution by observing how the RL agents learn.
+When applying deep RL to conservation management, we do not make a similar logical leap to assuming that animals behave like RL agents.
+We instead propose using RL as a way to search for solutions to unsolved decision-making problems in conservation. 
+
 <!-- Model free is great bc we don't know the true models -->
 The rapidly expanding class of model-free RL algorithms is particularly appealing given the ubiquitous presence of model uncertainty in ecological dynamics.
 Rarely do we know the underlying functional forms for ecological processes.
