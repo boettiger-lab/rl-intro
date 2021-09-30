@@ -44,7 +44,7 @@ keywords:
   - Tipping points
 bibliography: references.bib
 nocite: |
-    @A2C, @trpo, @ddpg, @TD3, @impala, @lenz_deepmpc_2015, @weber_imagination-augmented_2018
+    @A2C, @trpo, @ddpg, @TD3, @impala, @hafner_learning_2019, @weber_imagination-augmented_2018
 header-includes:
   - \usepackage{amsmath}
   - \usepackage{amssymb}
@@ -96,25 +96,26 @@ the number of figures, tables, and text boxes: **6** (five figures, 1 table)
 <!-- Environmental problems, ML -->
 Advances in both available data and computing power are opening the door for machine learning (ML) to play a greater role in addressing some of our planet’s most pressing environmental problems. 
 But will ML approaches really help us tackle our most pressing environmental problems? From the growing frequency and intensity of wildfire [@wildfire], to over-exploited fisheries [@Worm2006] and declining biodiversity [@biodiversity], to emergent zoonotic pandemics [@covid], the diversity and scope of environmental problems are unprecedented.
-Applications of ML in ecology have to-date illustrated the promise of two methods: *supervised learning* [@joseph_neural_2020] and *unsupervised learning* [@valletta_applications_2017]. However, the fields of ecology and conservation science have so far overlooked the third and possibly most promising approach in the ML triad: *reinforcement learning* (RL).
+Applications of ML in ecology have to-date illustrated the promise of two methods: *supervised learning* [@joseph_neural_2020] and *unsupervised learning* [@valletta_applications_2017]. 
+However, the fields of ecology and conservation have largely overlooked the third and possibly most promising approach in the ML triad: *reinforcement learning* (RL).
 Three features distinguish RL from other ML methods in ways that are particularly well suited to addressing issues of global ecological change:
 
 1) RL is explicitly focused on the task of selecting actions in an uncertain and changing environment to maximize some objective,
 2) RL does not require massive amounts of representative sampled historical data,
 3) RL approaches easily integrate with existing ecological models and simulations, which may be our best guide to understanding and predicting future possibilities.
 
-Despite relevance to decision making under uncertainty that could make RL uniquely well suited for ecological and conservation problems, it has so far seen little application in these fields.
+Despite relevance to decision making under uncertainty that could make RL uniquely well suited for ecological conservation, RL has not been widely applied across this field.
 To date, the problems considered by RL research have largely been drawn from examples in robotic movement and games like Go and Starcraft [@openai_learning_2019; @alphazero; @alphastar].
 Complex environmental problems share many similarities to these tasks and games: the need to plan many moves ahead given a large number of possible outcomes, to account for uncertainty and to respond with contingency to the unexpected.
 RL agents typically develop strategies by interacting with simulators, a practice that should not be unsettling to ecologists since learning from simulators is common across ecology.
 Rich, processes-based simulations such as the SORTIE model in forest management [@sortie], Ecopath with Ecosim in fisheries management [@ecopath], or climate change policy models [@dice] are already used to explore scenarios and inform ecosystem management.
-Decision-theoretic approaches based on optimal control techniques can only find the best strategy in the simplest of ecological models; the so called "curse of dimensionality" makes problems with a large number of states or actions intractable by conventional methods [@Possingham2006; @Marescot2013; @ferrer-mestres_k-n-momdps_2021].
+Decision-theoretic approaches based on optimal control techniques can only find the best strategy in the simplest of ecological models; the so called "curse of dimensionality" makes problems with a large number of states or actions intractable by conventional methods [@Possingham2006; @Marescot2013; @ferrer-mestres_k-n-momdps_2021; @chades_primer_2021].
 Neural-network-based RL techniques, referred to as *deep RL*, have proven particularly effective in problems involving complex, high-dimensional spaces that have previously proven intractable to classical methods.
 
 In this paper, we draw on examples from fisheries management and ecological tipping points to illustrate how deep RL techniques can successfully discover optimal solutions to previously solved management scenarios and discover highly effective solutions to unsolved problems.
 We demonstrate that RL-based approaches are capable but by no means a magic bullet: reasonable solutions require careful design of training environments, choice of RL algorithms, tuning and evaluation, as well as substantial computational power.
 Our examples are intentionally simple, aiming to provide a clear template for understanding that could be easily extended to cover more realistic conditions. 
-We include an extensive appendices with carefully annotated code which should allow readers to both reproduce and extend this analysis.
+We include extensive appendices with carefully annotated code which should allow readers to both reproduce and extend this analysis.
 
 
 # RL overview
@@ -144,7 +145,7 @@ Throughout this process, the agent's behavior is codified into what is called a 
 ## RL Environments
 
 An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an observation of the environment's current *state* and an associated *reward* as output.
-In contrast to classical approaches [@Marescot2013], there are few restrictions on what comprises a state or action. 
+In contrast to classical approaches [@Marescot2013; @chades_primer_2021], there are few restrictions on what comprises a state or action. 
 States and actions may be continuous or discrete, completely or partially observed, single or multidimensional.
 The main focus of building an RL environment, however, is on the environment's transition dynamics and reward function.
 The designer of the environment can make the environment follow any transition and reward function provided that both are functions of the current state and action.
@@ -156,14 +157,14 @@ In other environments, an agent may have to learn to forgo immediate rewards (or
 
 \begin{figure}
 \includegraphics[width=\linewidth]{fig1.pdf}
-\caption{Deep Reinforcement Learning:  A deep RL \emph{agent} uses a \emph{neural network} to select an \emph{action} in response to an \emph{observation} of the \emph{environment}, and receives a \emph{reward} from the environment as a result. During \emph{training}, the agent tries to maximize its cumulative reward by interacting with the environment and learning from experience. In the RL loop, the agent performs an action, then the environment returns a reward and an observation of the environment's state. The agent-environment loop continues until the environment reaches a terminal state, after which the environment will reset, causing a new \emph{episode} to begin. Across training episodes, the agent will continually update the \emph{parameters} in its neural network, so that the agent will select better actions. Before training starts, the researcher must input a set of \emph{hyperparameters} to the agent; hyperparameters direct the learning process and thus affect the outcome of training. A researcher finds the best set of hyperparameters during \emph{tuning}. Hyperparameter tuning consists of iterative \emph{trials}, in which the agent is trained with different sets of hyperparameters. At the end of a trial, the agent is evaluated to see which set of hyperparameters results in the highest cumulative reward. An agent is \emph{evaluated} by recording the cumulative reward over one episode, or the mean reward over multiple episodes. Within evaluation, the agent does not update its neural network; instead, the agent only uses a trained neural network to select actions.}
+\caption{Deep Reinforcement Learning:  A deep RL \emph{agent} uses a \emph{neural network} to select an \emph{action} in response to an \emph{observation} of the \emph{environment}, and receives a \emph{reward} from the environment as a result. During \emph{training}, the agent tries to maximize its cumulative reward by interacting with the environment and learning from experience. In the RL loop, the agent performs an action, then the environment returns a reward and an observation of the environment's state. The agent-environment loop continues until the environment reaches a terminal state, after which the environment will reset, causing a new \emph{episode} to begin. Across training episodes, the agent will continually update the \emph{parameters} in its neural network, so that the agent will select better actions. Before training starts, the researcher must input a set of \emph{hyperparameters} to the agent; hyperparameters direct the learning process and thus affect the outcome of training. A researcher finds the best set of hyperparameters during \emph{tuning}. Hyperparameter tuning consists of iterative \emph{trials}, in which the agent is trained with different sets of hyperparameters. At the end of a trial, the agent is evaluated to see which set of hyperparameters results in the highest cumulative reward. An agent is \emph{evaluated} by recording the cumulative reward over one episode, or the mean reward over multiple episodes. Within evaluation, the agent does not update its neural network; instead, the agent uses a trained neural network to select actions.}
 \end{figure}
 
 
 The OpenAI `gym` software framework was created to address the lack of standardization of RL environments and the need for better benchmark environments to advance RL research [@brockman2016].
 The `gym` framework defines a standard interface and methods by which a developer can describe an arbitrary environment in a computer program.
 This interface allows for the application of software agents that can interact and learn in that environment without knowing anything about the environment's internal details.
-Using the `gym` framework, we turn existing ecological models into valid environmental simulators that can be used with any RL agents.
+Using the `gym` framework, we turn existing ecological models into valid environmental simulators that can be used with any RL agent.
 In Appendix C, we give detailed instruction on how an OpenAI `gym` is constructed.
 
 ## Deep RL Agents
@@ -185,7 +186,7 @@ In Table 1, we present some of the more common deep RL algorithms which serve as
 \hline
 Abbreviation & Algorithm Name                                                    & Model \\
 \hline
-D-MPC        & Deep Model-Predictive Control (Lenz, Knepper, and Saxena 2015)    & Model-based \\
+PlaNet       & Deep Planning Network (Hafner et al. 2019)                        & Model-based \\
 I2A          & Imagination-Augmented Agents (Weber et al. 2018)                  & Model-based \\
 MBPO         & Model-based Policy Optimization (Janner et al. 2019)              & Model-based \\
 DQN          & Deep Q Networks   (Mnih et al. 2015)                              & Model-free  \\
@@ -226,7 +227,7 @@ A POMDP is a tuple that consists of the following:
 
 - $\Omega$ : a set of observations called the observation space
 
-- $E(o_{t}| s_{t})$: an emission distribution, which accounts for an agent's observation being different from environment's state
+- $E(o_{t}| s_{t})$: an emission distribution, which accounts for an agent's observation being different from the environment's state
 
 - $T(s_{t+1}|s_t, a_t)$: a state transition operator which describes the dynamics of the system
 
@@ -237,7 +238,7 @@ A POMDP is a tuple that consists of the following:
 - $\gamma \in (0,1]$: a discount factor
 
 The agent interacts with the environment in an iterative loop, whereby the agent only has access to the observation space, action space and the discounted reward signal, $\gamma^t \, r(s_t, a_t)$.
-As the agent interacts with the environment by selecting actions according to its policy, $\pi(a_t | o_t)$, the agent will create a trajectory, $\tau = (s_0, o_0, a_0, \dots, s_{H-1}, o_{H-1}, a_{H-1}, s_H)$.
+As the agent interacts with the environment by selecting actions according to its policy, $\pi(a_t | o_t)$^[The policy can also be conditioned on a history of observations, $(o_0, ..., o_t)$.], the agent creates a trajectory, $\tau = (s_0, o_0, a_0, \dots, s_{H-1}, o_{H-1}, a_{H-1}, s_H)$.
 From these definitions, we can provide an agent's trajectory distribution for a given policy as,
 
 $$
@@ -321,11 +322,10 @@ This confirms that quotas tend to be slightly lower than optimal, most notably a
 These features highlight a common challenge in the design and training of RL algorithms.
 RL cares only about improving the realized cumulative reward, and may sometimes achieve this in unexpected ways.
 Because these simulations rarely reach stock sizes at or above carrying capacity, these larger stock sizes show a greater deviation from the optimal policy than we observe at more frequently visited lower stock sizes.
-Training these agents in a variety of alternative contexts can improve there ability to generalize to other scenarios.
+Training these agents in a variety of alternative contexts can improve their ability to generalize to other scenarios.
 
-How would an RL agent be applied to empirical data?
-In principle, this is straightforward.
-After we train an agent on a simulation environment that approximates the fishery of interest, we can query the policy of the agent to find a quota for the observed stock.
+How could an RL agent be applied to empirical data?
+One solution would be to train an agent on a simulation environment that approximates the fishery of interest then query the policy of the agent to find a quota for the observed stock.
 To illustrate this, we examine the quota that would be recommended by our newly trained RL agent, above, against historical harvest levels of Argentine hake based on stock assessments from 1986 - 2014 [@ramlegacy, see Appendix D].
 Hake stocks showed a marked decline throughout this period, while harvests decreased only in proportion [Fig 3].
 In contrast, our RL agent would have recommended significantly lower quotas over most of the same interval, including the closure of the fishery as stocks were sufficiently depleted.
@@ -441,13 +441,13 @@ However, the limitations of classical methods such as optimal control frequently
 Complexity comes not only from the ecological processes but also the available actions.
 Deep RL agents have proven remarkably effective in handling such complexity, particularly when leveraging immense computing resources increasingly available through advances in hardware and software [@gpu_computing]. 
 
-<!-- Model free is great bc we don't know the true models -->
-The rapidly expanding class of model-free RL algorithms is particularly appealing given the ubiquitous presence of model uncertainty in ecological dynamics.
-Rarely do we know the underlying functional forms for ecological processes.
-Methods which must first assume something about the structure or functional form of a process before estimating the corresponding parameter can only ever be as good as those structural assumptions.
-Frequently available ecological data is insufficient to distinguish between possible alternative models [@knape_are_2012], or the correct model may be non-identifiable with any amount of data.
-Model-free RL approaches offer a powerful solution for this thorny issue.
-Model-free algorithms have proven successful at learning effective policies even when the underlying model is difficult or impossible to learn [@Pong2020], as long as simulations of possible mechanisms are available.
+<!-- RL for behavioral ecology is not the same as RL for conservation -->
+This paper does not set the precedent as the first application of RL to ecology.
+There have been a number of studies applying RL to behavioral ecology, typically with multi-agent environments [@wang_reinforcement_2020, @frankenhuis_enriching_2019, @perolat_multi-agent_2017].
+Yet, it is important to distinguish the aim of these behavioral studies from the aim of applying RL to conservation management. <!-- Compare using RL for conserv as prescriptive, behav eco as descriptive. We don't assume RL is the model. -->
+In previous behavioral ecology studies, RL algorithms as a substitute for animal learning mechanisms [@wang_reinforcement_2020, @perolat_multi-agent_2017].
+When applying deep RL to conservation management, we do not make the assumption that an RL algorithm learns analogously to how an animal learns.
+We instead propose that RL be used as a tool to search for solutions to decision-making problems. 
 
 <!-- Real problems are harder than these examples -->
 The examples presented here only scrape the surface of possible RL applications to conservation problems.
@@ -457,13 +457,21 @@ In the case of the ecosystem tipping point scenario, the optimal strategy is unk
 In these simple examples in which the simulation implements a single model, training is analogous to classical methods which take the model as given [@Marescot2013].
 But classical approaches can be difficult to generalize when the underlying model is unknown.
 In contrast, the process of training an RL algorithm on a more complex problem is no different than training on a simple one: we only need access to a simulation which can generate plausible future states in response to possible actions.
-This flexibility of RL could allow us to attain better decision-making insight for our most realistic ecological models such as the individual-based models used in the management of forests and wildfire [@sortie; @wildfire], disease [@covid], marine ecosystems [@ecopath], or global climate change [@dice].
+This flexibility of RL could allow us to attain better decision-making insight for our most realistic ecological models like those used for the management of forests and wildfire [@sortie; @wildfire], disease [@covid], marine ecosystems [@ecopath], or global climate change [@dice].
 
+<!-- Model free is great bc we don't know the true models -->
+The rapidly expanding class of model-free RL algorithms is particularly appealing given the ubiquitous presence of model uncertainty in ecological dynamics.
+Rarely do we know the underlying functional forms for ecological processes.
+Methods which must first assume something about the structure or functional form of a process before estimating the corresponding parameter can only ever be as good as those structural assumptions.
+Frequently, available ecological data are insufficient to distinguish between possible alternative models [@knape_are_2012], or the correct model may be non-identifiable with any amount of data.
+Model-free RL approaches offer a powerful solution for this thorny issue.
+Model-free algorithms have proven successful at learning effective policies even when the underlying model is difficult or impossible to learn [@Pong2020], as long as simulations of possible mechanisms are available.
 
 <!-- Solving 'real' problems will be hard -->
 Successfully applying RL to complex ecological problems is no easy task.
 Even on relatively uncomplicated environments, training an RL agent can be more challenging than expected due to an entanglement of reasons like hyperparameter instability and poor exploration that can be very difficult to resolve [@drlthatmatters; @berger-tal_exploration-exploitation_2014].
-As Section 5.1 and 5.2 illustrate, it is important to begin with simple problems, including those for which an optimal strategy is already known.
+It is also worth acknowledging that deep RL algorithms, particularly model-free algorithms, have poor sample efficiency, which could limit deep RL from being effective on environments that are slow to run [@sac].  
+Thus, as Section 5.1 and 5.2 illustrate, it is important to begin with simple problems, including those for which an optimal strategy is already known.
 Such examples provide important benchmarks to calibrate the performance, tuning and training requirements of RL.
 Once RL agents have mastered the basics, the examples can be easily extended into more complex problems by changing the environment.
 Yet, even in the case that an agent performs well on a realistic problem, there will be a range of open questions in using deep RL to inform decision-making. 
@@ -471,6 +479,13 @@ Since deep neural networks lack transparency [@castelvecchi_can_2016], can we be
 Given that there have been many examples of reward misspecification leading to undesirable behavior [@hadfield-menell_inverse_2020], what if we have selected an objective that unexpectedly causes damaging behavior?
 A greater role of algorithms in conservation decision-making also raises questions about ethics and power, particularly when those algorithms are opaque or proprietary [@scoville_algorithmic_2021, @chapman_promoting_2021].
 
+<!-- Where/how to use deep RL -->
+Yet, a more immediate barrier to the use of deep RL in conservation is deep RL's hardware requirements.
+Depending on the complexity of the RL environment and agent, the equipment necessary to train an agent can vary widely.
+The examples shown above were selected so they can be replicated on a personal computer, but more realistic problems will likely require specialized computational resources.
+For instance, one of the most notable achievements in RL, Alphastar, required 33 TPUs, processors that are specialized for deep learning, for more than 40 days [@alphastar].
+Fully detailed conservation decision-making problems will likely require comparable specialized algorithms and hardware that ecologists do not generally have access to.
+For deep RL to be an effective tool for conservation, there will need to be large investments of time and money, and extensive collaboration across computer science and ecology.
 
 <!-- But never fear, hard problems have been solved before!-->
 Deep RL is still a very young field, where despite several landmark successes, potential far outstrips practice.
