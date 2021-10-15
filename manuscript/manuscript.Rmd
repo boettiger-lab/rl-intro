@@ -494,6 +494,22 @@ Successes have so far been concentrated in applications to games and robotics, n
 Iterative improvements to well-posed public challenges have proven immensely effective in the computer science community in tackling difficult problems, which allow many teams with diverse expertise not only to compete but to learn from each other [@netflix_prize; @imagenet].
 By working to develop similarly well-posed challenges as clear benchmarks, ecology and environmental science researchers may be able to replicate that collaborative, iterative success in cracking hard problems.
 
+# Acknowledgements {-}
+
+All authors were supported by the NSF Faculty Early Career Development Program Award 1942280. We thank Benjamin Blonder, Zachary Sunberg, and Claire Tomlin for their thoughtful comments.
+
+# Conflicts of Interest {-}
+
+The authors declare there is no conflict of interest.
+
+# Authors' Contributions {-}
+
+M.L. and C.B. developed the code and wrote the manuscript with support from K.E.A.N. and M.S.C.
+
+# Data Availability {-}
+
+We have created a github repository <https://github.com/boettiger-lab/rl-intro> that contains the code used to produce the figures.
+
 
 \pagebreak
 
