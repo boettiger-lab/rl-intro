@@ -299,7 +299,7 @@ In contrast, a model-free deep RL algorithm makes no assumption about the precis
 
 We illustrate the deep RL approach using the model-free algorithm known as Twin Delayed Deep Deterministic Policy Gradient or more simply, TD3 [@TD3].
 A step-by-step walk-through for training agents on this environment is provided in the Appendix.
-We compare the resulting management, policy, and reward under the RL agent to that achieved by the optimal management solution [Fig 2].
+We compare the resulting management, policy, and reward under the RL agent to that achieved by the optimal management solution [Fig. 2].
 Despite having no knowledge of the underlying model, the RL agent learns enough to achieve nearly optimal performance.
 
 
@@ -317,9 +317,9 @@ plot_sims(sims_df) / ( plot_policy(policy_df) + ylim(c(0,0.8)) + plot_reward(sim
 
 ```
 
-The cumulative reward (utility) realized across 100 stochastic replicates is indistinguishable from that of the optimal policy [Fig 2].
+The cumulative reward (utility) realized across 100 stochastic replicates is indistinguishable from that of the optimal policy [Fig. 2].
 Nevertheless, comparing the mean state over replicate simulations reveals some differences in the RL strategy, wherein the stock is maintained at a slightly higher-than-optimal biomass.
-Because our state space and action space are sufficiently low-dimensional in this example, we are also able to visualize the policy function directly, and compare to the optimal policy [Fig 2].
+Because our state space and action space are sufficiently low-dimensional in this example, we are also able to visualize the policy function directly, and compare to the optimal policy [Fig. 2].
 This confirms that quotas tend to be slightly lower than optimal, most notably at larger stock sizes.
 These features highlight a common challenge in the design and training of RL algorithms.
 RL cares only about improving the realized cumulative reward, and may sometimes achieve this in unexpected ways.
@@ -329,7 +329,7 @@ Training these agents in a variety of alternative contexts can improve their abi
 How could an RL agent be applied to empirical data?
 One solution would be to train an agent on a simulation environment that approximates the fishery of interest then query the policy of the agent to find a quota for the observed stock.
 To illustrate this, we examine the quota that would be recommended by our newly trained RL agent, above, against historical harvest levels of Argentine hake based on stock assessments from 1986 - 2014 [@ramlegacy, see Appendix D].
-Hake stocks showed a marked decline throughout this period, while harvests decreased only in proportion [Fig 3].
+Hake stocks showed a marked decline throughout this period, while harvests decreased only in proportion [Fig. 3].
 In contrast, our RL agent would have recommended significantly lower quotas over most of the same interval, including the closure of the fishery as stocks were sufficiently depleted.
 While we have no way of knowing for sure if the RL quotas would have led to recovery, let alone an optimal harvest rate, the contrast between those recommended quotas and the historical catch is notable.
 
@@ -363,7 +363,7 @@ Instead of researchers evaluating a handful of control rules, the RL agent propo
 ## Ecological Tipping Points \label{sec:tipping}
 
 Our second example focuses on a case for which we do not have an existing, provably optimal policy to compare against.
-We consider the generic problem of an ecosystem facing slowly deteriorating environmental conditions which move the dynamics closer towards a tipping point [Fig 4].
+We consider the generic problem of an ecosystem facing slowly deteriorating environmental conditions which move the dynamics closer towards a tipping point [Fig. 4].
 This model of a critical transition has been posited widely in ecological systems, from the simple consumer-resource model of [@May1977] on which our dynamics are based, to microbial dynamics [@Dai2012], lake ecosystem communities [@Carpenter2011] to planetary ecosystems [@Barnosky2012].
 On top of these ecological dynamics we introduce an explicit ecosystem service model quantifying the value of more desirable 'high' state relative to the 'low' state.
 For simplicity, we assume a proportional benefit $b$ associated with the ecosystem state $X(t)$.
@@ -405,7 +405,7 @@ plot_sims(tip_sims_df) / ( plot_policy(tip_policy_df) + plot_reward(tip_sims_df)
 
 The TD3-trained agent proves far more successful in preventing chance transitions across the tipping point, consistently achieving a higher cumulative ecosystem service value across replicates than the steady-state strategy.
 
-Examining the replicate management trajectories and corresponding rewards [Fig 5] reveal that the RL agent incurs significantly higher costs in the initial phases of the simulation, dipping well below the mean steady-state reward initially before exceeding it in the long run.
+Examining the replicate management trajectories and corresponding rewards [Fig. 5] reveal that the RL agent incurs significantly higher costs in the initial phases of the simulation, dipping well below the mean steady-state reward initially before exceeding it in the long run.
 This initial investment then begins to pay off -- by about the 200th time step the RL agent has surpassed the performance of the steady-state strategy.
 The policy plot provides more intuition for the RL agent's strategy: at very high state values, the RL agent opts for no conservation action -- so far from the tipping point, no response is required.
 Near the tipping point, the RL agent steeply ramps up the conservation effort, and retains this effort even as the system falls below the critical threshold, where a sufficiently aggressive response can tip the system back into recovery.
