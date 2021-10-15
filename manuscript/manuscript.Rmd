@@ -48,9 +48,11 @@ nocite: |
 header-includes:
   - \usepackage{amsmath}
   - \usepackage{amssymb}
-#  - \usepackage{lineno}
+  - \usepackage{setspace}
+  - \usepackage{lineno}
 #  - \usepackage{endfloat}
-#  - \linenumbers
+  - \linenumbers
+  - \doublespacing
   
 output: 
   rticles::arxiv_article:
@@ -511,6 +513,5 @@ M.L. and C.B. developed the code and wrote the manuscript with support from K.E.
 We have created a github repository <https://github.com/boettiger-lab/rl-intro> that contains the code used to produce the figures.
 
 
-\pagebreak
 
 # References
