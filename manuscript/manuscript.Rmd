@@ -26,7 +26,6 @@ abstract: |
   In this paper, we illustrate and discuss the potential of a promising 
   corner of machine learning known as _reinforcement learning_ (RL) to help tackle the
   most challenging conservation decision problems. RL is uniquely
-  well suited to conservation and global change challenges for three reasons: (1)
   RL explicitly focuses on designing an agent who _interacts_ with an environment which is dynamic and uncertain,
   (2) RL approaches do not require massive amounts of data, (3) RL approaches would 
   utilize rather than replace existing models, simulations, and the knowledge they contain.
@@ -36,6 +35,7 @@ abstract: |
   Four appendices with annotated code provide a tangible introduction to researchers 
   looking to adopt, evaluate, or extend these approaches.
   
+  well suited to conservation and global change challenges for three reasons: (1)
 keywords:
   - Reinforcement Learning
   - Conservation
@@ -50,14 +50,12 @@ header-includes:
   - \usepackage{amssymb}
   - \usepackage{setspace}
   - \usepackage{lineno}
-#  - \usepackage{endfloat}
   - \linenumbers
   - \doublespacing
-  
 output: 
+  word_document: default
   rticles::arxiv_article:
     keep_tex: true
-  word_document: default
 editor_options: 
   markdown: 
     wrap: sentence
