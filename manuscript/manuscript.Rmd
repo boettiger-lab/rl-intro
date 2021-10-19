@@ -1,26 +1,26 @@
 ---
-title: "Deep Reinforcement Learning for Conservation Decisions"
+title: Deep Reinforcement Learning for Conservation Decisions
 authors:
-- name: Marcus Lapeyrolerie
-  department: Department of Environmental Science, Policy, and Management
-  affiliation: University of California, Berkeley
-  location: Berkeley, California
-  email: mlapeyro@berkeley.edu
-- name: Melissa S. Chapman
-  department: Department of Environmental Science, Policy, and Management
-  affiliation: University of California, Berkeley
-  location: Berkeley, California
-  email: mchapman@berkeley.edu
-- name: Kari E. A. Norman
-  department: Department of Environmental Science, Policy, and Management
-  affiliation: University of California, Berkeley
-  location: Berkeley, California
-  email: kari.norman@berkeley.edu
-- name: Carl Boettiger
-  department: Department of Environmental Science, Policy, and Management
-  affiliation: University of California, Berkeley
-  location: Berkeley, California
-  email: cboettig@berkeley.edu (corresponding author)
+  - name: Marcus Lapeyrolerie
+    department: Department of Environmental Science, Policy, and Management
+    affiliation: University of California, Berkeley
+    location: Berkeley, California
+    email: mlapeyro@berkeley.edu
+  - name: Melissa S. Chapman
+    department: Department of Environmental Science, Policy, and Management
+    affiliation: University of California, Berkeley
+    location: Berkeley, California
+    email: mchapman@berkeley.edu
+  - name: Kari E. A. Norman
+    department: Department of Environmental Science, Policy, and Management
+    affiliation: University of California, Berkeley
+    location: Berkeley, California
+    email: kari.norman@berkeley.edu
+  - name: Carl Boettiger
+    department: Department of Environmental Science, Policy, and Management
+    affiliation: University of California, Berkeley
+    location: Berkeley, California
+    email: cboettig@berkeley.edu (corresponding author)
 abstract: |
   Can machine learning help us make better decisions about a changing planet?
   In this paper, we illustrate and discuss the potential of a promising 
@@ -36,29 +36,30 @@ abstract: |
   Four appendices with annotated code provide a tangible introduction to researchers 
   looking to adopt, evaluate, or extend these approaches.
   
-output:
-  rticles::arxiv_article:
-    keep_tex: yes
-  pdf_document: default
-  word_document: default
+keywords:
+  - Reinforcement Learning
+  - Conservation
+  - Machine Learning
+  - Artificial Intelligence
+  - Tipping points
 bibliography: references.bib
 nocite: |
-  @A2C, @trpo, @ddpg, @TD3, @impala, @hafner_learning_2019, @weber_imagination-augmented_2018
+    @A2C, @trpo, @ddpg, @TD3, @impala, @hafner_learning_2019, @weber_imagination-augmented_2018
 header-includes:
-- \usepackage{amsmath}
-- \usepackage{amssymb}
-- \usepackage{setspace}
-- \usepackage{lineno}
-- \linenumbers
-- \doublespacing
-keywords:
-- Reinforcement Learning
-- Conservation
-- Machine Learning
-- Artificial Intelligence
-- Tipping points
-editor_options:
-  markdown:
+  - \usepackage{amsmath}
+  - \usepackage{amssymb}
+  - \usepackage{lineno}
+  - \usepackage{setspace}
+#  - \usepackage{endfloat}
+  - \linenumbers
+  - \doublespacing
+  
+output: 
+  rticles::arxiv_article:
+    keep_tex: true
+  word_document: default
+editor_options: 
+  markdown: 
     wrap: sentence
 ---
 
