@@ -1,31 +1,32 @@
 ---
-title: Deep Reinforcement Learning for Conservation Decisions
+title: "Deep Reinforcement Learning for Conservation Decisions"
 authors:
-  - name: Marcus Lapeyrolerie
-    department: Department of Environmental Science, Policy, and Management
-    affiliation: University of California, Berkeley
-    location: Berkeley, California
-    email: mlapeyro@berkeley.edu
-  - name: Melissa S. Chapman
-    department: Department of Environmental Science, Policy, and Management
-    affiliation: University of California, Berkeley
-    location: Berkeley, California
-    email: mchapman@berkeley.edu
-  - name: Kari E. A. Norman
-    department: Department of Environmental Science, Policy, and Management
-    affiliation: University of California, Berkeley
-    location: Berkeley, California
-    email: kari.norman@berkeley.edu
-  - name: Carl Boettiger
-    department: Department of Environmental Science, Policy, and Management
-    affiliation: University of California, Berkeley
-    location: Berkeley, California
-    email: cboettig@berkeley.edu (corresponding author)
+- name: Marcus Lapeyrolerie
+  department: Department of Environmental Science, Policy, and Management
+  affiliation: University of California, Berkeley
+  location: Berkeley, California
+  email: mlapeyro@berkeley.edu
+- name: Melissa S. Chapman
+  department: Department of Environmental Science, Policy, and Management
+  affiliation: University of California, Berkeley
+  location: Berkeley, California
+  email: mchapman@berkeley.edu
+- name: Kari E. A. Norman
+  department: Department of Environmental Science, Policy, and Management
+  affiliation: University of California, Berkeley
+  location: Berkeley, California
+  email: kari.norman@berkeley.edu
+- name: Carl Boettiger
+  department: Department of Environmental Science, Policy, and Management
+  affiliation: University of California, Berkeley
+  location: Berkeley, California
+  email: cboettig@berkeley.edu (corresponding author)
 abstract: |
   Can machine learning help us make better decisions about a changing planet?
   In this paper, we illustrate and discuss the potential of a promising 
   corner of machine learning known as _reinforcement learning_ (RL) to help tackle the
   most challenging conservation decision problems. RL is uniquely
+  well suited to conservation and global change challenges for three reasons: (1)
   RL explicitly focuses on designing an agent who _interacts_ with an environment which is dynamic and uncertain,
   (2) RL approaches do not require massive amounts of data, (3) RL approaches would 
   utilize rather than replace existing models, simulations, and the knowledge they contain.
@@ -35,29 +36,29 @@ abstract: |
   Four appendices with annotated code provide a tangible introduction to researchers 
   looking to adopt, evaluate, or extend these approaches.
   
-  well suited to conservation and global change challenges for three reasons: (1)
-keywords:
-  - Reinforcement Learning
-  - Conservation
-  - Machine Learning
-  - Artificial Intelligence
-  - Tipping points
+output:
+  rticles::arxiv_article:
+    keep_tex: yes
+  pdf_document: default
+  word_document: default
 bibliography: references.bib
 nocite: |
-    @A2C, @trpo, @ddpg, @TD3, @impala, @hafner_learning_2019, @weber_imagination-augmented_2018
+  @A2C, @trpo, @ddpg, @TD3, @impala, @hafner_learning_2019, @weber_imagination-augmented_2018
 header-includes:
-  - \usepackage{amsmath}
-  - \usepackage{amssymb}
-  - \usepackage{setspace}
-  - \usepackage{lineno}
-  - \linenumbers
-  - \doublespacing
-output: 
-  word_document: default
-  rticles::arxiv_article:
-    keep_tex: true
-editor_options: 
-  markdown: 
+- \usepackage{amsmath}
+- \usepackage{amssymb}
+- \usepackage{setspace}
+- \usepackage{lineno}
+- \linenumbers
+- \doublespacing
+keywords:
+- Reinforcement Learning
+- Conservation
+- Machine Learning
+- Artificial Intelligence
+- Tipping points
+editor_options:
+  markdown:
     wrap: sentence
 ---
 
@@ -445,7 +446,7 @@ Deep RL agents have proven remarkably effective in handling such complexity, par
 This paper does not set the precedent as the first application of RL to ecology.
 There have been a number of studies applying RL to behavioral ecology, typically with multi-agent environments [@wang_reinforcement_2020, @frankenhuis_enriching_2019, @perolat_multi-agent_2017].
 Yet, it is important to distinguish the aim of these behavioral studies from the aim of applying RL to conservation management. <!-- Compare using RL for conserv as prescriptive, behav eco as descriptive. We don't assume RL is the model. -->
-In previous behavioral ecology studies, RL algorithms as a substitute for animal learning mechanisms [@wang_reinforcement_2020, @perolat_multi-agent_2017].
+In previous behavioral ecology studies, RL algorithms are used as a substitute for animal learning mechanisms [@wang_reinforcement_2020, @perolat_multi-agent_2017].
 When applying deep RL to conservation management, we do not make the assumption that an RL algorithm learns analogously to how an animal learns.
 We instead propose that RL be used as a tool to search for solutions to decision-making problems. 
 
@@ -500,7 +501,7 @@ All authors were supported by the NSF Faculty Early Career Development Program A
 
 # Conflicts of Interest {-}
 
-The authors declare there is no conflict of interest.
+The authors declare there are no conflicts of interest.
 
 # Authors' Contributions {-}
 
@@ -508,7 +509,7 @@ M.L. and C.B. developed the code and wrote the manuscript with support from K.E.
 
 # Data Availability {-}
 
-We have created a github repository <https://github.com/boettiger-lab/rl-intro> that contains the code used to produce the figures.
+We have created a github repository <https://github.com/boettiger-lab/rl-intro> that contains the code used to produce the figures herein.
 
 
 
