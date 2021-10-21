@@ -28,10 +28,10 @@ abstract: |
   4. Our results demonstrate that deep RL has the potential to solve challenging decision problems in conservation. We discuss the obstacles that may restrict the successful application of deep RL to more realistic conservation problems. We ultimately set forth a research framework based on well-posed, public challenges so that ecologists and computer scientists can collaborate towards solving hard decision-making problems in conservation.
   
 keywords:
-  - Reinforcement Learning
+  - Artificial Intelligence
   - Conservation
   - Machine Learning
-  - Artificial Intelligence
+  - Reinforcement Learning
   - Tipping points
 bibliography: references.bib
 nocite: |
