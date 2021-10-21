@@ -22,19 +22,10 @@ authors:
     location: Berkeley, California
     email: cboettig@berkeley.edu (corresponding author)
 abstract: |
-  Can machine learning help us make better decisions about a changing planet?
-  In this paper, we illustrate and discuss the potential of a promising 
-  corner of machine learning known as _reinforcement learning_ (RL) to help tackle the
-  most challenging conservation decision problems. RL is uniquely
-  well suited to conservation and global change challenges for three reasons: (1)
-  RL explicitly focuses on designing an agent who _interacts_ with an environment which is dynamic and uncertain,
-  (2) RL approaches do not require massive amounts of data, (3) RL approaches would 
-  utilize rather than replace existing models, simulations, and the knowledge they contain.
-  We provide a conceptual and technical introduction to RL and its relevance to ecological
-  and conservation challenges, including examples of a problem in setting
-  fisheries quotas and in managing ecological tipping points.
-  Four appendices with annotated code provide a tangible introduction to researchers 
-  looking to adopt, evaluate, or extend these approaches.
+  1. Can machine learning help us make better decisions about a changing planet? In this paper, we illustrate and discuss the potential of a promising corner of machine learning known as deep reinforcement learning (RL) to help tackle the most challenging conservation decision problems. We provide a conceptual and technical introduction to deep RL as well as annotated code so that researchers can adopt, evaluate and extend these approaches.
+  2. RL explicitly focuses on designing an agent who interacts with an environment which is dynamic and uncertain. Deep RL is the subfield of RL that incorporates deep neural networks into the agent. We train deep RL agents to solve sequential decision-making problems in setting fisheries quotas and managing ecological tipping points.
+  3. We show that a deep RL agent is able to learn a nearly optimal solution for the fisheries management problem. For the tipping point problem, we show that a deep RL agent can outperform a sensible rule-of-thumb strategy. 
+  4. Our results demonstrate that deep RL has the potential to solve challenging decision problems in conservation. We discuss the obstacles that may restrict the successful application of deep RL to more realistic conservation problems. We ultimately set forth a research framework based on well-posed, public challenges so that ecologists and computer scientists can collaborate towards solving hard decision-making problems in conservation.
   
 keywords:
   - Reinforcement Learning
@@ -73,7 +64,7 @@ a short running title: **Deep Reinforcement Learning**
 
 the type of article: **Method**
 
-the number of words: **4,814**
+the number of words: **5655**
 
 the number of references: **62**
 
@@ -120,7 +111,7 @@ Our examples are intentionally simple, aiming to provide a clear template for un
 We include extensive appendices with carefully annotated code which should allow readers to both reproduce and extend this analysis.
 
 
-# RL overview
+# Materials and Methods
 
 <!-- Conceptual picture: (A) an "environment", and (B) an "agent"
   Components of an agent: 
@@ -257,7 +248,7 @@ Although there are RL-based methods for infinite horizon problems, i.e. when $H=
 In Appendix A, we will discuss in greater detail how deep RL algorithms attempt to optimize the RL objective.
 
 
-# Examples
+# Results
 
 We provide two examples that illustrate the application and potential of deep RL to ecological and conservation problems, highlighting both the potential and the inherent challenges.
 Annotated code for these examples may be found in Appendix B and at <https://github.com/boettiger-lab/rl-intro>.
