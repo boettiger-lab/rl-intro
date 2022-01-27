@@ -1,0 +1,120 @@
+---
+title: "failure_plot"
+output: html_document
+---
+
+```{r message=FALSE}
+#install.packages("renv")
+renv::restore()
+```
+
+
+```{r setup, cache = FALSE, message=FALSE}
+# R dependencies
+library(tidyverse)
+library(patchwork)
+library(reticulate)
+
+## Python dependencies loaded via R
+sb3      = import("stable_baselines3")
+torch    = import("torch")
+gym      = import("gym")
+gym_fishing = import("gym_fishing")
+gym_conservation = import("gym_conservation")
+
+
+source("../R/plotting-helpers.R")
+```
+
+```{r knitr, include = FALSE}
+# This chunk controls plot aesthetics only, and can be omitted with no material change
+knitr::opts_chunk$set(echo=TRUE, message = FALSE, warning = FALSE,
+                      fig.width = 7, fig.height = 4, cache = FALSE)
+ggplot2::theme_set(ggplot2::theme_bw())
+
+scale_colour_discrete = function(...) ggthemes::scale_colour_solarized()
+scale_fill_discrete = function(...) ggthemes::scale_fill_solarized()
+pal = ggthemes::solarized_pal()(8)
+txtcolor = "#586e75"
+
+colors <- set_names(c(pal[c(1,3,8,2)], txtcolor, pal[6]),
+                    c("Optimal", "TD3_untuned", "TD3_tuned", "RL", "historical", "steady-state"))
+scale_colour_discrete <- function(...) scale_colour_manual(..., values=colors)
+scale_fill_discrete <- function(...) scale_fill_manual(..., values=colors)
+```
+
+```{r}
+## reproducible settings
+np = import("numpy")
+seed = 24L # integer
+np$random$seed(seed)
+
+set.seed(seed)
+```
+
+```{r }
+## initialize the environment
+env_high = gym$make("fishing-v1", sigma=0.1, init_state=1.5)
+env_low = gym$make("fishing-v1", sigma=0.1)
+```
+
+```{r}
+# Simulate under the optimal solution (given the model)
+opt = gym_fishing$models$escapement(env_low)
+opt_sims_high = env_high$simulate(opt, reps = 100L)
+opt_sims_low = env_low$simulate(opt, reps = 100L)
+opt_policy = env_low$policyfn(opt)
+```
+
+```{r}
+# add a column indicating the model
+sims_df_high <- opt_sims_high %>% mutate(model = "Optimal")
+sims_df_low <- opt_sims_low %>% mutate(model = "Optimal")
+policy_df <- opt_policy  %>% mutate(model = "Optimal")
+```
+
+```{r}
+agent = sb3$TD3$load("../python/cache/td3_untuned")
+agent_sims_high = env_high$simulate(agent, reps = 100L)
+agent_sims_low = env_low$simulate(agent, reps = 100L)
+agent_policy = env_low$policyfn(agent, reps = 5L)
+```
+
+```{r}
+# stack result simulations with those above and plot:
+sims_df_high <- agent_sims_high %>% 
+  mutate(model = "TD3_untuned") %>% 
+  bind_rows(sims_df_high)
+
+# stack result simulations with those above and plot:
+sims_df_low <- agent_sims_low %>% 
+  mutate(model = "TD3_untuned") %>% 
+  bind_rows(sims_df_low)
+
+policy_df <- agent_policy  %>% 
+  mutate(model = "TD3_untuned")  %>% 
+  bind_rows(policy_df)
+```
+
+```{r}
+td3 <- sb3$TD3$load("../python/cache/td3_tuned.zip")
+td3_sims_high = env_high$simulate(td3, reps = 100L)
+td3_sims_low = env_low$simulate(td3, reps = 100L)
+td3_policy = env_low$policyfn(td3)
+```
+
+```{r}
+# stack result simulations with those above and plot:
+sims_df_high <- td3_sims_high %>% 
+  mutate(model = "TD3_tuned") %>% 
+  bind_rows(sims_df_high)
+sims_df_low <- td3_sims_low %>% 
+  mutate(model = "TD3_tuned") %>% 
+  bind_rows(sims_df_low)
+
+policy_df <- td3_policy  %>% 
+  mutate(model = "TD3_tuned")  %>% 
+  bind_rows(policy_df)
+
+( plot_sims(sims_df_low, "none") + plot_sims(sims_df_high, "right")) / ( plot_policy(policy_df))
+```

@@ -5,21 +5,22 @@ library(tidyverse)
 ymin = function(x) last(x[(ntile(x, 20)==1)])
 ymax = function(x) last(x[(ntile(x, 20)==19)])
 
-plot_sims <- function(sims_df)
+plot_sims <- function(sims_df, legend)
   sims_df %>%
   group_by(time, model) %>%
   summarise(ymin = ymin(state),
             ymax = ymax(state),
             state = mean(state), .groups = "drop") %>%
   ggplot(aes(time, state, ymin = ymin, ymax = ymax, fill=model)) +
-  geom_ribbon(alpha= 0.3) + geom_line(aes(col = model))
+  geom_ribbon(alpha= 0.3) + geom_line(aes(col = model)) +
+  theme(legend.position = legend)
 
 plot_policy <- function(policy_df)
   policy_df %>% ggplot(aes(state, action,
                            group=interaction(rep, model),
                            col = model)) +
   geom_line(show.legend = FALSE) +
-  coord_cartesian(xlim = c(0, 1.2))
+  coord_cartesian(xlim = c(0, 1.5))
 
 plot_reward <- function(sims_df, gamma = 1)
   sims_df %>%
