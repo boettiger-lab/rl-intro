@@ -137,7 +137,7 @@ Our implementations of these models in two python modules published to `PyPi` co
 We include extensive appendices with carefully annotated code which should allow readers to both reproduce and extend this analysis.
 
 We do recognize the need for more complex, "precise" models to derive quanitatively precise management policy in specific management problems such as fisheries, forestry, or climate change mitigation efforts. 
-The examples here should provide ecologists with the greater background to engage in the collaborative development of such methods, even as they also highlight challenges which ecological problems pose to existing techniques.
+The examples here should provide ecologists with a greater background to engage in the collaborative development of such methods, while also highlighting challenges which ecological problems pose to existing techniques.
 Even the simple models we consider here contain many sources of complexity -- significant stochasticity, non-linear dynamics, hysteresis -- that are likely commonplace to ecological problems but have not been well represtented in RL research to date. 
 Such work is beyond the scope of any one paper: it will require not only more computational resources, but more collaborations between large teams of ecologists and computer scientists.  
 
