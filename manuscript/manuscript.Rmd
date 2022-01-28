@@ -469,7 +469,7 @@ Model-free algorithms have proven successful at learning effective policies even
 
 <!-- Solving 'real' problems will be hard -->
 Successfully applying RL to complex ecological problems is no easy task.
-Even on relatively uncomplicated environments, training an RL agent can be more challenging than expected due to an entanglement of reasons like hyperparameter instability and poor exploration that can be very difficult to resolve [@drlthatmatters; @berger-tal_exploration-exploitation_2014].
+Even on relatively uncomplicated environments, training an RL agent can be more challenging than expected due to an entanglement of reasons, see Table 2, like hyperparameter instability and poor exploration that can be very difficult to resolve [@drlthatmatters; @berger-tal_exploration-exploitation_2014].
 It is also worth acknowledging that deep RL algorithms, particularly model-free algorithms, have poor sample efficiency, which could limit deep RL from being effective on environments that are slow to run [@sac].  
 Thus, as Section 5.1 and 5.2 illustrate, it is important to begin with simple problems, including those for which an optimal strategy is already known.
 Such examples provide important benchmarks to calibrate the performance, tuning and training requirements of RL.
@@ -478,6 +478,23 @@ Yet, even in the case that an agent performs well on a realistic problem, there 
 Since deep neural networks lack transparency [@castelvecchi_can_2016], can we be confident that the deep RL agent will generalize its past experience to new situations?
 Given that there have been many examples of reward misspecification leading to undesirable behavior [@hadfield-menell_inverse_2020], what if we have selected an objective that unexpectedly causes damaging behavior?
 A greater role of algorithms in conservation decision-making also raises questions about ethics and power, particularly when those algorithms are opaque or proprietary [@scoville_algorithmic_2021, @chapman_promoting_2021].
+
+\begin{table}
+\begin{tabular}{l l }
+\hline
+Practical Challenges with Deep RL & Description   \\
+\hline
+   Generalization                   & blah blah  \\
+   Intransparency                   & blah blah \\
+   Hyperparameter Instability       & blah blah  \\
+   Reward Misspecification          & blah blah \\
+   Capital Intensive                & blah blah  \\
+   Sample Inefficiency              & blah blah \\
+   
+\hline
+\end{tabular}
+\caption{Survey of common deep RL Challenges.}
+\end{table}
 
 <!-- Where/how to use deep RL -->
 Yet, a more immediate barrier to the use of deep RL in conservation is deep RL's hardware requirements.
