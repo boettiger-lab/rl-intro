@@ -480,20 +480,22 @@ Given that there have been many examples of reward misspecification leading to u
 A greater role of algorithms in conservation decision-making also raises questions about ethics and power, particularly when those algorithms are opaque or proprietary [@scoville_algorithmic_2021, @chapman_promoting_2021].
 
 \begin{table}
-\begin{tabular}{l l }
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{p{5 cm} p{10 cm}}
 \hline
-Practical Challenges with Deep RL & Description   \\
+Issue & Description   \\
 \hline
-   Generalization                   & blah blah  \\
-   Intransparency                   & blah blah \\
-   Hyperparameter Instability       & blah blah  \\
-   Reward Misspecification          & blah blah \\
-   Capital Intensive                & blah blah  \\
-   Sample Inefficiency              & blah blah \\
+   Generalization                   & Agents struggle to adapt to tasks not seen in training.   \\
+   Reproducibility                  & It can be very challenging to replicate results due to a host of reasons like differences in computational hardware. \\
+   Intransparency                   & RL users cannot interpret why agents select actions. \\
+   Hyperparameter Instability       & Agent performance can vary significantly over slight alterations in hyperparameters, like initialization seed.   \\
+   Reward Misspecification          & Agents commonly learn undesirable behavior that still maximizes the RL objective. \\
+   Capital Intensive                & Landmark successes like AlphaGo and AlphaStar have required very large teams of researchers and large amounts of computational power.  \\
+   Sample Inefficiency              & Current algorithms require large amounts of interaction with the environment to achieve reward maximization.  \\
    
 \hline
 \end{tabular}
-\caption{Survey of common deep RL Challenges.}
+\caption{Practical issues with deep RL.}
 \end{table}
 
 <!-- Where/how to use deep RL -->
