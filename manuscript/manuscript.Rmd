@@ -487,10 +487,10 @@ Issue & Description   \\
 \hline
    Generalization                   & Agents struggle to adapt to tasks not seen in training.   \\
    Reproducibility                  & It can be very challenging to replicate results due to a host of reasons like differences in computational hardware. \\
-   Intransparency                   & RL users cannot interpret why agents select actions. \\
+   Lack of Transparency             & RL users cannot interpret why agents select actions. \\
    Hyperparameter Instability       & Agent performance can vary significantly over slight alterations in hyperparameters, like initialization seed.   \\
    Reward Misspecification          & Agents commonly learn undesirable behavior that still maximizes the RL objective. \\
-   Capital Intensive                & Landmark successes like AlphaGo and AlphaStar have required very large teams of researchers and large amounts of computational power.  \\
+   High Capital Demands            & Landmark successes like AlphaGo and AlphaStar have required very large teams of researchers and large amounts of computational power.  \\
    Sample Inefficiency              & Current algorithms require large amounts of interaction with the environment to achieve reward maximization.  \\
    
 \hline
