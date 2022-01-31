@@ -129,7 +129,7 @@ Firstly, for some cases the optimal solution is already known, providing a clear
 Prior work sometimes overlooks this essential step, assuming that whatever behavior an RL agent produces is sufficiently optimal or otherwise an accurate proxy for behavior arising from animal learning or evolution. 
 As our evaluations will illustrate, such an assumption can be quickly misleading. 
 Second, these models are already widely studied and will be familiar to many readers: @Schaefer1954 is a staple of fisheries management textbooks and practice, with over 2800 citations, while @May1977 has become a canonical model of threshholds and tipping points which still continues to dominate how many ecologists think about these phenomena [@Scheffer2009].  
-Many readers can thus benefit from exisiting knowledge and intutition about the behavior and implications of these models in interpreting the performance of deep RL, something that would not be possible with a more complex model. 
+Many readers can thus benefit from existing knowledge and intuition about the behavior and implications of these models in interpreting the performance of deep RL, something that would not be possible with a more complex model. 
 It would be unwise to consider applications of RL on more complex bespoke models without first analyzing these classic and well-understood cases.
 Third, these models include or can easily be extended to contexts for which the optimal management policy is unknown or inaccessible to classical methods.
 Our implementations of these models have been published to the python-based `PyPi` code archive and include many such variations which represent open problems for RL.
