@@ -44,7 +44,7 @@ keywords:
   - Tipping points
 bibliography: references.bib
 nocite: |
-    @A2C, @trpo, @ddpg, @TD3, @impala, @hafner_learning_2019, @weber_imagination-augmented_2018
+    @A2C, @trpo, @ddpg, @TD3, @impala, @hafner_learning_2019, @weber_imagination-augmented_2018, @kirk_survey_2022
 header-includes:
   - \usepackage{amsmath}
   - \usepackage{amssymb}
@@ -485,13 +485,13 @@ A greater role of algorithms in conservation decision-making also raises questio
 \hline
 Issue & Description   \\
 \hline
-   Generalization                   & Agents struggle to adapt to tasks not seen in training.   \\
-   Reproducibility                  & It can be very challenging to replicate results due to a host of reasons like differences in computational hardware. \\
-   Lack of Transparency             & RL users cannot interpret why agents select actions. \\
-   Hyperparameter Instability       & Agent performance can vary significantly over slight alterations in hyperparameters, like initialization seed.   \\
-   Reward Misspecification          & Agents commonly learn undesirable behavior that still maximizes the RL objective. \\
-   High Capital Demands            & Landmark successes like AlphaGo and AlphaStar have required very large teams of researchers and large amounts of computational power.  \\
-   Sample Inefficiency              & Current algorithms require large amounts of interaction with the environment to achieve reward maximization.  \\
+   Generalization                   & Agents struggle to adapt to tasks not seen in training (Kirk et al. 2022).   \\
+   Reproducibility                  & It can be very challenging to replicate results due to a host of reasons like differences in computational hardware (Henderson et al. 2019). \\
+   Lack of Transparency             & Deep RL users cannot interpret why agents select actions (Castelvecchi 2016). \\
+   Hyperparameter Instability       & Agent performance can vary significantly over slight alterations in hyperparameters, like initialization seed (Henderson et al. 2019).   \\
+   Reward Misspecification          & Agents commonly learn undesirable behavior that still maximizes the RL objective  (Hadfield-Menell et al. 2020). \\
+   High Capital Demands            & Landmark successes like AlphaGo and AlphaStar have required very large teams of researchers and large amounts of computational power (Silver et al. 2017; Vinyals et al. 2019).  \\
+   Sample Inefficiency              & Current algorithms require large amounts of interaction with the environment to achieve reward maximization (Haarnoja et al. 2018).  \\
    
 \hline
 \end{tabular}
