@@ -44,7 +44,7 @@ keywords:
   - Tipping points
 bibliography: references.bib
 nocite: |
-    @A2C, @trpo, @ddpg, @TD3, @impala, @hafner_learning_2019, @weber_imagination-augmented_2018
+    @A2C, @trpo, @ddpg, @TD3, @impala, @hafner_learning_2019, @weber_imagination-augmented_2018, @kirk_survey_2022
 header-includes:
   - \usepackage{amsmath}
   - \usepackage{amssymb}
@@ -469,7 +469,7 @@ Model-free algorithms have proven successful at learning effective policies even
 
 <!-- Solving 'real' problems will be hard -->
 Successfully applying RL to complex ecological problems is no easy task.
-Even on relatively uncomplicated environments, training an RL agent can be more challenging than expected due to an entanglement of reasons like hyperparameter instability and poor exploration that can be very difficult to resolve [@drlthatmatters; @berger-tal_exploration-exploitation_2014].
+Even on relatively uncomplicated environments, training an RL agent can be more challenging than expected due to an entanglement of reasons, see Table 2, like hyperparameter instability and poor exploration that can be very difficult to resolve [@drlthatmatters; @berger-tal_exploration-exploitation_2014].
 It is also worth acknowledging that deep RL algorithms, particularly model-free algorithms, have poor sample efficiency, which could limit deep RL from being effective on environments that are slow to run [@sac].  
 Thus, as Section 5.1 and 5.2 illustrate, it is important to begin with simple problems, including those for which an optimal strategy is already known.
 Such examples provide important benchmarks to calibrate the performance, tuning and training requirements of RL.
@@ -478,6 +478,25 @@ Yet, even in the case that an agent performs well on a realistic problem, there 
 Since deep neural networks lack transparency [@castelvecchi_can_2016], can we be confident that the deep RL agent will generalize its past experience to new situations?
 Given that there have been many examples of reward misspecification leading to undesirable behavior [@hadfield-menell_inverse_2020], what if we have selected an objective that unexpectedly causes damaging behavior?
 A greater role of algorithms in conservation decision-making also raises questions about ethics and power, particularly when those algorithms are opaque or proprietary [@scoville_algorithmic_2021, @chapman_promoting_2021].
+
+\begin{table}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{p{5 cm} p{10 cm}}
+\hline
+Issue & Description   \\
+\hline
+   Generalization                   & Agents struggle to adapt to tasks not seen in training (Kirk et al. 2022).   \\
+   Reproducibility                  & It can be very challenging to replicate results due to a host of reasons like differences in computational hardware (Henderson et al. 2019). \\
+   Lack of Transparency             & Deep RL users cannot interpret why agents select actions (Castelvecchi 2016). \\
+   Hyperparameter Instability       & Agent performance can vary significantly over slight alterations in hyperparameters, like initialization seed (Henderson et al. 2019).   \\
+   Reward Misspecification          & Agents commonly learn undesirable behavior that still maximizes the RL objective  (Hadfield-Menell et al. 2020). \\
+   High Capital Demands            & Landmark successes like AlphaGo and AlphaStar have required very large teams of researchers and large amounts of computational power (Silver et al. 2017; Vinyals et al. 2019).  \\
+   Sample Inefficiency              & Current algorithms require large amounts of interaction with the environment to achieve reward maximization (Haarnoja et al. 2018).  \\
+   
+\hline
+\end{tabular}
+\caption{Practical issues with deep RL.}
+\end{table}
 
 <!-- Where/how to use deep RL -->
 Yet, a more immediate barrier to the use of deep RL in conservation is deep RL's hardware requirements.
