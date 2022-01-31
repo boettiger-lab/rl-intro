@@ -31,7 +31,7 @@ abstract: |
   While this potential may be compelling, the challenges involved in successfully deploying RL-based management to realistic scenarios are formidable --
   the required expertise and computational cost may place these applications may be beyond the reach of all but international technology firms.
   Such an advent would represent a sea-change not only in what problems we can solve, but what stakeholders are involved in solving them.
-  Ecologists must establish a better understanding of how these algorithms work and fail if we are to realize this potential and avoid the pitfalls such a transition would bring.
+  Ecologists must establish a better understanding of these algorithms if we are to realize the potential of deep RL and avoid the pitfalls such a transition would bring.
   To this end, we provide a conceptual and technical introduction to RL and its relevance to ecological and conservation challenges, including examples of a problem in setting fisheries quotas and in managing ecological tipping points.
   Four appendices with annotated code provide a tangible introduction to researchers looking to adopt, evaluate, or extend these approaches.
   
