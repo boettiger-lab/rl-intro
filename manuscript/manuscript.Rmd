@@ -113,7 +113,7 @@ Neural-network-based RL techniques, referred to as *deep RL*, have proven partic
 While deep RL may have the potential to open up such intractable problems, it also risks making those problems tractable only by stakeholders with access to extensive computational resources and expertise.
 It is notable that the landmark advances cited above have been solved not by academic teams but by specialized research teams of international technology firms such as Alphabet.
 Precise estimates of computational resources used in that research are difficult to establish, but previous estimates benchmarked against commercially available cloud computing platforms place the training of a single model at over $30 million [@alphacost],
-and many realistic ecological problems will involve greater complexity than board games of two players on a 19 x 19 grid [@alphago].
+and many realistic ecological problems will involve even greater complexity than these landmark examples [@alphago].
 While the history of improved efficiency in computing technology has shown a remarkable ability to reduce such barriers, it has simultaneously moved the leading edge of those capabilities farther beyond reach of traditional ecological research. 
 We believe that ecologists must seek to better understand the design, capabilities and limitations of these algorithms, even though their application will surely require the ambitious collaboration, resources and expertise on par with the scale of the immense environmental and ecological problems we face.
 
