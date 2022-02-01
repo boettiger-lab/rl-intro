@@ -110,7 +110,7 @@ Rich, processes-based simulations such as the SORTIE model in forest management 
 Decision-theoretic approaches based on optimal control techniques can only find the best strategy in the simplest of ecological models; the so called "curse of dimensionality" makes problems with a large number of states or actions intractable by conventional methods [@Possingham2006; @Marescot2013; @ferrer-mestres_k-n-momdps_2021; @chades_primer_2021].
 Neural-network-based RL techniques, referred to as *deep RL*, have proven particularly effective in problems involving complex, high-dimensional spaces that have previously proven intractable to classical methods.
 
-While deep RL may have the potential to open up such intractable problems, it also risks making those problems tractable only by stakeholders with access to extensive computational resources and expertise.
+While deep RL may have the potential to open up such intractable problems, it also risks making those problems tractable only for stakeholders with access to extensive computational resources and expertise.
 It is notable that the landmark advances cited above have been solved not by academic teams but by specialized research teams of international technology firms such as Alphabet.
 Precise estimates of computational resources used in that research are difficult to establish, but previous estimates benchmarked against commercially available cloud computing platforms place the training of a single model at over $30 million [@alphacost],
 and many realistic ecological problems will involve even greater complexity than these landmark examples [@alphago].
