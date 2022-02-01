@@ -23,18 +23,16 @@ authors:
     email: cboettig@berkeley.edu (corresponding author)
 abstract: |
   Can machine learning help us make better decisions about a changing planet?
-  In this paper, we illustrate and discuss the potential of a promising 
-  corner of machine learning known as _reinforcement learning_ (RL) to help tackle the
-  most challenging conservation decision problems. RL is uniquely
-  well suited to conservation and global change challenges for three reasons: (1)
-  RL explicitly focuses on designing an agent who _interacts_ with an environment which is dynamic and uncertain,
-  (2) RL approaches do not require massive amounts of data, (3) RL approaches would 
-  utilize rather than replace existing models, simulations, and the knowledge they contain.
-  We provide a conceptual and technical introduction to RL and its relevance to ecological
-  and conservation challenges, including examples of a problem in setting
-  fisheries quotas and in managing ecological tipping points.
-  Four appendices with annotated code provide a tangible introduction to researchers 
-  looking to adopt, evaluate, or extend these approaches.
+  In this paper, we illustrate and discuss the potential of a promising corner of machine learning known as _reinforcement learning_ (RL) to help tackle the most challenging conservation decision problems.
+  RL is uniquely well suited to conservation and global change challenges for three reasons: 
+  (1) RL explicitly focuses on designing an agent who _interacts_ with an environment which is dynamic and uncertain,
+  (2) RL approaches do not require massive amounts of data, 
+  (3) RL approaches would utilize rather than replace existing models, simulations, and the knowledge they contain.
+  While this potential may be compelling, the challenges involved in successfully deploying RL-based management to realistic scenarios are formidable --
+  the required expertise and computational cost may place these applications beyond the reach of all but large, international technology firms.
+  Ecologists must establish a better understanding of how these algorithms work and fail if we are to realize this potential and avoid the pitfalls such a transition would bring.
+  To this end, we provide a conceptual and technical introduction to RL and its relevance to ecological and conservation challenges, including examples of a problem in setting fisheries quotas and in managing ecological tipping points.
+  Four appendices with annotated code provide a tangible introduction to researchers looking to adopt, evaluate, or extend these approaches.
   
 keywords:
   - Reinforcement Learning
@@ -112,10 +110,34 @@ Rich, processes-based simulations such as the SORTIE model in forest management 
 Decision-theoretic approaches based on optimal control techniques can only find the best strategy in the simplest of ecological models; the so called "curse of dimensionality" makes problems with a large number of states or actions intractable by conventional methods [@Possingham2006; @Marescot2013; @ferrer-mestres_k-n-momdps_2021; @chades_primer_2021].
 Neural-network-based RL techniques, referred to as *deep RL*, have proven particularly effective in problems involving complex, high-dimensional spaces that have previously proven intractable to classical methods.
 
+While deep RL may have the potential to open up such intractable problems, it also risks making those problems tractable only by stakeholders with access to extensive computational resources and expertise.
+It is notable that the landmark advances cited above have been solved not by academic teams but by specialized research teams of international technology firms such as Alphabet.
+Precise estimates of computational resources used in that research are difficult to establish, but previous estimates benchmarked against commercially available cloud computing platforms place the training of a single model at over $30 million [@alphacost],
+and many realistic ecological problems will involve even greater complexity than these landmark examples [@alphago].
+While the history of improved efficiency in computing technology has shown a remarkable ability to reduce such barriers, it has simultaneously moved the leading edge of those capabilities farther beyond reach of traditional ecological research. 
+We believe that ecologists must seek to better understand the design, capabilities and limitations of these algorithms, even though their application will surely require the ambitious collaboration, resources and expertise on par with the scale of the immense environmental and ecological problems we face.
+
 In this paper, we draw on examples from fisheries management and ecological tipping points to illustrate how deep RL techniques can successfully discover optimal solutions to previously solved management scenarios and discover highly effective solutions to unsolved problems.
-We demonstrate that RL-based approaches are capable but by no means a magic bullet: reasonable solutions require careful design of training environments, choice of RL algorithms, tuning and evaluation, as well as substantial computational power.
-Our examples are intentionally simple, aiming to provide a clear template for understanding that could be easily extended to cover more realistic conditions. 
+We focus on examining the potential and limitations of deep RL through the lens of simple, classical models.
+Over a century of theory and practice in ecology has demonstrated that simple models can provide meaningful insights which improve management outcomes [@Getz2017].
+As Richard Levins successfully established in his classic paper on the principles of model building [@Levins1966], model complexity must not be mistaken for model realism.
+Levins esposed simple mechanistic models which satisfy the goals of being both _realistic_ and _general_. 
+More complex models such as those used in fisheries to guide the management of specific stocks typically sacrifice _generality_ for _precision_, a distinction Bob May characterized as "tactical models" (precise) rather than "strategic models" (general). 
+Such simple, realistic and general models are still the bedrock of most theory and practice today, even when implementation turns to tactical models for quantitative guidance (for instance, the notion of maximum sustainable yield, MSY, in fisheries, or $R_0$ in epidemiology, remain important concepts in management even though they do not exist in typical tactical models).
+These models provide an ideal first benchmark for evaluating the performance of emerging methods of deep RL for several reasons:
+Firstly, for some cases the optimal solution is already known, providing a clear standard-of-comparison to evaluate RL performance. 
+Prior work sometimes overlooks this essential step, assuming that whatever behavior an RL agent produces is sufficiently optimal or otherwise an accurate proxy for behavior arising from animal learning or evolution. 
+As our evaluations will illustrate, such an assumption can be quickly misleading. 
+Second, these models are already widely studied and will be familiar to many readers: @Schaefer1954 is a staple of fisheries management textbooks and practice, with over 2800 citations, while @May1977 has become a canonical model of thresholds and tipping points which still continues to dominate how many ecologists think about these phenomena [@Scheffer2009].  
+Many readers can thus benefit from existing knowledge and intuition about the behavior and implications of these models in interpreting the performance of deep RL, something that would not be possible with a more complex model. 
+Third, these models include or can easily be extended to contexts for which the optimal management policy is unknown or inaccessible to classical methods.
+Our implementations of these models have been published to the python-based `PyPi` code archive and include many such variations which represent open problems for RL.
 We include extensive appendices with carefully annotated code which should allow readers to both reproduce and extend this analysis.
+
+We do recognize the need for more complex, "precise" models to derive quantitatively precise management policy in specific management problems such as fisheries, forestry, or climate change mitigation efforts. 
+The examples here should provide ecologists with a greater background to engage in the collaborative development of such methods, while also highlighting challenges which ecological problems pose to existing techniques.
+Even the simple models we consider here contain sources of complexity such as hysteresis that are likely commonplace to ecological problems but have not been well represented in RL research to date. 
+Such work is beyond the scope of any one paper: it will require not only more computational resources, but more collaborations between large teams of ecologists and computer scientists.  
 
 
 # RL overview

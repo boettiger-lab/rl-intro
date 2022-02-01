@@ -1,3 +1,9 @@
+library/
+local/
+cellar/
+lock/
+python/
+staging/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -107,3 +113,11 @@ dmypy.json
 .Rhistory
 render.csv
 *.tex
+*.tex
+*.pdf
+manuscript_cache
+render.csv
+appendix_cache
+ramlegacy
+*.svg
+*.png
