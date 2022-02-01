@@ -121,12 +121,12 @@ In this paper, we draw on examples from fisheries management and ecological tipp
 We focus on examining the potential and limitations of deep RL through the lens of simple, classical models.
 Over a century of theory and practice in ecology has demonstrated that simple models can provide meaningful insights which improve management outcomes [@Getz2017].
 As Richard Levins successfully established in his classic paper on the principles of model building [@Levins1966], model complexity must not be mistaken for model realism.
-Levins esposed simple mechanistic models which satisfy the goals of being both _realistic_ and _general_. 
+Levins espoused simple mechanistic models which satisfy the goals of being both _realistic_ and _general_. 
 More complex models such as those used in fisheries to guide the management of specific stocks typically sacrifice _generality_ for _precision_, a distinction Bob May characterized as "tactical models" (precise) rather than "strategic models" (general). 
 Such simple, realistic and general models are still the bedrock of most theory and practice today, even when implementation turns to tactical models for quantitative guidance (for instance, the notion of maximum sustainable yield, MSY, in fisheries, or $R_0$ in epidemiology, remain important concepts in management even though they do not exist in typical tactical models).
 These models provide an ideal first benchmark for evaluating the performance of emerging methods of deep RL for several reasons:
 Firstly, for some cases the optimal solution is already known, providing a clear standard-of-comparison to evaluate RL performance. 
-Prior work sometimes overlooks this essential step, assuming that whatever behavior an RL agent produces is sufficiently optimal or otherwise an accurate proxy for behavior arising from animal learning or evolution. 
+Prior work sometimes overlooks this essential step, assuming that whatever behavior an RL agent produces is sufficiently optimal [@DQN].
 As our evaluations will illustrate, such an assumption can be quickly misleading. 
 Second, these models are already widely studied and will be familiar to many readers: @Schaefer1954 is a staple of fisheries management textbooks and practice, with over 2800 citations, while @May1977 has become a canonical model of thresholds and tipping points which still continues to dominate how many ecologists think about these phenomena [@Scheffer2009].  
 Many readers can thus benefit from existing knowledge and intuition about the behavior and implications of these models in interpreting the performance of deep RL, something that would not be possible with a more complex model. 
@@ -137,7 +137,7 @@ We include extensive appendices with carefully annotated code which should allow
 We do recognize the need for more complex, "precise" models to derive quantitatively precise management policy in specific management problems such as fisheries, forestry, or climate change mitigation efforts. 
 The examples here should provide ecologists with a greater background to engage in the collaborative development of such methods, while also highlighting challenges which ecological problems pose to existing techniques.
 Even the simple models we consider here contain sources of complexity such as hysteresis that are likely commonplace to ecological problems but have not been well represented in RL research to date. 
-Such work is beyond the scope of any one paper: it will require not only more computational resources, but more collaborations between large teams of ecologists and computer scientists.  
+Applying RL to a range of "precise" models is currently beyond the scope of any one paper: it will require not only more computational resources, but more collaborations between large teams of ecologists and computer scientists. 
 
 
 # RL overview
