@@ -112,23 +112,23 @@ Neural-network-based RL techniques, referred to as *deep RL*, have proven partic
 
 While deep RL may have the potential to open up such intractable problems, it also risks making those problems tractable only by stakeholders with access to extensive computational resources and expertise.
 It is notable that the landmark advances cited above have been solved not by academic teams but by specialized research teams of international technology firms such as Alphabet.
-Precise estimates of computational resources used in that research are difficult to establish, but previous estimates benchmarked against commercially available cloud computing platforms place the training of a single model at over $30 million [@alphacost],
-and many realistic ecological problems will involve even greater complexity than these landmark examples [@alphago].
+Precise estimates of computational resources used in that research are difficult to establish, but previous estimates benchmarked against commercially available cloud computing platforms place the training of a single model at over $35 million [@alphacost; @openai_costs; @alphaGoZero],
+and many realistic ecological problems will involve even greater complexity than these landmark examples [@alphaGoZero; @alphazero; @openai_learning_2019].
 While the history of improved efficiency in computing technology has shown a remarkable ability to reduce such barriers, it has simultaneously moved the leading edge of those capabilities farther beyond reach of traditional ecological research. 
 We believe that ecologists must seek to better understand the design, capabilities and limitations of these algorithms, even though their application will surely require the ambitious collaboration, resources and expertise on par with the scale of the immense environmental and ecological problems we face.
 
 In this paper, we draw on examples from fisheries management and ecological tipping points to illustrate how deep RL techniques can successfully discover optimal solutions to previously solved management scenarios and discover highly effective solutions to unsolved problems.
 We focus on examining the potential and limitations of deep RL through the lens of simple, classical models.
-Over a century of theory and practice in ecology has demonstrated that simple models can provide meaningful insights which improve management outcomes [@Getz2017].
+Over a century of theory and practice in ecology has demonstrated that simple models can provide meaningful insights which improve management outcomes [@Getz2018].
 As Richard Levins successfully established in his classic paper on the principles of model building [@Levins1966], model complexity must not be mistaken for model realism.
-Levins esposed simple mechanistic models which satisfy the goals of being both _realistic_ and _general_. 
+Levins espoused simple mechanistic models which satisfy the goals of being both _realistic_ and _general_. 
 More complex models such as those used in fisheries to guide the management of specific stocks typically sacrifice _generality_ for _precision_, a distinction Bob May characterized as "tactical models" (precise) rather than "strategic models" (general). 
 Such simple, realistic and general models are still the bedrock of most theory and practice today, even when implementation turns to tactical models for quantitative guidance (for instance, the notion of maximum sustainable yield, MSY, in fisheries, or $R_0$ in epidemiology, remain important concepts in management even though they do not exist in typical tactical models).
 These models provide an ideal first benchmark for evaluating the performance of emerging methods of deep RL for several reasons:
 Firstly, for some cases the optimal solution is already known, providing a clear standard-of-comparison to evaluate RL performance. 
 Prior work sometimes overlooks this essential step, assuming that whatever behavior an RL agent produces is sufficiently optimal or otherwise an accurate proxy for behavior arising from animal learning or evolution. 
 As our evaluations will illustrate, such an assumption can be quickly misleading. 
-Second, these models are already widely studied and will be familiar to many readers: @Schaefer1954 is a staple of fisheries management textbooks and practice, with over 2800 citations, while @May1977 has become a canonical model of thresholds and tipping points which still continues to dominate how many ecologists think about these phenomena [@Scheffer2009].  
+Second, these models are already widely studied and will be familiar to many readers: @Schaefer1954 is a staple of fisheries management textbooks and practice, with over 2800 citations, while @May1977 has become a canonical model of thresholds and tipping points which still continues to dominate how many ecologists think about these phenomena [@Scheffer2015].  
 Many readers can thus benefit from existing knowledge and intuition about the behavior and implications of these models in interpreting the performance of deep RL, something that would not be possible with a more complex model. 
 Third, these models include or can easily be extended to contexts for which the optimal management policy is unknown or inaccessible to classical methods.
 Our implementations of these models have been published to the python-based `PyPi` code archive and include many such variations which represent open problems for RL.
