@@ -22,23 +22,16 @@ authors:
     location: Berkeley, California
     email: cboettig@berkeley.edu (corresponding author)
 abstract: |
-  Can machine learning help us make better decisions about a changing planet?
-  In this paper, we illustrate and discuss the potential of a promising corner of machine learning known as _reinforcement learning_ (RL) to help tackle the most challenging conservation decision problems.
-  RL is uniquely well suited to conservation and global change challenges for three reasons: 
-  (1) RL explicitly focuses on designing an agent who _interacts_ with an environment which is dynamic and uncertain,
-  (2) RL approaches do not require massive amounts of data, 
-  (3) RL approaches would utilize rather than replace existing models, simulations, and the knowledge they contain.
-  While this potential may be compelling, the challenges involved in successfully deploying RL-based management to realistic scenarios are formidable --
-  the required expertise and computational cost may place these applications beyond the reach of all but large, international technology firms.
-  Ecologists must establish a better understanding of how these algorithms work and fail if we are to realize this potential and avoid the pitfalls such a transition would bring.
-  To this end, we provide a conceptual and technical introduction to RL and its relevance to ecological and conservation challenges, including examples of a problem in setting fisheries quotas and in managing ecological tipping points.
-  Four appendices with annotated code provide a tangible introduction to researchers looking to adopt, evaluate, or extend these approaches.
+  1. Can machine learning help us make better decisions about a changing planet? In this paper, we illustrate and discuss the potential of a promising corner of machine learning known as deep reinforcement learning (RL) to help tackle the most challenging conservation decision problems. We provide a conceptual and technical introduction to deep RL as well as annotated code so that researchers can adopt, evaluate and extend these approaches.
+  2. RL explicitly focuses on designing an agent who interacts with an environment which is dynamic and uncertain. Deep RL is the subfield of RL that incorporates deep neural networks into the agent. We train deep RL agents to solve sequential decision-making problems in setting fisheries quotas and managing ecological tipping points.
+  3. We show that a deep RL agent is able to learn a nearly optimal solution for the fisheries management problem. For the tipping point problem, we show that a deep RL agent can outperform a sensible rule-of-thumb strategy. 
+  4. Our results demonstrate that deep RL has the potential to solve challenging decision problems in conservation. While this potential may be compelling, the challenges involved in successfully deploying RL-based management to realistic scenarios are formidable -- the required expertise and computational cost may place these applications beyond the reach of all but large, international technology firms. Ecologists must establish a better understanding of how these algorithms work and fail if we are to realize this potential and avoid the pitfalls such a transition would bring. We ultimately set forth a research framework based on well-posed, public challenges so that ecologists and computer scientists can collaborate towards solving hard decision-making problems in conservation.
   
 keywords:
-  - Reinforcement Learning
+  - Artificial Intelligence
   - Conservation
   - Machine Learning
-  - Artificial Intelligence
+  - Reinforcement Learning
   - Tipping points
 bibliography: references.bib
 nocite: |
@@ -48,9 +41,8 @@ header-includes:
   - \usepackage{amssymb}
   - \usepackage{lineno}
   - \usepackage{setspace}
-#  - \usepackage{endfloat}
-#  - \linenumbers
-#  - \doublespacing
+  - \linenumbers
+  - \doublespacing
   
 output: 
   rticles::arxiv_article:
@@ -75,7 +67,7 @@ the number of words: **4,814**
 
 the number of references: **62**
 
-the number of figures, tables, and text boxes: **6** (five figures, 1 table)
+the number of figures, tables, and text boxes: **7** (5 figures, 2 tables)
 
 \pagebreak
 
@@ -130,7 +122,7 @@ These models provide an ideal first benchmark for evaluating the performance of 
 Firstly, for some cases the optimal solution is already known, providing a clear standard-of-comparison to evaluate RL performance. 
 Prior work sometimes overlooks this essential step, assuming that whatever behavior an RL agent produces is sufficiently optimal [@DQN].
 As our evaluations will illustrate, such an assumption can be quickly misleading. 
-Second, these models are already widely studied and will be familiar to many readers: @Schaefer1954 is a staple of fisheries management textbooks and practice, with over 2800 citations, while @May1977 has become a canonical model of thresholds and tipping points which still continues to dominate how many ecologists think about these phenomena [@Scheffer2015].  
+Second, these models are already widely studied and will be familiar to many readers: @Schaefer1954 is a staple of fisheries management textbooks and practice, with over 2800 citations, while @May1977 has become a canonical model of thresholds and tipping points which still continues to dominate how many ecologists think about these phenomena [@Scheffer2015].
 Many readers can thus benefit from existing knowledge and intuition about the behavior and implications of these models in interpreting the performance of deep RL, something that would not be possible with a more complex model. 
 Third, these models include or can easily be extended to contexts for which the optimal management policy is unknown or inaccessible to classical methods.
 Our implementations of these models have been published to the python-based `PyPi` code archive and include many such variations which represent open problems for RL.
@@ -139,10 +131,10 @@ We include extensive appendices with carefully annotated code which should allow
 We do recognize the need for more complex, "precise" models to derive quantitatively precise management policy in specific management problems such as fisheries, forestry, or climate change mitigation efforts. 
 The examples here should provide ecologists with a greater background to engage in the collaborative development of such methods, while also highlighting challenges which ecological problems pose to existing techniques.
 Even the simple models we consider here contain sources of complexity such as hysteresis that are likely commonplace to ecological problems but have not been well represented in RL research to date. 
-Applying RL to a range of "precise" models is currently beyond the scope of any one paper: it will require not only more computational resources, but more collaborations between large teams of ecologists and computer scientists.
+Applying RL to a range of "precise" models is currently beyond the scope of any one paper: it will require not only more computational resources but more collaborations between large teams of ecologists and computer scientists.
 
 
-# RL overview
+# Materials and Methods
 
 <!-- Conceptual picture: (A) an "environment", and (B) an "agent"
   Components of an agent: 
@@ -279,7 +271,7 @@ Although there are RL-based methods for infinite horizon problems, i.e. when $H=
 In Appendix A, we will discuss in greater detail how deep RL algorithms attempt to optimize the RL objective.
 
 
-# Examples
+# Results
 
 We provide two examples that illustrate the application and potential of deep RL to ecological and conservation problems, highlighting both the potential and the inherent challenges.
 Annotated code for these examples may be found in Appendix B and at <https://github.com/boettiger-lab/rl-intro>.
@@ -537,6 +529,21 @@ Successes have so far been concentrated in applications to games and robotics, n
 Iterative improvements to well-posed public challenges have proven immensely effective in the computer science community in tackling difficult problems, which allow many teams with diverse expertise not only to compete but to learn from each other [@netflix_prize; @imagenet].
 By working to develop similarly well-posed challenges as clear benchmarks, ecology and environmental science researchers may be able to replicate that collaborative, iterative success in cracking hard problems.
 
+# Acknowledgements {-}
+
+All authors were supported by the NSF Faculty Early Career Development Program Award 1942280. We thank Benjamin Blonder, Zachary Sunberg, and Claire Tomlin for their thoughtful comments.
+
+# Conflicts of Interest {-}
+
+The authors declare there are no conflicts of interest.
+
+# Authors' Contributions {-}
+
+M.L. and C.B. developed the code and wrote the manuscript with support from K.E.A.N. and M.S.C.
+
+# Data Availability {-}
+
+We have created a github repository <https://github.com/boettiger-lab/rl-intro> that contains the code used to produce the figures herein.
 
 \pagebreak
 
