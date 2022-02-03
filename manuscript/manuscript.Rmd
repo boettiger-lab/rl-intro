@@ -46,9 +46,11 @@ nocite: |
 header-includes:
   - \usepackage{amsmath}
   - \usepackage{amssymb}
-#  - \usepackage{lineno}
+  - \usepackage{lineno}
+  - \usepackage{setspace}
 #  - \usepackage{endfloat}
 #  - \linenumbers
+#  - \doublespacing
   
 output: 
   rticles::arxiv_article:
@@ -110,12 +112,12 @@ Rich, processes-based simulations such as the SORTIE model in forest management 
 Decision-theoretic approaches based on optimal control techniques can only find the best strategy in the simplest of ecological models; the so called "curse of dimensionality" makes problems with a large number of states or actions intractable by conventional methods [@Possingham2006; @Marescot2013; @ferrer-mestres_k-n-momdps_2021; @chades_primer_2021].
 Neural-network-based RL techniques, referred to as *deep RL*, have proven particularly effective in problems involving complex, high-dimensional spaces that have previously proven intractable to classical methods.
 
-While deep RL may have the potential to open up such intractable problems, it also risks making those problems tractable only by stakeholders with access to extensive computational resources and expertise.
+While deep RL may have the potential to open up such intractable problems, it also risks making those problems tractable only for stakeholders with access to extensive computational resources and expertise.
 It is notable that the landmark advances cited above have been solved not by academic teams but by specialized research teams of international technology firms such as Alphabet.
 Precise estimates of computational resources used in that research are difficult to establish, but previous estimates benchmarked against commercially available cloud computing platforms place the training of a single model at over $35 million [@alphacost; @openai_costs; @alphaGoZero],
 and many realistic ecological problems will involve even greater complexity than these landmark examples [@alphaGoZero; @alphazero; @openai_learning_2019].
 While the history of improved efficiency in computing technology has shown a remarkable ability to reduce such barriers, it has simultaneously moved the leading edge of those capabilities farther beyond reach of traditional ecological research. 
-We believe that ecologists must seek to better understand the design, capabilities and limitations of these algorithms, even though their application will surely require the ambitious collaboration, resources and expertise on par with the scale of the immense environmental and ecological problems we face.
+We believe that ecologists must seek to better understand the design, capabilities and limitations of these algorithms, even though the application of RL to conservation will surely require the ambitious collaboration, resources and expertise on par with the scale of the immense environmental and ecological problems we face.
 
 In this paper, we draw on examples from fisheries management and ecological tipping points to illustrate how deep RL techniques can successfully discover optimal solutions to previously solved management scenarios and discover highly effective solutions to unsolved problems.
 We focus on examining the potential and limitations of deep RL through the lens of simple, classical models.
@@ -126,7 +128,7 @@ More complex models such as those used in fisheries to guide the management of s
 Such simple, realistic and general models are still the bedrock of most theory and practice today, even when implementation turns to tactical models for quantitative guidance (for instance, the notion of maximum sustainable yield, MSY, in fisheries, or $R_0$ in epidemiology, remain important concepts in management even though they do not exist in typical tactical models).
 These models provide an ideal first benchmark for evaluating the performance of emerging methods of deep RL for several reasons:
 Firstly, for some cases the optimal solution is already known, providing a clear standard-of-comparison to evaluate RL performance. 
-Prior work sometimes overlooks this essential step, assuming that whatever behavior an RL agent produces is sufficiently optimal or otherwise an accurate proxy for behavior arising from animal learning or evolution. 
+Prior work sometimes overlooks this essential step, assuming that whatever behavior an RL agent produces is sufficiently optimal [@DQN].
 As our evaluations will illustrate, such an assumption can be quickly misleading. 
 Second, these models are already widely studied and will be familiar to many readers: @Schaefer1954 is a staple of fisheries management textbooks and practice, with over 2800 citations, while @May1977 has become a canonical model of thresholds and tipping points which still continues to dominate how many ecologists think about these phenomena [@Scheffer2015].  
 Many readers can thus benefit from existing knowledge and intuition about the behavior and implications of these models in interpreting the performance of deep RL, something that would not be possible with a more complex model. 
@@ -137,7 +139,7 @@ We include extensive appendices with carefully annotated code which should allow
 We do recognize the need for more complex, "precise" models to derive quantitatively precise management policy in specific management problems such as fisheries, forestry, or climate change mitigation efforts. 
 The examples here should provide ecologists with a greater background to engage in the collaborative development of such methods, while also highlighting challenges which ecological problems pose to existing techniques.
 Even the simple models we consider here contain sources of complexity such as hysteresis that are likely commonplace to ecological problems but have not been well represented in RL research to date. 
-Such work is beyond the scope of any one paper: it will require not only more computational resources, but more collaborations between large teams of ecologists and computer scientists.  
+Applying RL to a range of "precise" models is currently beyond the scope of any one paper: it will require not only more computational resources, but more collaborations between large teams of ecologists and computer scientists.
 
 
 # RL overview
