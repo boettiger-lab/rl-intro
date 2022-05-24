@@ -149,7 +149,7 @@ Applying RL to a range of "precise" models is currently beyond the scope of any 
 All applications of RL can be divided into two components: an *environment* and an *agent*.
 The *environment* is typically a computer simulation, though it is possible to use the real world as the RL environment [@ha_learning_2020].
 The *agent*, which is often a computer program, continuously interacts with the environment. 
-At each time step, the agent observes the current *state* of the environment then performs an *action*. 
+At each time step, the agent *observes* the current *state* of the environment then performs an *action*^[The terms observation and state are used nearly interchangeably in describing RL, so it is worth clarifying the distinction. An observation is the  depiction of the environment that is given to the agent at each time step, but the state is the true underlying description of the environment. When the term observation is used, this usually means that the observation does not provide an accurate portrayal of the environment's state. Yet, in cases when the observation and state are in agreement, the term observation is typically not used at all.]. 
 As a result of this action, the environment transitions to a new state and transmits a numerical *reward* signal to the agent.
 The goal of the agent is to learn how to maximize its expected cumulative reward.
 The agent learns how to achieve this objective during a period called *training*.
@@ -160,13 +160,14 @@ Throughout this process, the agent's behavior is codified into what is called a 
 
 ## RL Environments
 
-An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an observation of the environment's current *state* and an associated *reward* as output.
+An environment is a mathematical function, computer program, or real world experience that takes an agent's proposed *action* as input and returns an *observation* of the environment's current *state* and an associated *reward* as output.
 In contrast to classical approaches [@Marescot2013; @chades_primer_2021], there are few restrictions on what comprises a state or action. 
 States and actions may be continuous or discrete, completely or partially observed, single or multidimensional.
 The main focus of building an RL environment, however, is on the environment's transition dynamics and reward function.
 The designer of the environment can make the environment follow any transition and reward function provided that both are functions of the current state and action.
-This ability allows RL environments to model a broad range of decision making problems.
+The ability to tailor the actions, states, transition dynamics and reward function allows RL environments to model a broad range of decision making problems.
 For example, we can set the transitions to be deterministic or stochastic.
+We could map any countable set of actions to a discrete action space. 
 We can also specify the reward function to be *sparse*, whereby a positive reward can only be received after a long sequence of actions, e.g. the end point in a maze.
 In other environments, an agent may have to learn to forgo immediate rewards (or even accept an initial negative reward) in order to maximize the net discounted reward as we illustrate in examples here.
 
@@ -433,7 +434,7 @@ As replicate after replicate stochastically crashes, the mean state and mean rew
 In contrast, the RL agent edges the system slightly farther away from the tipping point, decreasing but not eliminating the chance of a chance transition.
 In the few replicates that experience a critical transition anyway, the RL agent usually responds with sufficient commitment to ensure their recovery [Appendix B].
 Only 3 out of 100 replicates degrade far enough for the RL agent to give up the high cost of trying to rescue them.
-The RL agent's use of a more dynamic strategy out-preforms the steady-state strategy.
+The RL agent's use of a more dynamic strategy out-performs the steady-state strategy.
 Numerous kinks visible in the RL policy function also suggest that this solution is not yet optimal.
 Such quirks are likely to be common features of RL solutions -- long as they have minimal impact on realized rewards.
 Further tuning of hyper-parameters, increased training, alterations or alternatives to the training algorithm would likely be able to further improve upon this performance.
@@ -491,7 +492,7 @@ Thus, as Section 5.1 and 5.2 illustrate, it is important to begin with simple pr
 Such examples provide important benchmarks to calibrate the performance, tuning and training requirements of RL.
 Once RL agents have mastered the basics, the examples can be easily extended into more complex problems by changing the environment.
 Yet, even in the case that an agent performs well on a realistic problem, there will be a range of open questions in using deep RL to inform decision-making. 
-Since deep neural networks lack transparency [@castelvecchi_can_2016], can we be confident that the deep RL agent will generalize its past experience to new situations?
+Since deep neural networks lack transparency [@castelvecchi_can_2016], can we be confident that the agent will generalize its past experience to new situations -- especially when we cannot readily visualize the policy?
 Given that there have been many examples of reward misspecification leading to undesirable behavior [@hadfield-menell_inverse_2020], what if we have selected an objective that unexpectedly causes damaging behavior?
 A greater role of algorithms in conservation decision-making also raises questions about ethics and power, particularly when those algorithms are opaque or proprietary [@scoville_algorithmic_2021, @chapman_promoting_2021].
 
