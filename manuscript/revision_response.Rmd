@@ -20,13 +20,15 @@ Reviewer 2:
 
 1) “It would have been nice to discuss how [the 3 ML] paradigms are not mutually exclusive. […]  Do we talk about deep RL  only when the neural networks are used in the decision process (policy, action) or even when NNs are used in the transition distribution ?”
 
-It is possible to use techniques from supervised learning and unsupervised learning in RL. Two examples that come to mind are behavior cloning and “CURL: Contrastive Unsupervised Representations for Reinforcement Learning” by Srinivas et al. which apply supervised and unsupervised learning techniques respectively. Reinforcement learning is a sprawling discipline and since this is an introductory piece in which we don’t want to overwhelm the reader, we think it is better to focus on more commonly encountered subjects in the field.
+It is possible to use techniques from supervised learning and unsupervised learning in RL. Two examples that come to mind are behavior cloning and “CURL: Contrastive Unsupervised Representations for Reinforcement Learning” by Srinivas et al. Reinforcement learning is a sprawling discipline and since this is an introductory piece where we don’t want to overwhelm the reader, we think it is better to focus on more commonly encountered subjects in the field.
 
-It is possible to use neural networks to model the transition dynamics whether that is in the agent or in the simulator. The first case would be an instance of model-based RL, where the agent is modeling the environment; this approach is quite common. We do not mention that neural networks can be used to approximate the transition dynamics explicitly in the manuscript, but implicitly: “Whenever there is a need for an agent to approximate some function, say a policy function, neural networks can be used in this capacity due to their property of being general function approximators.” 
+This is a good point that we have attempted to clarify in the manuscript:
+ 
+"Whenever there is a need for an agent to approximate some function, typically to model the policy and/or the transition dynamics, neural networks can be used in this capacity due to their property of being general function approximators."
 
 2) You also state that deep RL is not adopted in ecology. How about closely related fields such as evolution, genetics or biocontrol (see Treloar et al 2018) research ? Did you investigate that? 
 
-We’ve updated this statement, there are a handful applications of deep RL in ecology. !!Need to do this!!
+We’ve updated this statement as we have found a few noteworthy applications in ecology. Cite !!line!!.
 
 3) I didn't get the usefulness of adding the part about precise/tactical and strategic/general in the introduction, especially since this isn't elaborated in the discussion. 
 

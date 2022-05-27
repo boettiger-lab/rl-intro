@@ -96,7 +96,7 @@ Three features distinguish RL from other ML methods in ways that are particularl
 2) RL does not require massive amounts of representative sampled historical data,
 3) RL approaches easily integrate with existing ecological models and simulations, which may be our best guide to understanding and predicting future possibilities.
 
-Despite relevance to decision making under uncertainty that could make RL uniquely well suited for ecological conservation, RL has not been widely applied across this field.
+Despite relevance to decision making under uncertainty that could make RL uniquely well suited for ecological conservation, RL has only been applied to this field in a few cases [@xu_robust_2021, @silvestro_improving_2022].
 To date, the problems considered by RL research have largely been drawn from examples in robotic movement and games like Go and Starcraft [@openai_learning_2019; @alphazero; @alphastar].
 Complex environmental problems share many similarities to these tasks and games: the need to plan many moves ahead given a large number of possible outcomes, to account for uncertainty and to respond with contingency to the unexpected.
 RL agents typically develop strategies by interacting with simulators, a practice that should not be unsettling to ecologists since learning from simulators is common across ecology.
@@ -193,7 +193,7 @@ Yet, frequently, learning a model of the environment is very difficult, and in t
 
 
 Neural networks become useful in RL when the environment has a large observation-action space^[Conventionally, an observation-action space is considered to be large when it is non-tabular, i.e. cannot be represented in a computationally tractable table.], which happens frequently with realistic decision-making problems. 
-Whenever there is a need for an agent to approximate some function, say a policy function, neural networks can be used in this capacity due to their property of being general function approximators [@universalapproximators].
+Whenever there is a need for an agent to approximate some function, typically to model the policy and/or the transition dynamics, neural networks can be used in this capacity due to their property of being general function approximators [@universalapproximators].
 Although there are other function approximators that can be used in RL, e.g. Gaussian processes [@grande14], neural networks have excelled in this role because of their ability to learn complex, non-linear, high dimensional functions and their ability to adapt given new information [@briefsurveydrl].
 There is a multitude of deep RL algorithms since there are many design choices that can be made in constructing a deep RL agent -- see Appendix A for more detail on these engineering decisions. 
 In Table 1, we present some of the more common deep RL algorithms which serve as good reference points for the current state of deep RL.
