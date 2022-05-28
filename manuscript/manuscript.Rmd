@@ -252,7 +252,7 @@ A POMDP is a tuple that consists of the following:
 
 - $d_0(s_0)$: an initial state distribution
 
-- $\gamma \in (0,1]$: a discount factor
+- $\gamma \in (0,1]$: a discount factor which describes how much the agent will value rewards to be received in the distant future versus the immediate future
 
 The agent interacts with the environment in an iterative loop, whereby the agent only has access to the observation space, action space and the discounted reward signal, $\gamma^t \, r(s_t, a_t)$.
 As the agent interacts with the environment by selecting actions according to its policy, $\pi(a_t | o_t)$^[The policy can also be conditioned on a history of observations, $(o_0, ..., o_t)$.], the agent creates a trajectory, $\tau = (s_0, o_0, a_0, \dots, s_{H-1}, o_{H-1}, a_{H-1}, s_H)$.
