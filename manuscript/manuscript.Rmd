@@ -337,8 +337,9 @@ Because our state space and action space are sufficiently low-dimensional in thi
 This confirms that quotas tend to be slightly lower than optimal, most notably at larger stock sizes.
 These features highlight a common challenge in the design and training of RL algorithms.
 RL cares only about improving the realized cumulative reward, and may sometimes achieve this in unexpected ways.
-Because these simulations rarely reach stock sizes at or above carrying capacity, these larger stock sizes show a greater deviation from the optimal policy than we observe at more frequently visited lower stock sizes.
-Training these agents in a variety of alternative contexts could improve their ability to generalize to other scenarios.
+Because these simulations rarely reach stock sizes at or above carrying capacity, i.e. larger stock sizes are under-explored, these larger stock sizes show a greater deviation from the optimal policy than we observe at more frequently visited lower stock sizes.
+This observation brings up a point that is well worth discussing which is how to best identify and resolve under-explored scenarios.
+Usually, RL practitioners identify under-explored scenarios by either doing extensive testing or visualizing the policy, then tweaking the hyperparameters relevant to exploration in hopes of improving the result.
 
 How could an RL agent be applied to empirical data?
 One solution would be to train an agent on a simulation environment that approximates the fishery of interest then query the policy of the agent to find a quota for the observed stock.

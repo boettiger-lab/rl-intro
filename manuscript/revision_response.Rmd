@@ -59,7 +59,11 @@ The exponentiation based on time, t, follows from this description. Since the di
 
 7) In general, do you have recommendations to identify under-explored scenarios?
 
-Identifying under-explored spaces of the observation-action space is going to be very dependent on the problem. Usually RL practitioners identify under-explored scenarios by either doing extensive testing or visualizing the policy. As the observation-action spaces become large, identifying under-explored regions becomes particularly tough, since it becomes impossible to visualize the policy. When the observation-action space can be easily visualized, then one can rely on their domain knowledge to recognize sub-optimal performance, which is what we have done in both our examples. So the main recommendation is to first try to visualize the policy then perform extensive testing to identify areas of poor exploration.  
+This is a great question that we have tried to address in the latest revision,
+
+"Because these simulations rarely reach stock sizes at or above carrying capacity, i.e. larger stock sizes are under-explored, these larger stock sizes show a greater deviation from the optimal policy than we observe at more frequently visited lower stock sizes.
+This observation brings up a point that is well worth discussing which is how to best identify and resolve under-explored scenarios.
+Usually, RL practitioners identify under-explored scenarios by either doing extensive testing or visualizing the policy, then tweaking the hyperparameters relevant to exploration in hopes of improving the result."
 
 8) It would be great to add the optimal decision also in the Argentine Hake fishery to the figure. Was the optimal decision used at some point in that time series ?    
 
@@ -69,7 +73,7 @@ Identifying under-explored spaces of the observation-action space is going to be
 
 There are two primary ways that one could use domain knowledge to assist the agent in the learning process. One approach is to use a model-based agent where the RL practitioner would instill domain knowledge into the agent’s model of the environment directly. For instance, instead of fitting a randomized neural network to the the transition dynamics, the agent could estimate parameters for a pre-specified model. The benefit of this approach is that the agent could converge to an optimal solution more quickly as the policy search space could be made much smaller for restrictive models — note that this benefit can only be realized in certain scenarios like with RL algorithms that explore according to the same policy that they are updating. Another method is to design an exploration algorithm based off of domain knowledge so the agent can more efficiently find good solutions. For both cases, the primary benefit is the same: using domain knowledge can lead to more efficient exploration. Yet, if the domain knowledge is biased, then it is very likely that the agent will learn suboptimal solutions.
 
-The reviewer here raises a very good point here about employing domain knowledge to reduce computational costs. This is something that we alluded to here,
+The reviewer here raises a very good point here about employing domain knowledge to reduce computational costs. This is something that we alluded to in line xxx,
 
 "Fully detailed conservation decision-making problems will likely require comparable specialized algorithms and hardware that ecologists do not generally have access to."
 
