@@ -3,27 +3,22 @@ on: push
 
 name: Render manuscript
 
+
 jobs:
-  render:
-    name: Render RMarkdown
-    runs-on: ubuntu-22.04
+  render-rmarkdown:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: r-lib/actions/setup-r@master
-      - uses: r-lib/actions/setup-pandoc@v1
-      - uses: r-lib/actions/setup-tinytex@master
-        #- name: Cache Renv packages
-        #  uses: actions/cache@v2
-        # with:
-        #   path: $HOME/.local/share/renv
-        #   key: r-${{ hashFiles('renv.lock') }}
-        #   restore-keys: r-
-      - name: Install system dependencies
-        run: sudo apt-get update -qq && sudo apt-get -y install libcurl4-openssl-dev
-      - name: Install packages
-        run: |
-          R -e 'install.packages("renv")'
-          R -e 'renv::restore()'
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-renv@v2
+      
       - name: Appendix
         run: |-
           Rscript -e "rmarkdown::render('appendices/appendix-B-examples.Rmd')"
