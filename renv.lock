@@ -934,10 +934,10 @@
     },
     "rticles": {
       "Package": "rticles",
-      "Version": "0.19",
+      "Version": "0.23",
       "Source": "Repository",
       "Repository": "RSPM",
-      "Hash": "87b3f5ddfdd8fb6510855be5370bc029",
+      "Hash": "4cab3463b39137d4dd113b751cb2805d",
       "Requirements": [
         "knitr",
         "rmarkdown",
