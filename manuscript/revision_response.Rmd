@@ -12,7 +12,7 @@ We have fixed the line 318 typo. Use of "forgo" on line 132 was intentional.
 
 2) As a computer scientist, I am just curious to know more about the hardware and software used for the experiments, especially the GPU used and how much time did it take to converge? At least the order of magnitude (hours or days)?
 
-All algorithms were run on an NVIDIA Quadro RTX 8000 GPU. The training  budget for the fishing scenario was 300K timesteps (3K runs, taking about 1 hr). Tipping point training budget was 3M timesteps (6K runs, taking several hours). Precise run times vary with machine load and algorithm. Software details and hyperparameters are provided in the associated GitHub repo, https://github.com/boettiger-lab/rl-intro/. Hyperparameter tuning typically required 100s of training runs using both Optuna and manual adjustments.
+All algorithms were run on an NVIDIA Quadro RTX 8000 GPU. The training  budget for the fishing scenario was 300K timesteps (3K runs, taking about 25 minutes). Tipping point training budget was 3M timesteps (6K runs, taking around 3 hours). Precise run times vary with machine load and algorithm. Software details and hyperparameters are provided in the associated GitHub repo, https://github.com/boettiger-lab/rl-intro/. Hyperparameter tuning typically required 100s of training runs using both Optuna and manual adjustments.
 
 
 Reviewer 2:
