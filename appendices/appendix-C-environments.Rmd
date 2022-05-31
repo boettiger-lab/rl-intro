@@ -137,7 +137,9 @@ class FishingEnv(gym.Env):
 ```
 
 In practice, an environment may include additional logic for rendering information about it's current states as output.
-Effective environments may often work in a transformed variable space, for example, `gym_fishing` maps the space $[0,2K]$ into the space $[-1, 1]$, which significantly improves agent performance. 
+Effective environments may often work in a transformed variable space, for example, `gym_fishing` maps the space $[0,2K]$ into the space $[-1, 1]$, which significantly improves agent performance.
+Note that re-scaling the state space is equivalent to measuring the process in different units, so this does not affect the transition dynamics [@hastings_population_1997].
+
 Other features, such as 32 bit precision numeric values for state and action spaces, can also improve agent performance with GPU-based computation.
 
 Function inheritance provides a natural way to express many variations of a gym, such as alternate step functions, utility functions, or even alternate action and state spaces.
