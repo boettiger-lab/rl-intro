@@ -116,8 +116,8 @@ We focus on examining the potential and limitations of deep RL through the lens 
 Over a century of theory and practice in ecology has demonstrated that simple models can provide meaningful insights which improve management outcomes [@Getz2018].
 As Richard Levins successfully established in his classic paper on the principles of model building [@Levins1966], model complexity must not be mistaken for model realism.
 Levins espoused simple mechanistic models which satisfy the goals of being both _realistic_ and _general_. 
-More complex models such as those used in fisheries to guide the management of specific stocks typically sacrifice _generality_ for _precision_, a distinction Bob May characterized as "tactical models" (precise) rather than "strategic models" (general). 
-Such simple, realistic and general models are still the bedrock of most theory and practice today, even when implementation turns to tactical models for quantitative guidance (for instance, the notion of maximum sustainable yield, MSY, in fisheries, or $R_0$ in epidemiology, remain important concepts in management even though they do not exist in typical tactical models).
+More complex models such as those used in fisheries to guide the management of specific stocks typically sacrifice _generality_ for _precision_. 
+Such simple, realistic and general models are still the bedrock of most theory and practice today (for instance, the notion of maximum sustainable yield, MSY, in fisheries, or $R_0$ in epidemiology, remain important concepts in management).
 These models provide an ideal first benchmark for evaluating the performance of emerging methods of deep RL for several reasons:
 Firstly, for some cases the optimal solution is already known, providing a clear standard-of-comparison to evaluate RL performance. 
 Prior work sometimes overlooks this essential step, assuming that whatever behavior an RL agent produces is sufficiently optimal [@DQN].
