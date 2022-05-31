@@ -123,15 +123,14 @@ Firstly, for some cases the optimal solution is already known, providing a clear
 Prior work sometimes overlooks this essential step, assuming that whatever behavior an RL agent produces is sufficiently optimal [@DQN].
 As our evaluations will illustrate, such an assumption can be quickly misleading. 
 Second, these models are already widely studied and will be familiar to many readers: @Schaefer1954 is a staple of fisheries management textbooks and practice, with over 2800 citations, while @May1977 has become a canonical model of thresholds and tipping points which still continues to dominate how many ecologists think about these phenomena [@Scheffer2015].
-Many readers can thus benefit from existing knowledge and intuition about the behavior and implications of these models in interpreting the performance of deep RL, something that would not be possible with a more complex model. 
+Many readers can thus benefit from existing knowledge and intuition about the behavior and implications of these models in interpreting the performance of deep RL, something that would not be possible with a more complex model.
 Third, these models include or can easily be extended to contexts for which the optimal management policy is unknown or inaccessible to classical methods.
 Our implementations of these models have been published to the python-based `PyPi` code archive and include many such variations which represent open problems for RL.
 We include extensive appendices with carefully annotated code which should allow readers to both reproduce and extend this analysis.
 
-We do recognize the need for more complex, "precise" models to derive quantitatively precise management policy in specific management problems such as fisheries, forestry, or climate change mitigation efforts. 
-The examples here should provide ecologists with a greater background to engage in the collaborative development of such methods, while also highlighting challenges which ecological problems pose to existing techniques.
-Even the simple models we consider here contain sources of complexity such as hysteresis that are likely commonplace to ecological problems but have not been well represented in RL research to date. 
-Applying RL to a range of "precise" models is currently beyond the scope of any one paper: it will require not only more computational resources but more collaborations between large teams of ecologists and computer scientists.
+This paper does not intend to validate deep RL as a method that should be used to directly inform decision-making on current conservation problems.
+Instead, we have selected example problems to provide ecologists with a greater background to engage in the collaborative development of deep RL-based methods, while also highlighting challenges which ecological problems pose to existing techniques.
+Validating deep RL for current conservation problems is beyond the scope of any one paper: this will necessitate examining a range of more "precise" models which will require more computational resources than is available to most researchers and extensive collaboration between large teams of ecologists and computer scientists.
 
 
 # Materials and Methods
