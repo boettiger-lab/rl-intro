@@ -8,12 +8,11 @@ Reviewer 1:
 
 1) “I just noticed very few typos: Line 132: “forgo”, and line 318: “out-preforms”.”
 
-We have fixed the line 318 typo.
+We have fixed the line 318 typo. Use of "forgo" on line 132 was intentional.
 
 2) As a computer scientist, I am just curious to know more about the hardware and software used for the experiments, especially the GPU used and how much time did it take to converge? At least the order of magnitude (hours or days)?
 
-!! CC Carl !!
-
+All algorithms were run on an NVIDIA Quadro RTX 8000 GPU. The training  budget for the fishing scenario was 300K timesteps (3K runs, taking about 1 hr). Tipping point training budget was 3M timesteps (6K runs, taking several hours). Precise run times vary with machine load and algorithm. Software details and hyperparameters are provided in the associated GitHub repo, https://github.com/boettiger-lab/rl-intro/. Hyperparameter tuning typically required 100s of training runs using both Optuna and manual adjustments.
 
 
 Reviewer 2:
@@ -32,7 +31,11 @@ We’ve updated this statement as we have found a few note-worthy applications i
 
 3) I didn't get the usefulness of adding the part about precise/tactical and strategic/general in the introduction, especially since this isn't elaborated in the discussion. 
 
-**CC Carl**
+We agree the writing was not clear, we have sought to simplify this in the intro, sticking with Levins 1966 famous characterization. The essence of Levins' classic argument is merely that process-based models with only a handful of parameters are often more general than those with scores of parameters. We return to this point, though not this language, in the Discussion addressing how real-world simulations will be more complex then the benchmarks we have chosen for this intro. We avoid the language of tactical (i.e. 'use this precise policy or algorithm on this precise problem') vs strategic (i.e. ;evaluate the use RL as a strategy in conservation problems') as relatively unhelpful here.
+
+"Levins espoused simple mechanistic models which satisfy the goals of being both realistic and general.
+More complex models such as those used in fisheries to guide the management of specific stocks typically sacrifice generality for precision.
+Such simple, realistic and general models are still the bedrock of most theory and practice today (for instance, the notion of maximum sustainable yield, MSY, in fisheries, or R_0 in epidemiology, remain important concepts in management)."
 
 4) I think the distinction state/observation merits a bit more clarification. 
 
@@ -76,18 +79,20 @@ Reviewer 3:
 
 1) I strongly recommend that the authors rewrite portions of the manuscript to make it accessible to a broader audience unfamiliar with deep learning techniques.
 
-We acknowledge that our paper might be difficult to grasp for the audience of MEE, but we want to underscore that deep RL is difficult to understand in general, even for people that are familiar with the other subfields of machine learning. There are a lot of concepts and terminology that are unique to RL that will likely require newcomers to do lots of re-reading and digging through the references to gain a comprehensive understanding. This being said, we believe we’ve made subject matter as accessible as possible by explaining the fundamentals in the sections “RL Environments”  and “Deep RL Agents” without any hard-to-parse equations and minimal jargon. In the appendices, we go a bit more in-depth on some theoretical and practical topics, which will hopefully guide readers that are motivated to dig deeper to reach a better understanding of the subject. Lastly, on this area of concern, we have addressed some specific areas of confusion raised by other reviewers.
+The reviewer raises an excellent point about the importance of communicating these technical methods to a broad audience and we have sought to make our revision more accessible to a broad audience. We discuss changes to specific issues highlighted by the reviewer below, as well as those locations where other reviewers have noted that certain jargon was unclear. We have also gone over the manuscript and all four appendices to ensure they provide an introduction that is both accessible with hands-on executable code, while also being technically precise enough for readers to have an appropriate understanding of how the methods work.
 
 2) While RL is based on mathematical and probabilistic outcomes proposing actions to maximize profit, I wonder whether this shall provide feasible outcomes as the actions may only be mathematically attainable and not ecologically. Suppose this is being done to reduce human interventions at decision making, to identify and obtain viable strategies, one has to investigate the outputs of RL strategies. I suggest the authors consider discussing this briefly in the manuscript.
 
 
-We interpret this comment to be partially asking the question: “What are the limitations on an action space?” We have changed some of the language in “RL Environments” to better address this question:
+The reviewer raises two important issues here: "What is the appropriate reward function", and "What are the appropriate limitations on the action space". These questions have always been central issues to ecological management and decision-making, and are neither unique to or resolved by the use RL [@gregory_structured_2012; @conroy_decision_2013]. We have changed some of the language in “RL Environments” to better address the action space question:
 
 “The ability to tailor the actions, states, transition dynamics and reward function allows RL environments to model a broad range of decision making problems.
 For example, we can set the transitions to be deterministic or stochastic.
 We could map any countable set of actions to a discrete action space.”
 
-In other words, the action space can be tailored to fit virtually any decision-making problem. The other question that we interpret this comment to be presenting is whether we can describe all ecological processes mathematically. This is a fundamental philosophy of science question that is outside of the scope of this paper.
+And we address the difficulty in selecting a reward function in the discussion:
+
+"Given that there have been many examples of reward misspecification leading to undesirable behavior, what if we have selected an objective that unexpectedly causes damaging behavior?"
 
 3) The authors should provide a more vivid explanation of the training data: especially the action space and the reward signals for both the fishing management and the ecological tipping point problem.
 
@@ -110,4 +115,4 @@ We share this perspective with the reviewer that our study does not prove that d
 
 6) In Appendix C, the authors mentioned that scaling the instance space to [-1 1] improves the agent performance of RL. Ecological events are highly non-linear sequences of events; such data are often non-stationary. Will scaling the state space in RL not incorporate bias and still lead to robust predictions. I think it demands clarifications.
 
-Re-scaling the state space is equivalent to measuring the process in different units, so this does not affect the transition dynamics.
+We have added a discussion of scaling in the appendix.

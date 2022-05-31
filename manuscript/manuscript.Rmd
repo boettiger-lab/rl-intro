@@ -251,7 +251,7 @@ A POMDP is a tuple that consists of the following:
 
 - $d_0(s_0)$: an initial state distribution
 
-- $\gamma \in (0,1]$: a discount factor which describes how much the agent will value rewards to be received in the distant future versus the immediate future
+- $\gamma \in (0,1]$: a discount factor which describes how much the agent will value rewards to be received in the distant future versus the immediate future [@clark_mathematical_2010]
 
 The agent interacts with the environment in an iterative loop, whereby the agent only has access to the observation space, action space and the discounted reward signal, $\gamma^t \, r(s_t, a_t)$.
 As the agent interacts with the environment by selecting actions according to its policy, $\pi(a_t | o_t)$^[The policy can also be conditioned on a history of observations, $(o_0, ..., o_t)$.], the agent creates a trajectory, $\tau = (s_0, o_0, a_0, \dots, s_{H-1}, o_{H-1}, a_{H-1}, s_H)$.
@@ -492,6 +492,7 @@ Such examples provide important benchmarks to calibrate the performance, tuning 
 Once RL agents have mastered the basics, the examples can be easily extended into more complex problems by changing the environment.
 Yet, even in the case that an agent performs well on a realistic problem, there will be a range of open questions in using deep RL to inform decision-making. 
 Since deep neural networks lack transparency [@castelvecchi_can_2016], can we be confident that the agent will generalize its past experience to new situations -- especially when we cannot readily visualize the policy?
+To gain such confidence, it will be necessary to do extensive testing on previously unseen contexts [@kazak_verifying_2019], but even then, it can be difficult to verify that the agent will perform as expected.
 Given that there have been many examples of reward misspecification leading to undesirable behavior [@hadfield-menell_inverse_2020], what if we have selected an objective that unexpectedly causes damaging behavior?
 A greater role of algorithms in conservation decision-making also raises questions about ethics and power, particularly when those algorithms are opaque or proprietary [@scoville_algorithmic_2021; @chapman_promoting_2021].
 
