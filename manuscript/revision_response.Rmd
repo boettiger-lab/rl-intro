@@ -1,0 +1,122 @@
+---
+output: pdf_document
+---
+
+Revision Round 1 Notes, Deep RL for Conservation Decisions
+
+Reviewer 1:
+
+1) “I just noticed very few typos: Line 132: “forgo”, and line 318: “out-preforms”.”
+
+We have fixed the line 318 typo. Use of "forgo" on line 132 was intentional.
+
+2) As a computer scientist, I am just curious to know more about the hardware and software used for the experiments, especially the GPU used and how much time did it take to converge? At least the order of magnitude (hours or days)?
+
+All algorithms were run on an NVIDIA Quadro RTX 8000 GPU. The training  budget for the fishing scenario was 300K timesteps (3K runs, taking about 25 minutes). Tipping point training budget was 3M timesteps (6K runs, taking around 3 hours). Precise run times vary with machine load and algorithm. Software details and hyperparameters are provided in the associated GitHub repo, https://github.com/boettiger-lab/rl-intro/. Hyperparameter tuning typically required 100s of training runs using both Optuna and manual adjustments.
+
+
+Reviewer 2:
+
+1) “It would have been nice to discuss how [the 3 ML] paradigms are not mutually exclusive. […]  Do we talk about deep RL  only when the neural networks are used in the decision process (policy, action) or even when NNs are used in the transition distribution ?”
+
+It is possible to use techniques from supervised learning and unsupervised learning in RL. Two examples that come to mind are behavior cloning and “CURL: Contrastive Unsupervised Representations for Reinforcement Learning” by Srinivas et al. Reinforcement learning is a sprawling discipline, and since this is an introductory piece, we don’t want to overwhelm the reader with the multitude of available approaches. We have omitted a number of methods to focus on the more commonly encountered subjects in the field.
+
+Regarding how neural networks can be used, we have attempted to clarify this in the manuscript:
+ 
+"Whenever there is a need for an agent to approximate some function, typically to model the policy and/or the transition dynamics, neural networks can be used in this capacity due to their property of being general function approximators."
+
+2) You also state that deep RL is not adopted in ecology. How about closely related fields such as evolution, genetics or biocontrol (see Treloar et al 2018) research ? Did you investigate that? 
+
+We’ve updated this statement as we have found a few note-worthy applications in ecology. Cite !!line!!.
+
+3) I didn't get the usefulness of adding the part about precise/tactical and strategic/general in the introduction, especially since this isn't elaborated in the discussion. 
+
+We agree the writing was not clear, we have sought to simplify this in the intro, sticking with Levins 1966 famous characterization. The essence of Levins' classic argument is merely that process-based models with only a handful of parameters are often more general than those with scores of parameters. We return to this point, though not this language, in the Discussion addressing how real-world simulations will be more complex then the benchmarks we have chosen for this intro. We avoid the language of tactical (i.e. 'use this precise policy or algorithm on this precise problem') vs strategic (i.e. ;evaluate the use RL as a strategy in conservation problems') as relatively unhelpful here.
+
+"Levins espoused simple mechanistic models which satisfy the goals of being both realistic and general.
+More complex models such as those used in fisheries to guide the management of specific stocks typically sacrifice generality for precision.
+Such simple, realistic and general models are still the bedrock of most theory and practice today (for instance, the notion of maximum sustainable yield, MSY, in fisheries, or R_0 in epidemiology, remain important concepts in management)."
+
+4) I think the distinction state/observation merits a bit more clarification. 
+
+We added a footnote to address this problem:
+
+“The terms observation and state are used nearly interchangeably in describing RL, so it is worth clarifying the distinction. An observation is the depiction of the environment that is given to the agent at each time step, but the state is the true underlying description of the environment. When the term observation is used, this usually means that the observation does not provide an accurate portrayal of the environment's state. In cases when the observation and state are in agreement, the term observation is typically not used at all.”
+
+5) How you would go about observing the policies learnt by the model in the case of large models ? For instance, if the state space is very large. Surely, a decision-maker would not blindly trust a black-box model to provide the optimal decision without any provided logic, the way you show it in your experiments in Fig[2-5].  Are current machine learning interpretability tools also useful in deep RL settings?
+
+The difficulty around evaluating and interpreting ML models will be a significant obstacle to RL’s adoption on safety-critical problems. For large observation-action spaces, there are no general tools that will let you interpret the model, so practitioners must carry out extensive testing to gain confidence in the agent; but, extensive testing for large (aka non-tabular) observation-action spaces will not guarantee that the agent won’t commit undesirable actions on untested situations. We provided a small update to address these points which are open research questions:
+
+“Since deep neural networks lack transparency [@castelvecchi_can_2016], can we be confident that the agent will generalize its past experience to new situations -- especially when we cannot readily visualize the policy?”
+
+6) I would appreciate an explanation of the discount factor. What does it represent in practice ? Why is there a discount that depends on the state t? Where does it fit in the second experiment ?How to choose the Horizon H. Is it also an hyper-parameter just like epochs in gradient descent ? 
+
+We have updated our description of the discount factor in the manuscript to address these questions:
+
+"a discount factor which describes how much the agent will value rewards to be received in the distant future versus the immediate future"
+
+The exponentiation based on time, t, follows from this description. Since the discount factor is defined on the range (0, 1), the reward will become smaller over the episode. For evaluation, rewards are attributed a discount factor of 1. It is common however to train the agent with a different discount factor than is used during evaluation, as it may aid exploration to use a different discount factor; thus it can be treated like a hyperparameter. The horizon is another phrase for the length of an episode. It is a parameter of the POMDP and not a hyperparameter.   
+
+7) In general, do you have recommendations to identify under-explored scenarios?
+
+This is a great question that we have tried to address in the latest revision,
+
+"Because these simulations rarely reach stock sizes at or above carrying capacity, i.e. larger stock sizes are under-explored, these larger stock sizes show a greater deviation from the optimal policy than we observe at more frequently visited lower stock sizes.
+This observation brings up a point that is well worth discussing which is how to best identify and resolve under-explored scenarios.
+Usually, RL practitioners identify under-explored scenarios by either doing extensive testing or visualizing the policy, then tweaking the hyperparameters relevant to exploration in hopes of improving the result."
+
+8) It would be great to add the optimal decision also in the Argentine Hake fishery to the figure. Was the optimal decision used at some point in that time series ?    
+
+!!CC Carl!!
+
+9) But what if you had a good understanding of the system, how would knowing the model structure leveraging the theoretical knowledge of the ecosystems facilitate or complicate the RL problem? Specifically, in regards to the challenges in terms of computation cost you raise later. 
+
+There are two primary ways that one could use domain knowledge to assist the agent in the learning process. One approach is to use a model-based agent where the RL practitioner would instill domain knowledge into the agent’s model of the environment directly. For instance, instead of fitting a randomized neural network to the the transition dynamics, the agent could estimate parameters for a pre-specified model. The benefit of this approach is that the agent could converge to an optimal solution more quickly as the policy search space could be made much smaller for restrictive models — note that this benefit can only be realized in certain scenarios like with RL algorithms that explore according to the same policy that they are updating. Another method is to design an exploration algorithm based off of domain knowledge so the agent can more efficiently find good solutions. For both cases, the primary benefit is the same: using domain knowledge can lead to more efficient exploration. Yet, if the domain knowledge is biased, then it is very likely that the agent will learn suboptimal solutions.
+
+The reviewer here raises a very good point here about employing domain knowledge to reduce computational costs. This is something that we alluded to in line xxx,
+
+"Fully detailed conservation decision-making problems will likely require comparable specialized algorithms and hardware that ecologists do not generally have access to."
+
+
+
+Reviewer 3:
+
+1) I strongly recommend that the authors rewrite portions of the manuscript to make it accessible to a broader audience unfamiliar with deep learning techniques.
+
+The reviewer raises an excellent point about the importance of communicating these technical methods to a broad audience and we have sought to make our revision more accessible to a broad audience. We discuss changes to specific issues highlighted by the reviewer below, as well as those locations where other reviewers have noted that certain jargon was unclear. We have also gone over the manuscript and all four appendices to ensure they provide an introduction that is both accessible with hands-on executable code, while also being technically precise enough for readers to have an appropriate understanding of how the methods work.
+
+2) While RL is based on mathematical and probabilistic outcomes proposing actions to maximize profit, I wonder whether this shall provide feasible outcomes as the actions may only be mathematically attainable and not ecologically. Suppose this is being done to reduce human interventions at decision making, to identify and obtain viable strategies, one has to investigate the outputs of RL strategies. I suggest the authors consider discussing this briefly in the manuscript.
+
+
+The reviewer raises two important issues here: "What is the appropriate reward function", and "What are the appropriate limitations on the action space". These questions have always been central issues to ecological management and decision-making, and are neither unique to or resolved by the use RL [@gregory_structured_2012; @conroy_decision_2013]. We have changed some of the language in “RL Environments” to better address the action space question:
+
+“The ability to tailor the actions, states, transition dynamics and reward function allows RL environments to model a broad range of decision making problems.
+For example, we can set the transitions to be deterministic or stochastic.
+We could map any countable set of actions to a discrete action space.”
+
+And we address the difficulty in selecting a reward function in the discussion:
+
+"Given that there have been many examples of reward misspecification leading to undesirable behavior, what if we have selected an objective that unexpectedly causes damaging behavior?"
+
+3) The authors should provide a more vivid explanation of the training data: especially the action space and the reward signals for both the fishing management and the ecological tipping point problem.
+
+We provide an explanation of the training data for both problems. For the fishing problem: 
+
+Lines 216-218: “The manager seeks to optimize the net present value (discounted cumulative catch) of a fishery, observing the stock size each year and setting an appropriate harvest quota in response.”
+
+And for the tipping point problem we give a full detailed explanation of the problem from lines 265 to 280. 
+
+4) This confirms that quotas tend to be slightly lower than optimal, most notably at larger stock sizes. Do the authors mean that RL provides output as lower than the actual optimal. If so, how realistic is it? I want to learn from the authors how RL can be used to obtain readily available conservation solutions.
+
+For this question, it’s best to take a look at Figure 2 to see how closely the RL policy approximates the optimal policy for the fishing example. The agent seems to learn the general functional form of the policy but is slightly biased. We will address the re-occurring concern of whether RL is ready to be used for real problems in another comment.
+
+5) While preventing tipping points is a major goal of modern interdisciplinary science, conservation policy using RL only in one instance is not enough to comment on its applicability. The authors should validate the method by testing on a model of different origins with a different non-linearity and available real data exhibiting a critical transition. (As saddle-node bifurcation to all such instances, the trained RL model should work well when tested on such data). This shall be instrumental in commenting on the generality of the approach for conserving tippings. 
+The authors should justify the robustness of their RL method at conserving tipping in real empirical data. While such data may not be available, noisy simulated data with imperfect sampling mimicking real scenarios can be considered. Real data are often irregularly sampled with errors in reported values (quite obvious in climate data and maybe a concern while reducing emissions to prevent climate tippings ). The authors may perform an experiment and discuss the details in the discussion section as to how RL will deal with such instances.
+
+We share this perspective with the reviewer that our study does not prove that deep RL can be immediately applied to conservation problems. Validating RL as method for ecological problems is not the intention of our paper. Instead, we have written our paper to be an introduction for ecologists to deep RL, whereby we introduce the OpenAI Gym framework, some fundamental RL concepts and example problems, so that researchers can investigate deep RL on their own and better understand how it is beginning to be applied to ecology. We are at a point in time where researchers and organizations are using deep RL in conservation contexts, so it is imperative for our community to start understanding the benefits and downfalls of using deep RL for our specialized class of problems.
+
+!!edit intro to to voice this intention CC Carl!!
+
+6) In Appendix C, the authors mentioned that scaling the instance space to [-1 1] improves the agent performance of RL. Ecological events are highly non-linear sequences of events; such data are often non-stationary. Will scaling the state space in RL not incorporate bias and still lead to robust predictions. I think it demands clarifications.
+
+We have added a discussion of scaling in the appendix.
