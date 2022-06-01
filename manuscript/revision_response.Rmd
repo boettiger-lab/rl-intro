@@ -2,20 +2,19 @@
 output: pdf_document
 ---
 
-Revision Round 1 Notes, Deep RL for Conservation Decisions
-
-Reviewer 1:
+## Reviewer 1
 
 1) “I just noticed very few typos: Line 132: “forgo”, and line 318: “out-preforms”.”
 
-We have fixed the line 318 typo. Use of "forgo" on line 132 was intentional.
+We have fixed the line 318 typo.
+Use of "forgo" on line 132 was intentional.
 
 2) As a computer scientist, I am just curious to know more about the hardware and software used for the experiments, especially the GPU used and how much time did it take to converge? At least the order of magnitude (hours or days)?
 
 All algorithms were run on an NVIDIA Quadro RTX 8000 GPU. The training  budget for the fishing scenario was 300K timesteps (3K runs, taking about 25 minutes). Tipping point training budget was 3M timesteps (6K runs, taking around 3 hours). Precise run times vary with machine load and algorithm. Software details and hyperparameters are provided in the associated GitHub repo, https://github.com/boettiger-lab/rl-intro/. Hyperparameter tuning typically required 100s of training runs using both Optuna and manual adjustments. We have added these details to the manuscript in lines 199-206.
 
 
-Reviewer 2:
+## Reviewer 2
 
 1) “It would have been nice to discuss how [the 3 ML] paradigms are not mutually exclusive. […]  Do we talk about deep RL  only when the neural networks are used in the decision process (policy, action) or even when NNs are used in the transition distribution ?”
 
@@ -67,7 +66,7 @@ Usually, RL practitioners identify under-explored scenarios by either doing exte
 
 8) It would be great to add the optimal decision also in the Argentine Hake fishery to the figure. Was the optimal decision used at some point in that time series ?    
 
-!!CC Carl!!
+
 
 9) But what if you had a good understanding of the system, how would knowing the model structure leveraging the theoretical knowledge of the ecosystems facilitate or complicate the RL problem? Specifically, in regards to the challenges in terms of computation cost you raise later. 
 
@@ -79,7 +78,7 @@ The reviewer here raises a very good point here about employing domain knowledge
 
 
 
-Reviewer 3:
+## Reviewer 3
 
 1) I strongly recommend that the authors rewrite portions of the manuscript to make it accessible to a broader audience unfamiliar with deep learning techniques.
 
