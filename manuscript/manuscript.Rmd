@@ -277,10 +277,9 @@ We provide two examples that illustrate the application and potential of deep RL
 Annotated code for these examples may be found in Appendix B and at <https://github.com/boettiger-lab/rl-intro>.
 All algorithms were run on an NVIDIA Quadro RTX 8000 GPU.
 The training  budget for the fishing scenario was 300K timesteps (3K runs, taking about 25 minutes).
-Tipping point training budget was 3M timesteps (6K runs, taking around 3 hours).
-Precise run times vary with machine load and algorithm.
+The training budget for the tipping point example was 3M timesteps (6K runs, taking around 3 hours).
 Software details and hyperparameters are provided in the associated GitHub repo.
-Hyperparameter tuning typically required 100s of training runs using both Optuna, a python-based hyperparameter optimization library, and manual adjustments.
+Hyperparameter tuning typically required 100s of training runs using both Optuna, a python-based hyperparameter optimization module, and manual adjustments.
 
 ```{r knitr, include = FALSE}
 library(tidyverse)
@@ -552,7 +551,5 @@ M.L. and C.B. developed the code and wrote the manuscript with support from K.E.
 # Data Availability {-}
 
 We have created a github repository <https://github.com/boettiger-lab/rl-intro> that contains the code used to produce the figures herein.
-
-\pagebreak
 
 # References
