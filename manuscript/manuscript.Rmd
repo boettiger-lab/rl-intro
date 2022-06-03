@@ -96,7 +96,7 @@ Three features distinguish RL from other ML methods in ways that are particularl
 2) RL does not require massive amounts of representative sampled historical data,
 3) RL approaches easily integrate with existing ecological models and simulations, which may be our best guide to understanding and predicting future possibilities.
 
-Despite relevance to decision making under uncertainty that could make RL uniquely well suited for ecological conservation, RL has only been applied to this field in a few cases [@xu_robust_2021; @silvestro_improving_2022].
+Despite relevance to decision making under uncertainty that could make RL uniquely well suited for ecological control, RL has only been applied to this field in a few cases [@xu_robust_2021; @silvestro_improving_2022; @treloar_deep_2020].
 To date, the problems considered by RL research have largely been drawn from examples in robotic movement and games like Go and Starcraft [@openai_learning_2019; @alphazero; @alphastar].
 Complex environmental problems share many similarities to these tasks and games: the need to plan many moves ahead given a large number of possible outcomes, to account for uncertainty and to respond with contingency to the unexpected.
 RL agents typically develop strategies by interacting with simulators, a practice that should not be unsettling to ecologists since learning from simulators is common across ecology.
@@ -501,6 +501,7 @@ Yet, even in the case that an agent performs well on a realistic problem, there 
 Since deep neural networks lack transparency [@castelvecchi_can_2016], can we be confident that the agent will generalize its past experience to new situations -- especially when we cannot readily visualize the policy?
 To gain such confidence, it will be necessary to do extensive testing on previously unseen contexts [@kazak_verifying_2019], but even then, it can be difficult to verify that the agent will perform as expected.
 Given that there have been many examples of reward misspecification leading to undesirable behavior [@hadfield-menell_inverse_2020], what if we have selected an objective that unexpectedly causes damaging behavior?
+Reward misspecification is not unique to RL and has long been a central problem in ecological management and decision-making [@gregory_structured_2012; @conroy_decision_2013], but it is important to make clear that RL does not resolve this issue. 
 A greater role of algorithms in conservation decision-making also raises questions about ethics and power, particularly when those algorithms are opaque or proprietary [@scoville_algorithmic_2021; @chapman_promoting_2021].
 
 \begin{table}
