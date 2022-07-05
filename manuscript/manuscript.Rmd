@@ -541,7 +541,7 @@ By working to develop similarly well-posed challenges as clear benchmarks, ecolo
 
 # Acknowledgements {-}
 
-All authors were supported by the NSF Faculty Early Career Development Program Award 1942280. We thank Benjamin Blonder, Zachary Sunberg, and Claire Tomlin for their thoughtful comments.
+This material is based upon work supported by the National Science Foundation under Grant No. DBI-1942280. We thank Benjamin Blonder, Zachary Sunberg, and Claire Tomlin for their thoughtful comments.
 
 # Conflicts of Interest {-}
 
