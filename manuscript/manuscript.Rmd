@@ -549,7 +549,7 @@ The authors declare there are no conflicts of interest.
 
 # Authors' Contributions {-}
 
-M.L. and C.B. developed the code and wrote the manuscript with support from K.E.A.N. and M.S.C.
+Marcus Lapeyrolerie and Carl Boettiger developed the code and wrote the manuscript with support from Kari Norman and Melissa Chapman.
 
 # Data Availability {-}
 
