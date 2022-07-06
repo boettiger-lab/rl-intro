@@ -553,6 +553,6 @@ Marcus Lapeyrolerie and Carl Boettiger developed the code and wrote the manuscri
 
 # Data Availability {-}
 
-We have created a github repository <https://github.com/boettiger-lab/rl-intro> that contains the code used to produce the figures herein.
+We have created a GitHub repository <https://github.com/boettiger-lab/rl-intro> that contains the code used to produce the figures herein. The DOI for this repo is <https://zenodo.org/badge/latestdoi/318358820>.
 
 # References
