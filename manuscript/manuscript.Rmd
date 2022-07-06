@@ -399,7 +399,7 @@ We assume that large actions are proportionally more costly than small actions, 
 Many alterations of these basic assumptions are also possible: our `gym_conservation` implements a range of different scenarios with user-configurable settings.
 In each case, the manager observes the current state of the system each year and must then select the policy response that year.
 
-```{r message=FALSE, fig.cap="Bifurcation diagram for tipping point scenario. The ecosystem begins in the desirable 'high' state under an evironmental parameter (e.g. global mean temperature, arbitrary units) of 0.19.  In the absence of conservation action, the environment worsens (e.g. rising mean temperature) as the parameter increases.  This results in only a slow degredation of the stable state, until the parameter crosses the tipping point threshold at about 0.215, where the upper stable branch is anihilated in a fold bifurcation and the system rapidly transitions to lower stable branch, around state of 0.1.   Recovery to the upper branch requires a much greater conservation investment, reducing the parameter all the way to 0.165 where the reverse bifurcation will carry it back to the upper stable branch."}
+```{r message=FALSE, fig.cap="Bifurcation diagram for tipping point scenario. The ecosystem begins in the desirable 'high' state under an environmental parameter (e.g. global mean temperature, arbitrary units) of 0.19.  In the absence of conservation action, the environment worsens (e.g. rising mean temperature) as the parameter increases.  This results in only a slow degradation of the stable state, until the parameter crosses the tipping point threshold at about 0.215, where the upper stable branch is annihilated in a fold bifurcation and the system rapidly transitions to lower stable branch, around state of 0.1.   Recovery to the upper branch requires a much greater conservation investment, reducing the parameter all the way to 0.165 where the reverse bifurcation will carry it back to the upper stable branch."}
 bifur_df <- read_csv("figs/bifur.csv", col_types = "dccd")
 bifur_df %>%
   ggplot(aes(parameter, state, lty=equilibrium, group = group)) + 
@@ -420,7 +420,7 @@ tip_sims_df <-read_csv("figs/tipping_sims_df.csv")
 tip_policy_df <- read_csv("figs/tipping_policy_df.csv")
 ```
 
-```{r fig.cap="Ecosystem dynamics under management using the steady-state rule-of-thumb strategy compared to management using a neural network trained using the TD3 RL algorithm.  Top panel: mean and 95% confidence interval of ecosystem state over 100 replicate simulations.  As more replicates cross the tipping point threshold under steady-state strategy, the mean slowly decreases, while the TD3 agent preserves most replicates safely above the tipping point.  Lower left: the policy function learned using TD3 relative to the policy function under the steady state.  Lower right: mean rewards under TD3 management evenutally exceed those expected under the steady-state strategy as a large initial investment in conservation eventually pays off."}
+```{r fig.cap="Ecosystem dynamics under management using the steady-state rule-of-thumb strategy compared to management using a neural network trained using the TD3 RL algorithm.  Top panel: mean and 95% confidence interval of ecosystem state over 100 replicate simulations.  As more replicates cross the tipping point threshold under steady-state strategy, the mean slowly decreases, while the TD3 agent preserves most replicates safely above the tipping point.  Lower left: the policy function learned using TD3 relative to the policy function under the steady state.  Lower right: mean rewards under TD3 management eventually exceed those expected under the steady-state strategy as a large initial investment in conservation eventually pays off."}
 
 plot_sims(tip_sims_df) / ( plot_policy(tip_policy_df) + plot_reward(tip_sims_df))
 ```
@@ -549,10 +549,10 @@ The authors declare there are no conflicts of interest.
 
 # Authors' Contributions {-}
 
-M.L. and C.B. developed the code and wrote the manuscript with support from K.E.A.N. and M.S.C.
+Marcus Lapeyrolerie and Carl Boettiger developed the code and wrote the manuscript with support from Kari Norman and Melissa Chapman.
 
 # Data Availability {-}
 
-We have created a github repository <https://github.com/boettiger-lab/rl-intro> that contains the code used to produce the figures herein.
+We have created a GitHub repository <https://github.com/boettiger-lab/rl-intro> that contains the code used to produce the figures herein. The DOI for this repo is <https://zenodo.org/badge/latestdoi/318358820>.
 
 # References
